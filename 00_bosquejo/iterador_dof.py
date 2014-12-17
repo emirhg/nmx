@@ -5,6 +5,7 @@ import sys
 import urllib.request, json
 print("Version de python: ", sys.version)
 print("Se recomiendo >3")
+f = open('resultadosFechasConNOMS', 'w')
 def iterador_por_mes(mes_inicial, anho_inicio, mes_final, anho_fin):
     """Return an iterator of the months with year"""
     a_inicio = 12 * anho_inicio + mes_inicial - 1
@@ -35,7 +36,10 @@ DOF_MESES = 'http://diariooficial.gob.mx/WS_getDiarioFecha.php?year=%d&month=%d'
 #http://diariooficial.gob.mx/WS_getDiarioFull.php?year=2013&month=07&day=31
 DOF_DIARIO_FULL = 'http://diariooficial.gob.mx/WS_getDiarioFull.php?year=%s&month=%s&day=%s'
 count = 0 # 721; #Fix para 2008
-print("    Id; Anho; Mes; Dia")
+f.write("    Id;Anho; Mes;  Dia")
+f.write("\n")
+f.close()
+
 for x in iterador_por_mes(1, 1990, 12, 2014):
     #print("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
     try:
@@ -59,10 +63,12 @@ for x in iterador_por_mes(1, 1990, 12, 2014):
                     #print(find_values('titulo', data))
                     count += 1
                     print("%6d;%2d;%4d;%s"%(count, x[0], x[1], dia))
+                    f = open('resultadosFechasConNOMS', 'a')
+                    f.write("%6d;%2d;%4d;%s"%(count, x[0], x[1], dia))
+                    f.write("\n")
+                    f.close()
             except:
                 print("Unexpected error:", sys.exc_info()[0])
                 raise 
-
-
 
 
