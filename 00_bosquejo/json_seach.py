@@ -1,6 +1,8 @@
 #! /usr/bin/python3
 import json
 
+f = open('workfile', 'w')
+
 def find_values(id, json_repr):
     results = []
 
@@ -13,4 +15,7 @@ def find_values(id, json_repr):
     return results
 
 json_repr = '{"P1": "ss", "Id": 1234, "P2": {"P1": "cccc"}, "P3": [{"P1": "aaa"}]}'
-print (find_values('P1', json_repr)	)
+f.write(str(find_values('P1', json_repr)))
+f.write("\n")
+f.write(str(find_values('P1', json_repr)))
+f.close()
