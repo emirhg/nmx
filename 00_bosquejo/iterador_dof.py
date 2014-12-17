@@ -1,4 +1,4 @@
-#!python
+#! /usr/bin/python3
 """Carga los archivos del DOF para buscar NOMS"""
 # -*- coding: utf-8 -*-
 import sys
@@ -34,9 +34,9 @@ DOF_MESES = 'http://diariooficial.gob.mx/WS_getDiarioFecha.php?year=%d&month=%d'
 
 #http://diariooficial.gob.mx/WS_getDiarioFull.php?year=2013&month=07&day=31
 DOF_DIARIO_FULL = 'http://diariooficial.gob.mx/WS_getDiarioFull.php?year=%s&month=%s&day=%s'
-count = 721; #Fix para 2008
-print("Id;Anho;Mes;Dia")
-for x in iterador_por_mes(6, 1992, 12, 2008):
+count = 0 # 721; #Fix para 2008
+print("    Id; Anho; Mes; Dia")
+for x in iterador_por_mes(1, 1990, 12, 2014):
     #print("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
     try:
         response = urllib.request.urlopen(DOF_MESES%(x[0], x[1]))
