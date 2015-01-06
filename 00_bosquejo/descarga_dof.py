@@ -34,8 +34,9 @@ count = 0 # 721; #Fix para 2008
 f.write("    Id;Anho; Mes;  Dia; FINDNOM")
 f.write("\n")
 
+ftodos = open('DOFs/todos', 'w');
 
-for x in iterador_por_mes(1, 1900, 12, 2014):
+for x in iterador_por_mes(1, 2015, 1, 2015):
     print("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
     f.write("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
     try:
@@ -58,8 +59,9 @@ for x in iterador_por_mes(1, 1900, 12, 2014):
                 content2 = response.read()
                 data2 = json.loads(content2.decode('utf8')) 
                 titulo = NOMBRE_ARCHIVOS%(x[0], x[1], dia)
-                faux = open( titulo , 'w')
+                faux = open(titulo, 'w')
                 json.dump(data2, faux)
+                ftodos.write(json.dumps(data2)+"\n");
                 faux.close()  
                 print("year=%s&month=%s&day=%s OK" % (x[0], x[1], dia))              
                 f.write("year=%s&month=%s&day=%s OK" % (x[0], x[1], dia))              
@@ -74,3 +76,4 @@ for x in iterador_por_mes(1, 1900, 12, 2014):
         f.write("Unexpected error: data si longitud") 
 
 f.close()
+ftodos.close()
