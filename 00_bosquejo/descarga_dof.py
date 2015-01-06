@@ -1,11 +1,17 @@
 #! /usr/bin/python3
-"""Carga los archivos del DOF para buscar NOMS"""
+"""Descarga todos los resumenes del DOF """
 # -*- coding: utf-8 -*-
 import sys
 import urllib.request, json
-print("Version de python: ", sys.version)
-print("Se recomiendo >3")
-f = open('resultadosFechasConNOMS', 'w')
+import os #Para subcarpeta
+
+directory = 'DOFs'
+if not os.path.exists(directory):
+    os.makedirs(directory)
+
+f = open('logDescargaNOM', 'w')
+print("Corriendo la descarga de los resumenes del DOF")
+f.write("Corriendo la descarga de los resumenes del DOF")
 
 def iterador_por_mes(mes_inicial, anho_inicio, mes_final, anho_fin):
     """Return an iterator of the months with year"""
@@ -16,63 +22,55 @@ def iterador_por_mes(mes_inicial, anho_inicio, mes_final, anho_fin):
         #print ( "Y: %d, m: %d" % (y, m+1))
         yield year, month+1
 
-def find_values(id, json_repr):
-    """Encuentra los valores bajo la llave id"""
-    results = []
-
-    def _decode_dict(a_dict):
-        """Usa decode_dict"""
-        try: 
-            results.append(a_dict[id])
-        except KeyError: 
-            pass
-        return a_dict
-
-    json.loads(json_repr, object_hook=_decode_dict)  # return value ignored
-    return results
 
 #http://diariooficial.gob.mx/WS_getDiarioFecha.php?year=2012&month=08
 DOF_MESES = 'http://diariooficial.gob.mx/WS_getDiarioFecha.php?year=%d&month=%d'
 
 #http://diariooficial.gob.mx/WS_getDiarioFull.php?year=2013&month=07&day=31
 DOF_DIARIO_FULL = 'http://diariooficial.gob.mx/WS_getDiarioFull.php?year=%s&month=%s&day=%s'
+NOMBRE_ARCHIVOS = 'DOFs/DiarioFullyear=%s&month=%s&day=%s,json'
+
 count = 0 # 721; #Fix para 2008
 f.write("    Id;Anho; Mes;  Dia; FINDNOM")
 f.write("\n")
-f.close()
+
 
 for x in iterador_por_mes(1, 1900, 12, 2014):
-    #print("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
+    print("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
+    f.write("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
     try:
         response = urllib.request.urlopen(DOF_MESES%(x[0], x[1]))
         content = response.read()
         data = json.loads(content.decode('utf8')) 
-        #print(data['availableDays'])
     except:
-        data = 0;
+        data = 0
         print("DOF MESES - Unexpected error:", sys.exc_info()[0])
+        f.write("DOF MESES - Unexpected error:", sys.exc_info()[0])
         raise 
     if len(data) > 0:
         dias_del_mes = data['availableDays']
-        #print("Num dias: ", len(dias_del_mes))
         for dia in reversed(dias_del_mes):
-            #print("Dia: %s/%2d/%d"%(y, x[1], x[0]))
+            print("year=%s&month=%s&day=%s" % (x[0], x[1], dia))
+            f.write("year=%s&month=%s&day=%s" % (x[0], x[1], dia))
             content2 = ""
             try:
-                response = urllib.request.urlopen(DOF_DIARIO_FULL%(x[0], x[1], dia))
+                response = urllib.request.urlopen(DOF_DIARIO_FULL % (x[0], x[1], dia))
                 content2 = response.read()
-                #data = json.loads(content.decode('utf8')) 
-                if content2.decode('utf8').find('NOM-') != -1: 
-                    #print(find_values('titulo', data))
-                    count += 1
-                    print("%6d;%2d;%4d;%s"%(count, x[0], x[1], dia))
-                    f = open('resultadosFechasConNOMS', 'a')
-                    f.write("%6d;%2d;%4d;%s;%d"%(count, x[0], x[1], dia, content2.decode('utf8').find('NOM-')))
-                    f.write("\n")
-                    f.close()
+                data2 = json.loads(content2.decode('utf8')) 
+                titulo = NOMBRE_ARCHIVOS%(x[0], x[1], dia)
+                faux = open( titulo , 'w')
+                json.dump(data2, faux)
+                faux.close()  
+                print("year=%s&month=%s&day=%s OK" % (x[0], x[1], dia))              
+                f.write("year=%s&month=%s&day=%s OK" % (x[0], x[1], dia))              
             except:
                 print("Unexpected error:", sys.exc_info()[0])
+                f.write("Unexpected error:", sys.exc_info()[0])
                 raise 
+        print("FIN Recorriendo  el mes: %2d - %d OK" % (x[1], x[0]))
+        f.write("FIN Recorriendo  el mes: %2d - %d OK" % (x[1], x[0]))
     else:
         print("Unexpected error: data si longitud") 
+        f.write("Unexpected error: data si longitud") 
 
+f.close()
