@@ -36,7 +36,7 @@ f.write("\n")
 
 ftodos = open('DOFs/todos', 'w');
 
-for x in iterador_por_mes(1, 2015, 1, 2015):
+for x in iterador_por_mes(1, 1900, 1, 2015):
     print("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
     f.write("Recorriendo  el mes: %2d - %d" % (x[1], x[0]))
     try:
