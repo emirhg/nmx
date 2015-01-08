@@ -26,21 +26,33 @@ def parseToCSV(publicacion):
     index=0;
     result = [];
     for ejemplar in publicacionJSON['ejemplares']:
-        for seccion in ejemplar['secciones']:
-            for contenido in seccion['contentsection']['content']['content']:
-                contentLine = (ejemplar['id'] + '\t' + parseDate(ejemplar['fecha']) + '\t' + ejemplar['edicion'] + '\t' + seccion['secc']+ '\t' + seccion['contentsection']['name']+ '\t' + seccion['contentsection']['content']['name'] + '\t' + contenido['id'] + '\t' + contenido['date'] + '\t' + contenido['titulo'] + '\t' + contenido['url']);
-                if(validaNOM(contenido['titulo'])):
-                    print(contentLine);
+        if (ejemplar.get('secciones')):
+            for seccion in ejemplar['secciones']:
+                if (seccion['contentsection']['content'].get('content')):
+                    for contenido in seccion['contentsection']['content']['content']:
+                        if (type(contenido) is str):
+                            contenido=seccion['contentsection']['content']['content'][contenido];
+                        contentLine = (ejemplar['id'] + '\t' + parseDate(ejemplar['fecha']) + '\t' + ejemplar['edicion'] + '\t' + seccion['secc']+ '\t' + seccion['contentsection']['name']+ '\t' + seccion['contentsection']['content']['name'] + '\t' + contenido['id'] + '\t' + contenido['date'] + '\t' + contenido['titulo'] + '\t' + contenido['url']);
+
+                        if(validaNOM(contenido['titulo'])):
+                            print(contentLine);
+                else:
+                    print("WARNING: ", seccion, file=sys.stderr);
+        else:
+            print("WARNING: ", ejemplar, file=sys.stderr)
+
 #Main function
 def main():
     if len(sys.argv) <= 1:
         print ('Tienes que especificar un archivo de entrada.');
         print ('Ejemplo: `' + os.path.basename(__file__) + ' input.json`');
     else:
-        jsonInputFileName = str(sys.argv[1]);#'../data/publicaciones-dof.json';
+        counter=1;
+        jsonInputFileName = str(sys.argv[1]);
         with open(jsonInputFileName) as inputFile:
             for publicacion in inputFile:
-                parseToCSV(publicacion);
+                if(validaNOM(publicacion)):
+                    parseToCSV(publicacion);
 
 #Ejecución
 main();
