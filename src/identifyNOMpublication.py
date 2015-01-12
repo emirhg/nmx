@@ -20,6 +20,16 @@ def validaNOM(contentLine):
         result = False;
     return result;
 
+#Busca y devuelve la clave NOM en una línea de texto.
+def getClaveNOM(contentLine):
+    pattern = re.compile('.*(NOM(\-[\s\w\d]+)+).*');
+    matches = pattern.match(contentLine);
+    if (matches!=None):
+        result = matches.group(1);
+    else:
+        result = False;
+    return result;
+
 #Convierte una string JSON a multiples lineas TSV , una para cada contenido de la publicación
 def parseToCSV(publicacion):
     publicacionJSON = json.loads(publicacion);
@@ -31,11 +41,14 @@ def parseToCSV(publicacion):
                 if (seccion['contentsection']['content'].get('content')):
                     for contenido in seccion['contentsection']['content']['content']:
                         if (type(contenido) is str):
-                            contenido=seccion['contentsection']['content']['content'][contenido];
+                            contenido = seccion['contentsection']['content']['content'][contenido];
+
+                        claveNOM = getClaveNOM(contenido['titulo']);
                         contentLine = (ejemplar['id'] + '\t' + parseDate(ejemplar['fecha']) + '\t' + ejemplar['edicion'] + '\t' + seccion['secc']+ '\t' + seccion['contentsection']['name']+ '\t' + seccion['contentsection']['content']['name'] + '\t' + contenido['id'] + '\t' + contenido['date'] + '\t' + contenido['titulo'] + '\t' + contenido['url']);
 
-                        if(validaNOM(contenido['titulo'])):
-                            print(contentLine);
+                        if(claveNOM):
+                            NOMDescription = ejemplar['id'] + '\t' + parseDate(ejemplar['fecha']) + '\t' + seccion['contentsection']['content']['name'] + '\t' + contenido['id'] + '\t' + contenido['date'] + '\t' + claveNOM + '\t' + contenido['titulo'] + '\t' + contenido['url'];
+                            print(NOMDescription);
                 else:
                     print("WARNING: ", seccion, file=sys.stderr);
         else:
