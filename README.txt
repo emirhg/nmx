@@ -3,8 +3,7 @@ La presente aplicación hace uso del API del DOF para identificar las publicacio
 
 === Ejecución ===
 Identifica la publicación y contenido que hacen referencia a una NOM:
-  #./src/identifyNOMpublication.py data/publicaciones-dof.json
-  ./src/identifyNOMpublication.py 00_bosquejo/DOFs/todos 2>/dev/null
+  ./src/identifyNOMpublication.py data/publicaciones-DOF.json 2>/dev/null
 
 
 === Contenido ===
