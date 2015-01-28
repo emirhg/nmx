@@ -16,13 +16,14 @@ def obtenTipoNom(linea):
 
 def main():
     """" Main function """
-    sys.argv = r'C:\Taller\009_IMCO\noms\data\publicacionesNOMs-acentos.csv'
+#   ¬_¬
+#   sys.argv = r'C:\Taller\009_IMCO\noms\data\publicacionesNOMs-acentos.csv'
     if len(sys.argv) <= 1:
         print('Tienes que especificar un archivo de entrada.')
         print('Ejemplo: `' + os.path.basename(__file__) + ' input.json`')
     else:
         counter=1
-        inputFile = sys.argv
+        inputFile = sys.argv[1]
         with open(inputFile, "r", encoding='utf-8') as inputFileOpened:
             for linea in inputFileOpened:
                 grupo = obtenClavesNOM(linea)
