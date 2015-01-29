@@ -3,6 +3,7 @@
 import json, re;
 import os,sys;
 import html.parser;
+import stat
 
 ## Versión de Hugo para múltiples NOMs en la misma línea
 def obtenClavesNOM(linea):
@@ -60,9 +61,16 @@ def parseToCSV(publicacion):
 #Main function
 def main():
     if len(sys.argv) <= 1:
-        print ('Tienes que especificar un archivo de entrada.');
-        print ('Ejemplo: `' + os.path.basename(__file__) + ' input.json`');
-    else:
+        mode = os.fstat(0).st_mode
+        if stat.S_ISFIFO(mode) or stat.S_ISREG(mode):
+            print ('"id_dof","fecha","organo","id_publicacion_dof","fecha_nom","clave_nom_sugerido","titulo","url","todas_claves_nom_en_titulo","primera_palabra"');
+            for publicacion in sys.stdin:
+                parseToCSV(publicacion);
+        else:                
+            print ('Tienes que especificar un archivo de entrada.');
+            print ('Ejemplo: `' + os.path.basename(__file__) + ' input.json`');
+
+    elif len(sys.argv)==2:
         jsonInputFileName = str(sys.argv[1]);
         print ('"id_dof","fecha","organo","id_publicacion_dof","fecha_nom","clave_nom_sugerido","titulo","url","todas_claves_nom_en_titulo","primera_palabra"');
         with open(jsonInputFileName) as inputFile:
