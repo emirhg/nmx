@@ -5,6 +5,9 @@ La presente aplicación hace uso del API del DOF para identificar las publicacio
 Identifica la publicación y contenido que hacen referencia a una NOM:
   ./src/identifyNOMpublication.py data/publicaciones-DOF.json 2>/dev/null
 
+Descarga el resumen de la publicación de hoy y entuba el resultado para identificar las secciones referentes a NOMs
+  ./src/downloadDOFJSON.py | cut -f3 | src/identifyNOMpublication.py
+
 
 === Contenido ===
 src/    Contiene el código fuente de la aplicación

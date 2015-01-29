@@ -12,7 +12,7 @@ def getDOFResume(thisDate):
     response = urllib.request.urlopen(DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day))
     content = response.read()
     data = json.loads(content.decode('utf8')) 
-    return data
+    return json.dumps(data)
     
 
 def printHelp():
