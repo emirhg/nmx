@@ -6,14 +6,36 @@ from datetime import date
 from datetime import timedelta
 
 DOF_DIARIO_FULL = 'http://diariooficial.gob.mx/WS_getDiarioFull.php?year=%s&month=%s&day=%s'
+
+BB_DETALLEEDICION = "http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario=%s"
 DEBUG = True;
+
+def getCodigoDiario(dof):
+    ejemplares = []
+    for ejemplar in dof['ejemplares']:
+        ejemplares.append(ejemplar['id'])
+    return ejemplares;
+
+def getJSON(urlRequest):
+    response = urllib.request.urlopen(urlRequest)
+    content = response.read()
+    data = json.loads(content.decode('utf8')) 
+    return data
+"""
+def getBB_DetalleEdicion(idDOF):
+    urlRequest = BB_DETALLEEDICION % (idDOF);
+    response = urllib.request.urlopen(urlRequest)
+    content = response.read()
+    data = json.loads(content.decode('utf8')) 
+    return data
+   
 
 def getDOFResume(thisDate):
     response = urllib.request.urlopen(DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day))
     content = response.read()
     data = json.loads(content.decode('utf8')) 
-    return json.dumps(data)
-    
+    return data
+   """ 
 
 def printHelp():
     print ('Este script sirve para descaragar el resumen de las publicaciones del DOF en un periodo determinado:')
@@ -52,10 +74,15 @@ def main():
 
     for i in range (0,delta.days+1):
         thisDate = startDate + timedelta(days=i)
-        response = getDOFResume(thisDate)
-        if (DEBUG):
-            print ("%s-%s-%s" % (thisDate.year,thisDate.month,thisDate.day) + "\t" + DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day), end="\t")
-        print (response)
+        response = getJSON(DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day))
+        clave_dof = getCodigoDiario(response)
+
+        for idDOF in clave_dof:
+            detalle = getJSON(BB_DETALLEEDICION % (idDOF))
+            if (DEBUG):
+                print ("%s-%s-%s" % (thisDate.year,thisDate.month,thisDate.day) + "\t" + DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day), end="\t")
+            print (json.dumps(response), end="\t")
+            print (BB_DETALLEEDICION % (idDOF) + "\t" + json.dumps(detalle))
 
 #Ejecución
 main();
