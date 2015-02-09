@@ -21,6 +21,14 @@ def obtenTipoNom(linea):
     #res = linea.split('\t')
     return linea.partition(' ')[0]
 
+def getWordContext(word,phrase):
+    pattern = re.compile('[^\.\(\["]*' + word +'[^\.\)\]"]*');
+    matches = pattern.findall(str(phrase));
+    for idx, val in enumerate(matches):
+        val = re.sub('\s*\(.+\)?','', val)
+        matches[idx] =  val
+    return matches[0];
+
 
 # Transforma el formato de fecha de 'dia_semana DIA de nombre_mes AÑO' a 'DIA/MES/AÑO'
 # viernes 24 de enero 2014 -> 24/01/2014
@@ -32,12 +40,13 @@ def parseDate(dateString):
 
 #Busca y devuelve la clave NOM en una línea de texto.
 def getClaveNOM(contentLine):
-    #pattern = re.compile('((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/]\s*\w+)+)');
-    #pattern = re.compile('((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.]\s*\w+)+(\s+\d{3})?\d)');
     pattern = re.compile('((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.\s]\s*\w+)+(\s+\d{3})?\d(?=\.))|((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.]\s*\w+)+(\s+\d{3})?\d)');
     
-    matches = pattern.findall(str(contentLine));    
-    return matches;
+    matches = pattern.findall(str(contentLine));
+    result = [];
+    for match in matches:
+        result.append(match[0].replace("nicos- NOM","NOM") if match[0]!= '' else match[4].replace("nicos- NOM","NOM"))
+    return result;
 
 def escapeQuotes(string):
     return string.replace('"','""');
@@ -54,7 +63,7 @@ def parseToCSV(publicacionJSON):
                             if (type(contenido) is str):
                                 contenido = seccion['contentsection']['content']['content'][contenido];
                             for match in getClaveNOM(contenido['titulo']):
-                                claveNOM = match[0].replace("nicos- NOM","NOM")
+                                claveNOM = match;
                                 claveNOMnormalizada = re.sub('\-+','\-',claveNOM.replace(" ", "-")).upper();
 
                                 NOMDescription = '"'+escapeQuotes(ejemplar['id']) + '","' + escapeQuotes(parseDate(ejemplar['fecha'])) + '","' + escapeQuotes(seccion['contentsection']['content']['name']) + '","' + escapeQuotes(contenido['id']) + '","' + escapeQuotes(contenido['date']) + '","' + escapeQuotes(claveNOM) + '","' + escapeQuotes(claveNOMnormalizada) + '","' + escapeQuotes(contenido['titulo']) + '","' + escapeQuotes(contenido['url']) + '","' + escapeQuotes(str(set(obtenClavesNOM(contenido['titulo'])))) + '","' + escapeQuotes(obtenTipoNom(contenido['titulo']))+ '"';
@@ -115,6 +124,11 @@ def json2matrix(jsonObject):
             if (isinstance(response,str)):
                 auxResponse = response
                 result[idx].update({key: auxResponse});
+
+                for key3,value in enumerate(result):
+                    if (len(result[key3].keys() - [key]) == len(result[key3].keys())):
+                        result[idx].update({key: auxResponse})
+                    
             
             else:
                 for key2,value in enumerate(response):
@@ -131,14 +145,31 @@ def json2matrix(jsonObject):
         result = str(jsonObject);
 
     return (result)
+
+
+def getJSONNOMS(plainJson):
+    result = []
+    
+    for entry in plainJson:
+        jsonString = json.dumps(entry);
+
+        for match in getClaveNOM(jsonString):
+            claveNormalizada = re.sub('[\-\s]+','-',match).upper()
+            newEntry = {};
+            newEntry.update(entry.copy())
+            newEntry.update({'claveNOM' : match, 'claveNOMNormalizada': claveNormalizada ,'contexto': getWordContext(match,jsonString)});
+            result.append(newEntry.copy());
+    return (result)
+        
     
 #Main function
 def main():
 
     inputSrc = None;
     columns = [0];
+    header = False;
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hi:f:",["ifile=","fields="])
+        opts, args = getopt.getopt(sys.argv[1:],"hi:f:H",["ifile=","fields=","with-header"])
     except getopt.GetoptError:
         printHelp();
         sys.exit(2)
@@ -152,19 +183,17 @@ def main():
             columns = arg.split(',');
             for key,value in enumerate(columns):
                 columns[key] = int(value)-1
+        elif opt in ('-H', '--with-header'):
+            header=True;
 
     if stat.S_ISFIFO(os.fstat(0).st_mode) or stat.S_ISREG(os.fstat(0).st_mode):
         inputSrc = '-';
     elif not(inputSrc) and args:
         inputSrc = str(args[0]);
-    """
-    print (opts)
-    print (args)
-    print (columns)
-    """
     if not(inputSrc):
         printHelp();
     else:
+        headerKeys = [];
         with inputData(inputSrc) as data:
             for publicacion in data:
                 splitedPublicacion = publicacion.split("\t");
@@ -175,9 +204,29 @@ def main():
                          logging.error("Malformed JSON")
 
                     plainJson = json2matrix(jsonObject);
-                    print(plainJson);
-                    print (len(plainJson))
+                    
+                    for nom in getJSONNOMS(plainJson):
+                        # Obtiene las claves del JSON
+                        for key in nom:
+                            if (key not in headerKeys):
+                                headerKeys.append(key)
+                        for key in headerKeys:
+                            if (key in nom):
+                                print ('"'+escapeQuotes(nom[key]) + '"', end="")
+                            else:
+                                print ('""', end="")
+                            if (key != headerKeys[-1]):
+                                print(",", end="")
+                            else:
+                                print ("")
+                    
                     #extractDataFromPublication(splitedPublicacion[colIdx]);
+    if (header):
+        for key in headerKeys:
+            if (key != headerKeys[-1]):
+                print(key, end=",")
+            else:
+                print (key)
 
 #Ejecución
 main();
