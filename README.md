@@ -29,6 +29,6 @@ csvquery data/publicacionesNOMs-1990.csv data/economiaNOMS.csv -q'select distinc
 ## Metodología
 El contenido de las publicaciones del DOF ha sido extraido de la siguiente URL:
 
-http://diariooficial.gob.mx/WS_getDiarioFull.php?year=2013&month=07&day=31
-http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario=28054
-http://diariooficial.gob.mx/nota_detalle.php?codigo=685002&fecha=08/12/2003
+http://diariooficial.gob.mx/WS_getDiarioFull.php?year=2013&month=07&day=31  
+http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario=28054  
+http://diariooficial.gob.mx/nota_detalle.php?codigo=685002&fecha=08/12/2003  
