@@ -6,28 +6,24 @@ import html.parser;
 import stat
 import logging
 import getopt
-
-
-## Versión de Hugo para múltiples NOMs en la misma línea
-def obtenClavesNOM(linea):
-    """ Obtiene un grupo de string que cumplen el patron de clave NOM """
-    res = re.findall('(?:PROY-)*NOM-[0-9\- A-Z\\\\\/]*', linea)
-    return res
+import tempfile
 
 ## Técnicamente es el tipo de publicación de la NOM (Comentario/Publicación/Cancelación/Fe de errata/etc...)
 ## Se considera la primera palabra (sólo la primera palabra) en el título de la publicación
 def obtenTipoNom(linea):
     """ Obtiene por ahora la primera palabra del título, tendría que regresar de que se trata"""
-    #res = linea.split('\t')
     return linea.partition(' ')[0]
 
 def getWordContext(word,phrase):
-    pattern = re.compile('[^\.\(\["]*' + word +'[^\.\)\]"]*');
+    pattern = re.compile('[^\.\(\["]*' + re.escape(word) +'[^\.\)\]"]*');
     matches = pattern.findall(str(phrase));
     for idx, val in enumerate(matches):
         val = re.sub('\s*\(.+\)?','', val)
         matches[idx] =  val
-    return matches[0];
+    #print (matches)
+    result = None if matches== None else matches[0];
+    return result;
+    #return '';
 
 
 # Transforma el formato de fecha de 'dia_semana DIA de nombre_mes AÑO' a 'DIA/MES/AÑO'
@@ -37,46 +33,38 @@ def parseDate(dateString):
     matches = pattern.match(dateString);
     return matches.group(1) + '/' + matches.group(2).replace('enero','01').replace('febrero','02').replace('marzo','03').replace('abril','04').replace('mayo','05').replace('junio','06').replace('julio','07').replace('agosto','08').replace('septiembre','09').replace('octubre','10').replace('noviembre','11').replace('diciembre','12') + '/' + matches.group(3) ;
 
-
 #Busca y devuelve la clave NOM en una línea de texto.
 def getClaveNOM(contentLine):
-    pattern = re.compile('((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.\s]\s*\w+)+(\s+\d{3})?\d(?=\.))|((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.]\s*\w+)+(\s+\d{3})?\d)');
+    #regexpr = '(((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.\s]\s*\w+)+(\s+\d{3})?\d(?=\.))|((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.]\s*\w+)+(\s+\d{3})?\d))';
+    # Eficiencia de la expresión regular
+    # Descripción,total
+    # Claves NOMs,3942
+    # NOMs faltantes,43
+    # Registros identificados,16828
+
+    regexpr = '((?:norma\s+oficial\s+mexicana\s*(?:de\s+emergencia\s*)?(?:\s*\-\s*)?\s)|(?P<prefijo>(?<=[^\w])(\w+\s*[\-\/]\s*)*?NOM[-\s.\/]+))(?P<clave>(?:[^,;"]+?)(?:\s*(?:(?=[,;"])|\d{4}|\d(?=\s+[^\d]+[\s,;:]))))';
+    # Eficiencia de la expresión regular
+    # Descripción,total
+    # Claves NOMs,4048
+    # NOMs faltantes,43
+    # Registros identificados,20685
+
+
+    matches = re.findall(regexpr, contentLine, re.IGNORECASE)
     
-    matches = pattern.findall(str(contentLine));
     result = [];
+    
     for match in matches:
-        result.append(match[0].replace("nicos- NOM","NOM") if match[0]!= '' else match[4].replace("nicos- NOM","NOM"))
+        #claveCorregida = match[0];
+        claveCorregida = match[1] + match[-1]
+        laveCorregida = claveCorregida.replace("nicos- NOM","NOM")
+        
+        result.append(claveCorregida)
+
     return result;
 
 def escapeQuotes(string):
     return string.replace('"','""');
-
-#Convierte una string JSON a multiples lineas CSV , una para cada contenido de la publicación
-def parseToCSV(publicacionJSON):
-    if (publicacionJSON.get('ejemplares')):
-        for ejemplar in publicacionJSON['ejemplares']:
-            if (ejemplar.get('secciones')):
-                for seccion in ejemplar['secciones']:
-                    if (seccion['contentsection']['content'].get('content')):
-                        for contenido in seccion['contentsection']['content']['content']:
-                            #Algunas llaves están codificadas como string en lugar del índice del arreglo y hacemos este truquillo para que no llore.
-                            if (type(contenido) is str):
-                                contenido = seccion['contentsection']['content']['content'][contenido];
-                            for match in getClaveNOM(contenido['titulo']):
-                                claveNOM = match;
-                                claveNOMnormalizada = re.sub('\-+','\-',claveNOM.replace(" ", "-")).upper();
-
-                                NOMDescription = '"'+escapeQuotes(ejemplar['id']) + '","' + escapeQuotes(parseDate(ejemplar['fecha'])) + '","' + escapeQuotes(seccion['contentsection']['content']['name']) + '","' + escapeQuotes(contenido['id']) + '","' + escapeQuotes(contenido['date']) + '","' + escapeQuotes(claveNOM) + '","' + escapeQuotes(claveNOMnormalizada) + '","' + escapeQuotes(contenido['titulo']) + '","' + escapeQuotes(contenido['url']) + '","' + escapeQuotes(str(set(obtenClavesNOM(contenido['titulo'])))) + '","' + escapeQuotes(obtenTipoNom(contenido['titulo']))+ '"';
-                                print( html.parser.HTMLParser().unescape(NOMDescription),end="\n",flush=True);
-                                #break;
-                    else:
-                        logging.warning("No 'contensection.content.content' element in object `"+ json.dumps(seccion) + "`");
-            else:
-                logging.warning("No 'ejemplares.secciones' element in object `"+ json.dumps(ejemplar) + "`")
-    else:
-        logging.warning("Extracción de datos en desarrollo");
-
-        
 
 def extractDataFromPublication(publicacion):
     try:
@@ -146,6 +134,41 @@ def json2matrix(jsonObject):
 
     return (result)
 
+def normalizaClaveNOM(claveNOM):
+    claveNOM = claveNOM.upper();
+    claveNOM = re.sub('\s*/\s*','/',claveNOM)
+    claveNOM = re.sub('[\-\s]+','-',claveNOM)
+    
+    claveSplited = claveNOM.split("-");
+
+    #Ajusta la clave númerica a 3 dígitos
+    if(len(claveSplited)>=2 and  claveSplited[1].isnumeric()):
+        while len(claveSplited[1]) < 3:
+            claveSplited[1] = '0' + claveSplited[1];
+    elif(len(claveSplited)>=3 and claveSplited[2].isnumeric()):
+        while len(claveSplited[2]) < 3:
+            claveSplited[2] = '0' + claveSplited[2];
+
+    # Normaliza las claves de las secretarias
+    if(len(claveSplited)>=3 and not claveSplited[2].isnumeric()):
+        claveSplited[2] = re.sub('^CNA$','CONAGUA', claveSplited[2])
+        claveSplited[2] = re.sub('^RECNAT$','SEMARNAT', claveSplited[2])
+        #claveSplited[2] = claveSplited[2].replace("CNA","CONAGUA");
+    elif(len(claveSplited)>=4 and not claveSplited[3].isnumeric()):
+        claveSplited[3] = re.sub('^CNA$','CONAGUA', claveSplited[3])
+        claveSplited[3] = re.sub('^RECNAT$','SEMARNAT', claveSplited[3])
+        #claveSplited[3] = claveSplited[3].replace("CNA","CONAGUA");
+    
+
+    #Ajusta el año a 4 dígitos
+    if(claveSplited[-1].isnumeric() and len(claveSplited[-1])==2):
+        if (int(claveSplited[-1])>20):
+            claveSplited[-1] = '19' + claveSplited[-1];
+        else:
+            claveSplited[-1] = '20' + claveSplited[-1];
+    
+    claveNOM = '-'.join(claveSplited);
+    return claveNOM
 
 def getJSONNOMS(plainJson):
     result = []
@@ -154,10 +177,25 @@ def getJSONNOMS(plainJson):
         jsonString = json.dumps(entry);
 
         for match in getClaveNOM(jsonString):
+#            claveNormalizada = normalizaClaveNOM(match)
             claveNormalizada = re.sub('[\-\s]+','-',match).upper()
+            claveNormalizada = normalizaClaveNOM(match)
+            contexto = getWordContext(match,jsonString);
+            tipo = obtenTipoNom(contexto);
+
+            if (tipo.upper() == 'PROYECTO' and 'PROY-NOM' not in claveNormalizada):
+                claveNormalizada = 'PROY-' + claveNormalizada
+
+            #contexto = getWordContext(match,jsonString);
+            contexto=''
+            tipo = obtenTipoNom(contexto);
+
+            if (tipo.upper() == 'PROYECTO' and 'PROY-NOM' not in claveNormalizada):
+                claveNormalizada = 'PROY-' + claveNormalizada
+            
             newEntry = {};
             newEntry.update(entry.copy())
-            newEntry.update({'claveNOM' : match, 'claveNOMNormalizada': claveNormalizada ,'contexto': getWordContext(match,jsonString)});
+            newEntry.update({'claveNOM' : match, 'claveNOMNormalizada': claveNormalizada ,'contexto': contexto, 'tipoPublicacion': tipo});
             result.append(newEntry.copy());
     return (result)
         
@@ -168,6 +206,8 @@ def main():
     inputSrc = None;
     columns = [0];
     header = False;
+    tmpFile = tempfile.NamedTemporaryFile(delete=True)
+    
     try:
         opts, args = getopt.getopt(sys.argv[1:],"hi:f:H",["ifile=","fields=","with-header"])
     except getopt.GetoptError:
@@ -206,27 +246,35 @@ def main():
                     plainJson = json2matrix(jsonObject);
                     
                     for nom in getJSONNOMS(plainJson):
+                        
+                        #tmpFile.write (bytes('"'+html.parser.HTMLParser().unescape(escapeQuotes(json.dumps(nom))) + '",', 'UTF-8'));
                         # Obtiene las claves del JSON
                         for key in nom:
                             if (key not in headerKeys):
                                 headerKeys.append(key)
                         for key in headerKeys:
+                            #Imprime los valores en la columna correspondiente
                             if (key in nom):
-                                print ('"'+escapeQuotes(nom[key]) + '"', end="")
+                                tmpFile.write(bytes('"'+html.parser.HTMLParser().unescape(escapeQuotes(nom[key])) + '"', 'UTF-8'))
                             else:
-                                print ('""', end="")
+                                tmpFile.write (bytes('""', 'UTF-8'))
+                            # Separador si aún existen elemento o salto de línea si es el último
                             if (key != headerKeys[-1]):
-                                print(",", end="")
+                                tmpFile.write(bytes(',', 'UTF-8'))
                             else:
-                                print ("")
+                                tmpFile.write(bytes("\n", 'UTF-8'))
                     
                     #extractDataFromPublication(splitedPublicacion[colIdx]);
     if (header):
+        #print ("objeto",end=",")
         for key in headerKeys:
             if (key != headerKeys[-1]):
                 print(key, end=",")
             else:
                 print (key)
+    with open(tmpFile.name) as tmpData:
+        for line in (tmpData):
+            print (line, end="")
 
 #Ejecución
 main();
