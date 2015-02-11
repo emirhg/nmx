@@ -7,6 +7,8 @@ import stat
 import logging
 import getopt
 import tempfile
+import collections
+
 
 ## Técnicamente es el tipo de publicación de la NOM (Comentario/Publicación/Cancelación/Fe de errata/etc...)
 ## Se considera la primera palabra (sólo la primera palabra) en el título de la publicación
@@ -20,11 +22,8 @@ def getWordContext(word,phrase):
     for idx, val in enumerate(matches):
         val = re.sub('\s*\(.+\)?','', val)
         matches[idx] =  val
-    #print (matches)
     result = None if matches== None else matches[0];
     return result;
-    #return '';
-
 
 # Transforma el formato de fecha de 'dia_semana DIA de nombre_mes AÑO' a 'DIA/MES/AÑO'
 # viernes 24 de enero 2014 -> 24/01/2014
@@ -66,14 +65,6 @@ def getClaveNOM(contentLine):
 def escapeQuotes(string):
     return string.replace('"','""');
 
-def extractDataFromPublication(publicacion):
-    try:
-        publicacionJSON = json.loads(publicacion);
-        parseToCSV(publicacionJSON);
-    except ValueError:
-         logging.error("Malformed JSON")
-
-
 def printHelp():
     #print ('Tienes que especificar un archivo de entrada.');
     print ('Ejemplo: `' + os.path.basename(__file__) + ' input.csv`');
@@ -104,7 +95,7 @@ def json2matrix(jsonObject):
     else:
         jsonObj = jsonObject;
 
-    if (type(jsonObj) is enumerate or type(jsonObj) is dict):
+    if (type(jsonObj) is enumerate or type(jsonObj) is dict or type(jsonObj) is collections.OrderedDict):
         for key in jsonObj:
             if type(key) is tuple:
                 key = key[0]
@@ -153,11 +144,9 @@ def normalizaClaveNOM(claveNOM):
     if(len(claveSplited)>=3 and not claveSplited[2].isnumeric()):
         claveSplited[2] = re.sub('^CNA$','CONAGUA', claveSplited[2])
         claveSplited[2] = re.sub('^RECNAT$','SEMARNAT', claveSplited[2])
-        #claveSplited[2] = claveSplited[2].replace("CNA","CONAGUA");
     elif(len(claveSplited)>=4 and not claveSplited[3].isnumeric()):
         claveSplited[3] = re.sub('^CNA$','CONAGUA', claveSplited[3])
         claveSplited[3] = re.sub('^RECNAT$','SEMARNAT', claveSplited[3])
-        #claveSplited[3] = claveSplited[3].replace("CNA","CONAGUA");
     
 
     #Ajusta el año a 4 dígitos
@@ -172,22 +161,14 @@ def normalizaClaveNOM(claveNOM):
 
 def getJSONNOMS(plainJson):
     result = []
-    
     for entry in plainJson:
-        jsonString = json.dumps(entry);
-
-        for match in getClaveNOM(jsonString):
-#            claveNormalizada = normalizaClaveNOM(match)
-            claveNormalizada = re.sub('[\-\s]+','-',match).upper()
-            claveNormalizada = normalizaClaveNOM(match)
-            contexto = getWordContext(match,jsonString);
-            tipo = obtenTipoNom(contexto);
-
-            if (tipo.upper() == 'PROYECTO' and 'PROY-NOM' not in claveNormalizada):
-                claveNormalizada = 'PROY-' + claveNormalizada
-
-            #contexto = getWordContext(match,jsonString);
-            contexto=''
+        
+        jsonString = str(json.dumps(entry));
+        clavesNOM = getClaveNOM(jsonString);
+        for match in clavesNOM:
+            claveNormalizada = re.sub('[\-\s]+','-',str(match)).upper()
+            claveNormalizada = normalizaClaveNOM(str(match))
+            contexto = getWordContext(str(match),jsonString);
             tipo = obtenTipoNom(contexto);
 
             if (tipo.upper() == 'PROYECTO' and 'PROY-NOM' not in claveNormalizada):
@@ -197,6 +178,7 @@ def getJSONNOMS(plainJson):
             newEntry.update(entry.copy())
             newEntry.update({'claveNOM' : match, 'claveNOMNormalizada': claveNormalizada ,'contexto': contexto, 'tipoPublicacion': tipo});
             result.append(newEntry.copy());
+        
     return (result)
         
     
@@ -233,20 +215,21 @@ def main():
     if not(inputSrc):
         printHelp();
     else:
+
         headerKeys = [];
         with inputData(inputSrc) as data:
             for publicacion in data:
                 splitedPublicacion = publicacion.split("\t");
                 for colIdx in columns:
                     try:
-                        jsonObject = json.loads(splitedPublicacion[colIdx]);
+                        jsonObject = json.JSONDecoder(object_pairs_hook=collections.OrderedDict).decode((str(splitedPublicacion[colIdx])))
                     except ValueError:
                          logging.error("Malformed JSON")
 
                     plainJson = json2matrix(jsonObject);
+                    jsonNOMS = getJSONNOMS(plainJson);
                     
-                    for nom in getJSONNOMS(plainJson):
-                        
+                    for nom in jsonNOMS:
                         #tmpFile.write (bytes('"'+html.parser.HTMLParser().unescape(escapeQuotes(json.dumps(nom))) + '",', 'UTF-8'));
                         # Obtiene las claves del JSON
                         for key in nom:
@@ -263,8 +246,6 @@ def main():
                                 tmpFile.write(bytes(',', 'UTF-8'))
                             else:
                                 tmpFile.write(bytes("\n", 'UTF-8'))
-                    
-                    #extractDataFromPublication(splitedPublicacion[colIdx]);
     if (header):
         #print ("objeto",end=",")
         for key in headerKeys:
