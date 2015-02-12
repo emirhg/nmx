@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 import json, re;
 import os,sys;
@@ -17,6 +18,9 @@ def obtenTipoNom(linea):
     return linea.partition(' ')[0]
 
 def getWordContext(word,phrase):
+    word = html.parser.HTMLParser().unescape(word)
+    phrase = html.parser.HTMLParser().unescape(phrase);
+    
     pattern = re.compile('[^\.\(\["]*' + re.escape(word) +'[^\.\)\]"]*');
     matches = pattern.findall(str(phrase));
     for idx, val in enumerate(matches):
@@ -28,20 +32,32 @@ def getWordContext(word,phrase):
 # Transforma el formato de fecha de 'dia_semana DIA de nombre_mes AÑO' a 'DIA/MES/AÑO'
 # viernes 24 de enero 2014 -> 24/01/2014
 def parseDate(dateString):
-    pattern = re.compile('^\w+\s(\d+)\s\w+\s(\w+)\s(\d{4})$');
+    pattern = re.compile('^(?:[^\d]+\s)?(\d+)(?:\s\w+\s|\-)(\w+)[\s\-]((?:\d{2}){1,2})$');
     matches = pattern.match(dateString);
-    return matches.group(1) + '/' + matches.group(2).replace('enero','01').replace('febrero','02').replace('marzo','03').replace('abril','04').replace('mayo','05').replace('junio','06').replace('julio','07').replace('agosto','08').replace('septiembre','09').replace('octubre','10').replace('noviembre','11').replace('diciembre','12') + '/' + matches.group(3) ;
+    
+    if matches:
+        year = matches.group(3);
+        
+        if (len(matches.group(3))==2):
+            if (int(matches.group(3))<30):
+                year = '20' +matches.group(3)
+            else:
+                year = '19' +matches.group(3)
+        return matches.group(1) + '/' + matches.group(2).lower().replace('enero','01').replace('febrero','02').replace('marzo','03').replace('abril','04').replace('mayo','05').replace('junio','06').replace('julio','07').replace('agosto','08').replace('septiembre','09').replace('octubre','10').replace('noviembre','11').replace('diciembre','12').replace('jan','01').replace('feb','02').replace('mar','03').replace('apr','04').replace('may','05').replace('jun','06').replace('jul','07').replace('aug','08').replace('sep','09').replace('oct','10').replace('nov','11').replace('dec','12') + '/' + year ;
+    else:
+        return dateString;
 
 #Busca y devuelve la clave NOM en una línea de texto.
 def getClaveNOM(contentLine):
+    contentLine = html.parser.HTMLParser().unescape(contentLine);
     #regexpr = '(((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.\s]\s*\w+)+(\s+\d{3})?\d(?=\.))|((\w+\s*[\-\/]\s*)?NOM(\s*[\-\/\.]\s*\w+)+(\s+\d{3})?\d))';
     # Eficiencia de la expresión regular
     # Descripción,total
     # Claves NOMs,3942
     # NOMs faltantes,43
     # Registros identificados,16828
-
-    regexpr = '((?:norma\s+oficial\s+mexicana\s*(?:de\s+emergencia\s*)?(?:\s*\-\s*)?\s)|(?P<prefijo>(?<=[^\w])(\w+\s*[\-\/]\s*)*?NOM[-\s.\/]+))(?P<clave>(?:[^,;"]+?)(?:\s*(?:(?=[,;"])|\d{4}|\d(?=\s+[^\d]+[\s,;:]))))';
+    
+    regexpr = '((?:norma\s+oficial\s+mexicana\s*(?:espec.{1,2}fica\s*)?(?:de\s+emergencia,?\s*(?:denominada\s*)?)?(?:\(?\s*emergente\s*\)?\s*)?(?:\(?\s*con\s+\car.{1,2}cter\s+(?:de\s+emergencia|emergente)\s*\)?\s*,?\s*)?(?:\s*n.{1,2}mero\s*)?(?:\s*\-\s*)?\s)|(?P<prefijo>(?<=[^\w])(\w+\s*[\-\/]\s*)*?NOM(?:[-.\/]|\s+[^a-z])+))(?P<clave>(?:[^;"]+?)(?:\s*(?:(?=[,.]\s|[;"]|[^\d-]\s[^\d])|\d{4}|\d(?=\s+[^\d]+[\s,;:]))))';
     # Eficiencia de la expresión regular
     # Descripción,total
     # Claves NOMs,4048
@@ -56,7 +72,8 @@ def getClaveNOM(contentLine):
     for match in matches:
         #claveCorregida = match[0];
         claveCorregida = match[1] + match[-1]
-        laveCorregida = claveCorregida.replace("nicos- NOM","NOM")
+        claveCorregida = claveCorregida.replace("nicos- NOM","NOM").replace("\\fNOM","NOM")
+        claveCorregida = re.sub('^[^\d]+$',' ',claveCorregida)
         
         result.append(claveCorregida)
 
@@ -171,7 +188,7 @@ def getJSONNOMS(plainJson):
             contexto = getWordContext(str(match),jsonString);
             tipo = obtenTipoNom(contexto);
 
-            if (tipo.upper() == 'PROYECTO' and 'PROY-NOM' not in claveNormalizada):
+            if (tipo.upper() == 'PROYECTO' and 'PROY-' not in claveNormalizada[:5]):
                 claveNormalizada = 'PROY-' + claveNormalizada
             
             newEntry = {};
@@ -236,8 +253,18 @@ def main():
                             if (key not in headerKeys):
                                 headerKeys.append(key)
                         for key in headerKeys:
+                            #keyAux = key;
+                            #if keyAux.lower()=='id':
+                            #    keyAux='cod_nota'
+                            #elif keyAux.lower() =='date':
+                            #    keyAux='fecha'
+                            #elif keyAux.lower() =='tituloDecreto':
+                            #    keyAux='titulo'
+                                
                             #Imprime los valores en la columna correspondiente
                             if (key in nom):
+                                if key=='fecha':
+                                    nom[key] = parseDate(nom[key])
                                 tmpFile.write(bytes('"'+html.parser.HTMLParser().unescape(escapeQuotes(nom[key])) + '"', 'UTF-8'))
                             else:
                                 tmpFile.write (bytes('""', 'UTF-8'))

@@ -33,8 +33,8 @@ Este script por el momento carece de documentación interna.
 ├── src  
 │   ├── classifyPublication.py  
 │   ├── downloadDOFJSON.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Descarga las publicaciones del DOF para un rango de fechas  
-│   ├── identifyNOMpublication.py&nbsp;&nbsp;&nbsp;Identifica los registros relacionados a una NOM a partir de un JSON  
-│   ~~└── utileriaNOMS.py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Funciones auxiliares.~~  
+│   ├── identifyNOMpublication.py&nbsp;&nbsp;&nbsp;Identifica los registros relacionados a una NOM  
+│   
 └── tester.sh  
 
 ## Metodología
