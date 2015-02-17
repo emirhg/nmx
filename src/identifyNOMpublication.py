@@ -9,6 +9,7 @@ import logging
 import getopt
 import tempfile
 import collections
+from csvutils import escapeQuotes
 
 
 ## Técnicamente es el tipo de publicación de la NOM (Comentario/Publicación/Cancelación/Fe de errata/etc...)
@@ -79,9 +80,6 @@ def getClaveNOM(contentLine):
 
     return result;
 
-def escapeQuotes(string):
-    return string.replace('"','""');
-
 def printHelp():
     #print ('Tienes que especificar un archivo de entrada.');
     print ('Ejemplo: `' + os.path.basename(__file__) + ' input.csv`');
@@ -123,9 +121,7 @@ def json2matrix(jsonObject):
 
                 for key3,value in enumerate(result):
                     if (len(result[key3].keys() - [key]) == len(result[key3].keys())):
-                        result[idx].update({key: auxResponse})
-                    
-            
+                        result[idx].update({key: auxResponse})            
             else:
                 for key2,value in enumerate(response):
                     d = result[idx].copy();
@@ -200,8 +196,7 @@ def getJSONNOMS(plainJson):
         
     
 #Main function
-def main():
-
+if __name__ == "__main__":
     inputSrc = None;
     columns = [0];
     header = False;
@@ -239,9 +234,12 @@ def main():
                 splitedPublicacion = publicacion.split("\t");
                 for colIdx in columns:
                     try:
-                        jsonObject = json.JSONDecoder(object_pairs_hook=collections.OrderedDict).decode((str(splitedPublicacion[colIdx])))
+                        jsonString = splitedPublicacion[colIdx] if splitedPublicacion[colIdx][0]!='"' else splitedPublicacion[colIdx][1:-2].replace('""','"')
+                        #print(jsonString)
+                        jsonObject = json.JSONDecoder(object_pairs_hook=collections.OrderedDict).decode((str(jsonString)))
                     except ValueError:
                          logging.error("Malformed JSON")
+                         break;
 
                     plainJson = json2matrix(jsonObject);
                     jsonNOMS = getJSONNOMS(plainJson);
@@ -283,6 +281,3 @@ def main():
     with open(tmpFile.name) as tmpData:
         for line in (tmpData):
             print (line, end="")
-
-#Ejecución
-main();

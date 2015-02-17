@@ -1,14 +1,15 @@
 #! /usr/bin/python3
+# -*- coding: utf-8 -*-
 
+from csvutils import escapeQuotes
 import time,sys,os
 import urllib.request,json
 from datetime import date
 from datetime import timedelta
 
 DOF_DIARIO_FULL = 'http://diariooficial.gob.mx/WS_getDiarioFull.php?year=%s&month=%s&day=%s'
-
 BB_DETALLEEDICION = "http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario=%s"
-DEBUG = True;
+#DEBUG = True;
 
 def getCodigoDiario(dof):
     ejemplares = []
@@ -21,21 +22,6 @@ def getJSON(urlRequest):
     content = response.read()
     data = json.loads(content.decode('utf8')) 
     return data
-"""
-def getBB_DetalleEdicion(idDOF):
-    urlRequest = BB_DETALLEEDICION % (idDOF);
-    response = urllib.request.urlopen(urlRequest)
-    content = response.read()
-    data = json.loads(content.decode('utf8')) 
-    return data
-   
-
-def getDOFResume(thisDate):
-    response = urllib.request.urlopen(DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day))
-    content = response.read()
-    data = json.loads(content.decode('utf8')) 
-    return data
-   """ 
 
 def printHelp():
     print ('Este script sirve para descaragar el resumen de las publicaciones del DOF en un periodo determinado:')
@@ -47,7 +33,7 @@ def printHelp():
     print ("\t" + os.path.basename(__file__) + " \t\t\t\t Descarga el día actual");
     sys.exit();
 
-def main():
+if __name__ == "__main__":
     if len(sys.argv) <= 1:
         startDate = date.today()
         endDate = date.today()
@@ -67,22 +53,21 @@ def main():
             endDate = date.fromtimestamp(time.mktime(time.strptime(sys.argv[2],'%Y-%m-%d')));
             startDate = date.fromtimestamp(time.mktime(time.strptime(sys.argv[1],'%Y-%m-%d')));
             delta = endDate - startDate
-        #print( str(today.year) + "/" + str(today.month) + "/" + str(today.day));
-        #response = urllib.request.urlopen(DOF_DIARIO_FULL % (x[0], x[1], dia))
     if (delta.days<0):
         printHelp()
+
+    print ('"fecha","URL","respuesta","encoding"')
 
     for i in range (0,delta.days+1):
         thisDate = startDate + timedelta(days=i)
         response = getJSON(DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day))
-        clave_dof = getCodigoDiario(response)
 
+        print ('"%s-%s-%s"' % (thisDate.year,thisDate.month,thisDate.day) + ',"'+ DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day) + '"', end="")
+        print (',"' + escapeQuotes(json.dumps(response)) + '","html-entity"')
+
+        clave_dof = getCodigoDiario(response)
+            
         for idDOF in clave_dof:
             detalle = getJSON(BB_DETALLEEDICION % (idDOF))
-            if (DEBUG):
-                print ("%s-%s-%s" % (thisDate.year,thisDate.month,thisDate.day) + "\t" + DOF_DIARIO_FULL % (thisDate.year, thisDate.month, thisDate.day), end="\t")
-            print (json.dumps(response), end="\t")
-            print (BB_DETALLEEDICION % (idDOF) + "\t" + json.dumps(detalle))
-
-#Ejecución
-main();
+            print ('"%s-%s-%s"' % (thisDate.year,thisDate.month,thisDate.day), end="")
+            print (',"' + BB_DETALLEEDICION % (idDOF) + '","' + escapeQuotes(json.dumps(detalle)) + '","bad-encoding"')
