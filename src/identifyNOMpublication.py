@@ -33,6 +33,7 @@ def getWordContext(word,phrase):
         result = matches[0];
     return result;
 
+
 # Transforma el formato de fecha de 'dia_semana DIA de nombre_mes AÑO' a 'DIA/MES/AÑO'
 # viernes 24 de enero 2014 -> 24/01/2014
 def parseDate(dateString):
@@ -296,6 +297,5 @@ if __name__ == "__main__":
     tmpFile.close()
     with open(tmpFile.name) as tmpData:
         for line in (tmpData):
-            print (line, end="")
-            
+            print (line, end="")           
     os.remove(tmpFile.name)
