@@ -27,7 +27,10 @@ def getWordContext(word,phrase):
     for idx, val in enumerate(matches):
         val = re.sub('\s*\(.+\)?','', val)
         matches[idx] =  val
-    result = None if matches== None else matches[0];
+    if not matches:
+        result = phrase
+    else:
+        result = matches[0];
     return result;
 
 # Transforma el formato de fecha de 'dia_semana DIA de nombre_mes AÑO' a 'DIA/MES/AÑO'
@@ -58,31 +61,33 @@ def getClaveNOM(contentLine):
     # NOMs faltantes,43
     # Registros identificados,16828
     
-    regexpr = '((?:norma\s+oficial\s+mexicana\s*(?:espec.{1,2}fica\s*)?(?:de\s+emergencia,?\s*(?:denominada\s*)?)?(?:\(?\s*emergente\s*\)?\s*)?(?:\(?\s*con\s+\car.{1,2}cter\s+(?:de\s+emergencia|emergente)\s*\)?\s*,?\s*)?(?:\s*n.{1,2}mero\s*)?(?:\s*\-\s*)?\s)|(?P<prefijo>(?<=[^\w])(\w+\s*[\-\/]\s*)*?NOM(?:[-.\/]|\s+[^a-z])+))(?P<clave>(?:[^;"]+?)(?:\s*(?:(?=[,.]\s|[;"]|[^\d-]\s[^\d])|\d{4}|\d(?=\s+[^\d]+[\s,;:]))))';
-    # Eficiencia de la expresión regular
+    regexpr = '((?:norma\s+oficial\s+mexicana\s*(?:espec.{1,2}fica\s*)?(?:de\s+emergencia,?\s*(?:denominada\s*)?)?(?:\(?\s*emergente\s*\)?\s*)?(?:\(?\s*con\s+\car.{1,2}cter\s+(?:de\s+emergencia|emergente)\s*\)?\s*,?\s*)?(?:\s*n.{1,2}mero\s*)?(?:\s*\-\s*)?\s)|(?P<prefijo>(?<=[^\w])(\w+\s*[\-\/]\s*)*?NOM(?:[-.\/]|\s+[^a-z])+))(?P<clave>(?:(?:NOM-?)?[^;"]+?)(?:\s*(?:(?=[,.]\s|[;"]|[^\d\-\/]\s[^\d])|\d{4}|\d(?=\s+[^\d]+[\s,;:]))))';
     # Descripción,total
-    # Claves NOMs,4048
-    # NOMs faltantes,43
-    # Registros identificados,20685
-
+    # Claves NOMs,3986
+    # NOMs faltantes,1
+    # Registros identificados,16384
 
     matches = re.findall(regexpr, contentLine, re.IGNORECASE)
-    
     result = [];
     
     for match in matches:
         #claveCorregida = match[0];
         claveCorregida = match[1] + match[-1]
         claveCorregida = claveCorregida.replace("nicos- NOM","NOM").replace("\\fNOM","NOM")
-        claveCorregida = re.sub('^[^\d]+$',' ',claveCorregida)
-        
-        result.append(claveCorregida)
+        claveCorregida = re.sub('^[^\d]+$','--',claveCorregida)
 
+        #if (len(claveCorregida)>0):
+        result.append(claveCorregida)
     return result;
 
 def printHelp():
-    #print ('Tienes que especificar un archivo de entrada.');
-    print ('Ejemplo: `' + os.path.basename(__file__) + ' input.csv`');
+    print ('\tUso: `' + os.path.basename(__file__) + ' input.csv`');
+    print ('\nOpciones:')
+    print ('\t-h\t\tAyuda')
+    print ('\t-i, --input=INPUTFILE\t\tArchivo de entrada')
+    print ('\t-c, --columns=LIST\t\tColumnas de las que se extraerán los datos (TSV)')
+    print ('\t-h, --print-header\t\tIndica si se ha de imprimir la cabecera al principio del archivo de salida. Por omisión la salida se imprime sin cabecera')
+    print ('\t-f, --fields=LIST\t\tNombres de los cambos que se incluirán en el archivo de salida. El caracter PIPE se puede usar para unir campos (XOR) campo1|campo2. Es útil cuando el mismo campo cambia de nombre en registros distintos.')
 
 class inputData:
     def __init__(self, inputSrc):
@@ -141,8 +146,10 @@ def json2matrix(jsonObject):
 def normalizaClaveNOM(claveNOM):
     claveNOM = claveNOM.upper();
     claveNOM = re.sub('\s*/\s*','/',claveNOM)
-    claveNOM = re.sub('[\-\s]+','-',claveNOM)
-    
+    claveNOM = re.sub('[\-\s,]+','-',claveNOM)
+
+    if (claveNOM[0].isnumeric()):
+        claveNOM = 'NOM-'+claveNOM;
     claveSplited = claveNOM.split("-");
 
     #Ajusta la clave númerica a 3 dígitos
@@ -152,16 +159,6 @@ def normalizaClaveNOM(claveNOM):
     elif(len(claveSplited)>=3 and claveSplited[2].isnumeric()):
         while len(claveSplited[2]) < 3:
             claveSplited[2] = '0' + claveSplited[2];
-
-    # Normaliza las claves de las secretarias
-    if(len(claveSplited)>=3 and not claveSplited[2].isnumeric()):
-        claveSplited[2] = re.sub('^CNA$','CONAGUA', claveSplited[2])
-        claveSplited[2] = re.sub('^RECNAT$','SEMARNAT', claveSplited[2])
-    elif(len(claveSplited)>=4 and not claveSplited[3].isnumeric()):
-        claveSplited[3] = re.sub('^CNA$','CONAGUA', claveSplited[3])
-        claveSplited[3] = re.sub('^RECNAT$','SEMARNAT', claveSplited[3])
-    
-
     #Ajusta el año a 4 dígitos
     if(claveSplited[-1].isnumeric() and len(claveSplited[-1])==2):
         if (int(claveSplited[-1])>20):
@@ -178,6 +175,10 @@ def getJSONNOMS(plainJson):
         
         jsonString = str(json.dumps(entry));
         clavesNOM = getClaveNOM(jsonString);
+
+        if ('--' in clavesNOM):
+            logging.warning('Se elimino una NOM que no contiene digitos.' + str(clavesNOM) + '\n' + jsonString);
+            
         for match in clavesNOM:
             claveNormalizada = re.sub('[\-\s]+','-',str(match)).upper()
             claveNormalizada = normalizaClaveNOM(str(match))
@@ -200,10 +201,12 @@ if __name__ == "__main__":
     inputSrc = None;
     columns = [0];
     header = False;
-    tmpFile = tempfile.NamedTemporaryFile(delete=True)
+    tmpFile = tempfile.NamedTemporaryFile(delete=False)
+    headerKeys = [];
+    userHeader = [];
     
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hi:f:H",["ifile=","fields=","with-header"])
+        opts, args = getopt.getopt(sys.argv[1:],"hi:f:c:H",["ifile=","columns=","print-header","fields="])
     except getopt.GetoptError:
         printHelp();
         sys.exit(2)
@@ -211,14 +214,18 @@ if __name__ == "__main__":
         if opt == '-h':
             printHelp();
             sys.exit()
-        elif opt in ("-i", "--ifile"):
+        elif opt in ("-i", "--input"):
             inputSrc = arg
-        elif opt in ("-f", "--fields"):
+        elif opt in ("-c", "--columns"):
             columns = arg.split(',');
             for key,value in enumerate(columns):
                 columns[key] = int(value)-1
-        elif opt in ('-H', '--with-header'):
+        elif opt in ('-H', '--print-header'):
             header=True;
+        elif opt in ('-f', '--fields'):
+            userHeader = arg.split(',')
+            for key,value in enumerate(userHeader):
+                userHeader[key] = value.split('|')
 
     if stat.S_ISFIFO(os.fstat(0).st_mode) or stat.S_ISREG(os.fstat(0).st_mode):
         inputSrc = '-';
@@ -227,8 +234,6 @@ if __name__ == "__main__":
     if not(inputSrc):
         printHelp();
     else:
-
-        headerKeys = [];
         with inputData(inputSrc) as data:
             for publicacion in data:
                 splitedPublicacion = publicacion.split("\t");
@@ -247,37 +252,50 @@ if __name__ == "__main__":
                     for nom in jsonNOMS:
                         #tmpFile.write (bytes('"'+html.parser.HTMLParser().unescape(escapeQuotes(json.dumps(nom))) + '",', 'UTF-8'));
                         # Obtiene las claves del JSON
-                        for key in nom:
-                            if (key not in headerKeys):
-                                headerKeys.append(key)
-                        for key in headerKeys:
-                            #keyAux = key;
-                            #if keyAux.lower()=='id':
-                            #    keyAux='cod_nota'
-                            #elif keyAux.lower() =='date':
-                            #    keyAux='fecha'
-                            #elif keyAux.lower() =='tituloDecreto':
-                            #    keyAux='titulo'
-                                
-                            #Imprime los valores en la columna correspondiente
-                            if (key in nom):
-                                if key=='fecha':
-                                    nom[key] = parseDate(nom[key])
-                                tmpFile.write(bytes('"'+html.parser.HTMLParser().unescape(escapeQuotes(nom[key])) + '"', 'UTF-8'))
-                            else:
+                        if (len(userHeader)==0):
+                            for key in nom:
+                                if ([key] not in headerKeys):
+                                    #print ('\n' + key + "===>" + str(headerKeys))
+                                    headerKeys.append([key])
+                        else:
+                            headerKeys = userHeader;
+                            
+                        for keys in headerKeys:
+                            printed=False;
+                            #print(keys)
+                            for key in nom:
+                                #Imprime los valores en la columna correspondiente
+                                if (key in keys):
+                                    #print ('\n' + key + "===>" + str(keys))
+                                    if key=='fecha':
+                                        nom[key] = parseDate(nom[key])
+                                    #print(html.parser.HTMLParser().unescape(escapeQuotes(nom[key])))
+                                    printed=True;
+                                    tmpFile.write(bytes('"'+html.parser.HTMLParser().unescape(escapeQuotes(nom[key])) + '"', 'UTF-8'))
+#                                if printed:
+                                    break
+                                    
+                            if not printed:
+                                #print('""',end="")
                                 tmpFile.write (bytes('""', 'UTF-8'))
                             # Separador si aún existen elemento o salto de línea si es el último
-                            if (key != headerKeys[-1]):
+                            if (keys != headerKeys[-1]):
+                                #print(",",end="")
                                 tmpFile.write(bytes(',', 'UTF-8'))
                             else:
+                                #print("\n",end="")
                                 tmpFile.write(bytes("\n", 'UTF-8'))
     if (header):
         #print ("objeto",end=",")
-        for key in headerKeys:
-            if (key != headerKeys[-1]):
+        for keys in headerKeys:
+            key = keys[0]
+            if (keys != headerKeys[-1]):
                 print(key, end=",")
             else:
                 print (key)
+    tmpFile.close()
     with open(tmpFile.name) as tmpData:
         for line in (tmpData):
             print (line, end="")
+            
+    os.remove(tmpFile.name)

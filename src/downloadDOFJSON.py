@@ -24,7 +24,7 @@ def getJSON(urlRequest):
     return data
 
 def printHelp():
-    print ('Este script sirve para descaragar el resumen de las publicaciones del DOF en un periodo determinado:')
+    print ('Este script sirve para descargar el resumen de las publicaciones del DOF en un periodo determinado:')
     print ("\n\t" + os.path.basename(__file__) + " [DIAS | [FECHA_INICIO [FECHA_FINAL]]");
     print ("\nEl formato de fecha es %Y-%m-%d")
     print ("\n\nEjemplo:\n\t" + os.path.basename(__file__) + " 2\t\t\t\t Recupera las publicaciones de los últimos 2 días");
