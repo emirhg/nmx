@@ -244,7 +244,7 @@ if __name__ == "__main__":
                         #print(jsonString)
                         jsonObject = json.JSONDecoder(object_pairs_hook=collections.OrderedDict).decode((str(jsonString)))
                     except ValueError:
-                         logging.error("Malformed JSON")
+                         logging.error("Malformed JSON: " + splitedPublicacion[colIdx])
                          break;
 
                     plainJson = json2matrix(jsonObject);
