@@ -5,7 +5,8 @@ Sistema para la adquisición, clasificación y visualización de las Normas Ofic
 La presente aplicación hace uso del API del DOF para identificar las publicaciones referentes a Normas Oficiales Mexicanas y clasificarlas.
 
 ## Requerimientos del sistema
- - Python3
+ - PostgreSQL >= 9.1
+ - postgresql-plpython3
 
 ## Uso
 

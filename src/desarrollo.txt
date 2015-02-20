@@ -7,6 +7,17 @@ psql -c "GRANT SELECT ON ALL TABLES ON SCHEMA public TO usuario_nom" catalogonom
 
 #create UNIQUE INDEX idx_fecha_url_UNIQUE ON dof(fecha,url);
 
+
+
+select current_date, getDiarioFullUrl(current_date);
+
+
+
+
+
+
+
+
 nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 1900-1-1 1924-12-31' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
 nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 1925-1-1 1949-12-31' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
 nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 1950-1-1 1974-12-31' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
@@ -16,4 +27,4 @@ nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 2000-1-1' WITH 
 
 psql -c "select distinct (extract(year from fecha)), encoding, count(*) from dof where fecha>='1990-1-1' group by extract(year from fecha), encoding order by extract(year from fecha), encoding desc;" catalogonoms
 
-psql -c "copy (select respuesta from dof) to stdout WITH CSV;" catalogonoms | ./src/identifyNOMpublication.py -c3,5 -H -f "fecha|date,cod_nota|id,claveNOM,claveNOMNormalizada,titulo|tituloDecreto,url"
+psql -h localhost -U nom_user -W -c "\COPY (SELECT respuesta from dof order by fecha desc limit 300) to stdout with csv;" catalogonoms | ./src/identifyNOMpublication.py -f "fecha|date,cod_nota|id,claveNOM,claveNOMNormalizada,titulo|tituloDecreto,url" > /dev/null
