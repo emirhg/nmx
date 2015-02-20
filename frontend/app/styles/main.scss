@@ -1,0 +1,29 @@
+$icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+
+//Layout
+$color-azul-imco:   #01AED8;
+$navbar-height:   70px;
+$fuente-titulo: 'Exo 2';
+$fuente:  'Source Sans Pro', Arial, Times, serif;
+// bower:scss
+@import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
+// endbower
+@import url(http://fonts.googleapis.com/css?family=Exo+2:400,700,600&subset=latin,latin-ext);
+
+@import "partes/navegacion";
+@import "elementos/social";
+
+
+body {
+  font-family: $fuente;
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+
+}
+
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+
+}

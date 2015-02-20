@@ -1,0 +1,69 @@
+$color-azul-imco : blue;
+$nav-border: 1px solid white;
+$grid-float-breakpoint: 700px;
+
+nav.navbar-imco{
+ 	//font-family: $fuente-titulo;
+ 	//background-color: pink;
+ 	border-radius: 0px;
+ 	border: 0px;
+ 	border-bottom: $nav-border;
+ 	margin-bottom: 0px;
+
+ 	.navbar-brand{
+ 		padding-top: 10px;
+ 		padding-left: 20px;
+ 		img{
+ 			height: 47px;
+ 		}
+ 	}
+
+
+ 	/* Princial */
+ 	.navbar-principal{
+
+ 		>li{
+ 			&:first-child:before {
+ 				border-right: pink 0 solid;
+ 			}
+ 			&::before {
+ 				content: "";
+ 				border-right: #393536 1px solid;
+ 				position: absolute;
+ 				height: 30px;
+ 				margin-left: -1px;
+ 				margin-top: 19px;
+ 				width: 1px;
+ 			}
+ 			&>a{
+ 				color: white;
+ 				text-transform:  uppercase;
+ 				&:hover{
+ 					color: $color-azul-imco;
+ 				}
+ 			}
+ 			@media (min-width: $grid-float-breakpoint) {
+ 				max-width: 150px;
+ 				>a{
+ 					max-height: 1rem;
+ 					padding-top: 23px;
+ 					line-height: 1.3rem;
+ 				}
+ 			}
+ 		}
+ 	}
+ 	/* FIN Princial */
+ 	.navbar-social{
+ 		border-bottom:  $nav-border;
+ 		a{
+ 			font-size: 27px;
+ 			padding: 18px 10px;
+ 		}
+ 		@media (min-width: $grid-float-breakpoint) {
+ 			margin-left: 15px;
+ 			border-left: $nav-border;
+ 			border-bottom: 0px;
+ 		}
+
+ 	}
+ }
