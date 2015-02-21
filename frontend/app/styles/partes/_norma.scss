@@ -1,0 +1,53 @@
+div.filtros-nom{
+	background-color: $color-principal;
+	h1{
+		color: white;
+		font-family: $fuente-titulo;
+		font-size: 20px;
+		font-weight: bold;
+	}
+}
+
+.filtro-tabs{
+	font-family: $fuente-titulo;
+	li{
+		&.active{
+			a{
+				background-color: $color-principal;
+				color: white;
+				&:hover,&:active,&:focus{
+					background-color: $color-principal;
+					color: white;
+				}
+			}
+		}
+		a{
+			text-transform: uppercase;
+			font-weight: bold;
+			color: $color-principal;
+			&:active,&:focus{
+				background-color: lighten( $color-principal, 20%);
+				//color: white;
+			}	
+			&:hover{
+				background-color: lighten( $color-principal, 10%);
+				color: white;
+			}
+		}
+	}
+}
+div.panel-norma{
+	border-radius: 0;
+	box-shadow: 0 0 0 ;
+	border: 0px;
+	&:hover{
+		cursor: pointer;
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+	}
+	div.panel-body{
+		padding: 10px 15px;
+	}
+	h3{
+		margin: 5px 0;
+	}
+}
