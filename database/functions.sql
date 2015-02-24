@@ -41,7 +41,7 @@ AS $$
   DROP TABLE IF EXISTS edicionID;
   CREATE TEMPORARY TABLE IF NOT EXISTS edicionID (cod_diario text);
   INSERT INTO edicionID SELECT trim(both '"' from (json_array_elements(diario->'ejemplares')->'id')::text);  
-  RETURN QUERY SELECT DISTINCT 'http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario='||cod_diario from edicionID WHERE length(cod_diario)>0;
+  RETURN QUERY SELECT DISTINCT 'http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario='||cod_diario from edicionID WHERE length(cod_diario)>0 and cod_diario!='null';
   END
 $$ LANGUAGE plpgsql;
 
@@ -70,7 +70,7 @@ AS $$
   INSERT INTO detalleEdicionUrl SELECT getDetalleEdicionUrl(diarioFull);
   
   RETURN QUERY SELECT foo.fecha, foo.url,foo.respuesta::json,foo.servicio FROM (
-    SELECT fechaConsulta as fecha, diarioFullUrl as url, diarioFull::text as respuesta, 'diarioFull' as servicio UNION
+    SELECT fechaConsulta as fecha, diarioFullUrl as url, diarioFull::text as respuesta, 'diarioFull' as servicio WHERE (select count(*) from json_array_elements(diarioFull->'ejemplares') as ejemplares WHERE (ejemplares->'id')::text != 'null')>0 UNION
     SELECT fechaConsulta as fecha, url, getDataFromURL(url)::text, 'detalleEdicion' FROM detalleEdicionUrl) AS foo;
 
   END
