@@ -8,11 +8,15 @@ div.filtros-nom{
 	}
 }
 
+
 .filtro-tabs{
 	font-family: $fuente-titulo;
 	li{
+		border-radius: 0;
 		&.active{
 			a{
+				
+
 				background-color: $color-principal;
 				color: white;
 				&:hover,&:active,&:focus{
@@ -22,6 +26,7 @@ div.filtros-nom{
 			}
 		}
 		a{
+			border-radius: 0;
 			text-transform: uppercase;
 			font-weight: bold;
 			color: $color-principal;
@@ -40,7 +45,7 @@ div.panel-norma{
 	border-radius: 0;
 	box-shadow: 0 0 0 ;
 	border: 0px;
-	&:hover{
+	&.panel-norma-home:hover{
 		cursor: pointer;
 		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
 	}
@@ -49,5 +54,41 @@ div.panel-norma{
 	}
 	h3{
 		margin: 5px 0;
+	}
+}
+
+//Iconos en todas la normas
+
+
+ul.lista-instituciones{
+	li{
+
+		vertical-align: middle;
+		.normas-icono{
+			font-size: 20px;
+			color: #85868C;
+		}
+	}
+}
+
+/*  Norma */
+h4.nom-subtitulo{
+	text-transform: uppercase;
+	font-size: 16px;
+	color: #85868C;
+	margin: 17px 0px 5px 0px;
+}
+h3{
+	font-size: 20px;
+	&.nom-titulo{
+		font-weight: bold;
+	}
+	a{
+		text-decoration: none;
+		color: #01C0F6;
+		&:hover{
+			text-decoration: none;
+			color: darken(#01C0F6,10%);
+		}
 	}
 }

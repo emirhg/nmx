@@ -14,23 +14,23 @@ $color-principal: #0A809D;
 
 
 // bower:scss
-$border-radius-base: 0;
 @import 'bootstrap-sass-official/assets/stylesheets/_bootstrap.scss';
 // endbower
 
 @import url(http://fonts.googleapis.com/css?family=Exo+2:400,700,600&subset=latin,latin-ext);
 
+@import 'elementos/fuente';
 @import 'partes/navegacion';
 @import 'partes/norma';
 @import 'elementos/social';
 
 
 body {
-  font-family: $fuente;
-  width: 100%;
-  max-width: 100%;
-  min-width: 100%;
-  background-color: $color-fondo;
+	font-family: $fuente;
+	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
+	background-color: $color-fondo;
 }
 
 
