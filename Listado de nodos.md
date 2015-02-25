@@ -68,3 +68,39 @@ Un objecto que contenga:
 Un arreglo con otras publicaciones ordenado por fecha:
 {categoria, fecha, titulo dof, clave dof}
 * Noms relacionadas (arreglo) clave de noms de normas relacionadas por estar publicadas en titulos del defo al mismo tiempo*
+
+Ejemplo: 
+``
+[{
+    "clavenom": "NOM-xxx-123-99990",
+    "titulo": "NORMA Oficial Mexicana NOM-064-SAG/PESC/SEMARNAT-2013, Sobre sistemas, métodos y técnicas de captura prohibidos en la pesca en aguas de jurisdicción federal de los Estados Unidos Mexicanos.",
+    "fecha": "2015-02-17T06:00:00.000Z",
+    "clavePublicacionDOF": "5492",
+    "link": "http://www.dof.gob.mx/normasOficiales.php?codp=5492&view=si",
+    "linkPDF": "http://www.dof.gob.mx/normasOficiales/5492/sct3a11_C/sct3a11_C.html",
+    "dependencia": "SCT",
+    "comites": ["Comite SCT ", "ComitesCT2 "]
+    "publicaciones": [{
+        "tipoPublicacion": "Proyecto",
+        "titulo": "test",
+        "fecha": "12412",
+        "clavePublicacionDOF": "21323",
+        "link": " fse",
+        "linkPDF": "esfe "
+    }, {
+        "tipoPublicacion": "Respuestas",
+        "titulo": "test",
+        "fecha": "12412",
+        "clavePublicacionDOF": "21323",
+        "link": " fse",
+        "linkPDF": "esfe "
+    }, {
+        "tipoPublicacion": "Norma",
+        "titulo": "test",
+        "fecha": "12412",
+        "clavePublicacionDOF": "21323",
+        "link": " fse",
+        "linkPDF": "esfe "
+    }, ...]
+}, ...];
+``
