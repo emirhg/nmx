@@ -1,5 +1,13 @@
-psql -c "CREATE DATABASE catalogonoms;"
-psql -c "CREATE USER usuario_nom IDENTIFIED BY PASSWORD 'password';"
-psql -c "CREATE TABLE dof (fecha date, url text, respuesta json, servicio varchar(15));" catalogonoms
-psql -c "CREATE TABLE notas (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, url text);" catalogonoms
-psql -c "GRANT SELECT ON ALL TABLES ON SCHEMA public TO usuario_nom" catalogonoms
+psql -c "CREATE USER admin_catalogonoms WITH PASSWORD 'password.complicada';"
+psql -c "CREATE DATABASE catalogonoms OWNER admin_catalogonoms;"
+psql -c "CREATE USER usuario_catalogonom WITH PASSWORD 'password';"
+
+psql -c "CREATE TABLE dof (fecha date, url text, respuesta json, servicio text);" catalogonoms
+psql -c "CREATE TABLE notasNOM (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, etiqueta text, url text);" catalogonoms
+
+psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO usuario_catalogonom" catalogonoms
+#psql -c "GRANT ALL PRIVILIGES ON ALL TABLES IN SCHEMA public TO admin_catalogonoms" catalogonoms
+
+nohup psql -h 127.0.0.1 -U admin_catalogonoms -d catalogonoms -c "insert into dof select * from getdoftable(date'1990-1-1', date'1990-12-31');"&
+
+nohup for year in {1990..2014}; do psql -h 127.0.0.1 -U admin_catalogonoms -d catalogonoms -c "SET client_min_messages TO WARNING;insert into dof select * from getdoftable(date'$year-1-1', date'$year-12-31');" ; done &

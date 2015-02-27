@@ -1,4 +1,27 @@
+-- Usuarios
+CREATE USER admin_catalogonoms WITH PASSWORD 'password.complicada'
+CREATE USER usuario_catalogonom WITH PASSWORD 'password'
+
+-- Creación de la Base de datos
+CREATE DATABASE catalogonoms OWNER admin_catalogonoms;
+
+-- Connección a la Base
+\C catalogonoms;
+
+-- Esquema de la Base
+CREATE TABLE dof (fecha date, url text, respuesta json, servicio text);
+CREATE TABLE notasNOM (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, etiqueta text, url text);
+ALTER TABLE dof OWNER TO admin_catalogonoms;
+ALTER TABLE notasNOM OWNER TO admin_catalogonoms;
+
+-- Permisos de usuario
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO usuario_catalogonom
+
+-- Extensiones requeridas
 CREATE EXTENSION plpython3u;
+
+
+-- Functiones de aplicación
 
 CREATE OR REPLACE FUNCTION getDataFromURL (urlrequest text)
   RETURNS json
@@ -37,11 +60,12 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION getDetalleEdicionUrl(diario json)
   RETURNS TABLE (detalleEdicionURL text)
 AS $$
+  DECLARE
+    edicionID text[];
   BEGIN
-  DROP TABLE IF EXISTS edicionID;
-  CREATE TEMPORARY TABLE IF NOT EXISTS edicionID (cod_diario text);
-  INSERT INTO edicionID SELECT trim(both '"' from (json_array_elements(diario->'ejemplares')->'id')::text);  
-  RETURN QUERY SELECT DISTINCT 'http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario='||cod_diario from edicionID WHERE length(cod_diario)>0 and cod_diario!='null';
+    SELECT array(SELECT trim(both '"' from (json_array_elements(diario->'ejemplares')->'id')::text)) INTO edicionID;
+    
+    RETURN QUERY SELECT DISTINCT 'http://diariooficial.gob.mx/BB_DetalleEdicion.php?cod_diario='||unnest from unnest(edicionID) WHERE length(unnest)>0 and unnest!='null';
   END
 $$ LANGUAGE plpgsql;
 
@@ -61,28 +85,54 @@ AS $$
   DECLARE
     diarioFull json;
     diarioFullUrl text;
+    detalleEdicionUrl text[];
   BEGIN
-  DROP TABLE IF EXISTS detalleEdicionUrl;
-  CREATE TEMPORARY TABLE detalleEdicionUrl (url text);
-  
   SELECT getDiarioFullUrl(fechaConsulta) INTO diarioFullUrl;
   SELECT getDataFromURL(diarioFullUrl) INTO diarioFull;
-  INSERT INTO detalleEdicionUrl SELECT getDetalleEdicionUrl(diarioFull);
+  
+  SELECT array(SELECT getDetalleEdicionUrl(diarioFull)) INTO detalleEdicionUrl;
   
   RETURN QUERY SELECT foo.fecha, foo.url,foo.respuesta::json,foo.servicio FROM (
     SELECT fechaConsulta as fecha, diarioFullUrl as url, diarioFull::text as respuesta, 'diarioFull' as servicio WHERE (select count(*) from json_array_elements(diarioFull->'ejemplares') as ejemplares WHERE (ejemplares->'id')::text != 'null')>0 UNION
-    SELECT fechaConsulta as fecha, url, getDataFromURL(url)::text, 'detalleEdicion' FROM detalleEdicionUrl) AS foo;
-
+    SELECT fechaConsulta as fecha, unnest, getDataFromURL(unnest)::text, 'detalleEdicion' FROM unnest(detalleEdicionUrl)) AS foo;
   END
 $$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION getDOFTable(fechaInicio date, fechaFin date)
-  RETURNS TABLE (fecha date, urlWS text, respuesta json, servicio text)
+CREATE OR REPLACE FUNCTION populateDOFTable(fechaInicio date,fechaFin date)
+  RETURNS VOID
 AS $$
-
-
+  DECLARE r record;
+  BEGIN
+  FOR r IN SELECT fecha FROM generate_series(fechaInicio, fechaFin, '1 day'::interval) fecha
+  LOOP
+      PERFORM populateDOFTable(r.fecha::date);
+  END LOOP;
+  END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION populateDOFTable(fecha date)
+  RETURNS VOID
+AS $$
+  BEGIN
+  INSERT INTO dof SELECT * FROM getDOFTable(fecha);
+  END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION insertNOMData() RETURNS trigger
+AS $$
+BEGIN
+  WITH diario AS (select NEW.fecha,NEW.respuesta,NEW.servicio),
+  entries as (select fecha,servicio,unnestJSON(respuesta) from diario),
+  diarioFull AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'diarioFull'),
+  detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'detalleEdicion'),
+  uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull))
+  INSERT INTO notasnom(fecha, cod_nota,clavenom,clavenomnorm,titulo) SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo FROM uniqueEntries order by (regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
+  RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER insertNOMData AFTER INSERT ON dof
+    FOR EACH ROW EXECUTE PROCEDURE insertNOMData();
+    
 
 CREATE OR REPLACE FUNCTION unnestJSON(jsonstring json)
   RETURNS TABLE ( unnestJSON json)
@@ -134,7 +184,6 @@ AS $$
     
   return (result)
 $$ LANGUAGE plpython3u;
-
 
 CREATE OR REPLACE FUNCTION getClaveNOM(notajson json)
   RETURNS TABLE ( claveNOM text)
@@ -188,7 +237,7 @@ AS $$
   return claveNOMNormalizada
 $$ LANGUAGE plpython3u;
 
-
+-- Prueba
 WITH diario AS (select fecha,respuesta,servicio from getdoftable('1995-11-13')),
 entries as (select fecha,servicio,unnestJSON(respuesta) from diario),
 diarioFull AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'diarioFull'),
@@ -196,16 +245,10 @@ detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim
 uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull))
 SELECT fecha,cod_nota,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo FROM uniqueEntries order by (regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
 
-
-
--- Query de prueba, descarga y desplieda los títulos de las notas referentes a NOMs el día 13 de Noviembre de 1995
--- WITH diario AS (select fecha,respuesta,servicio from getdoftable('1995-11-13')), entries as (select fecha,unnestJSON(respuesta) from diario) select distinct fecha,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"'), btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') from entries;
--- OUTPUT:
---
---
---fecha	getclavenom	btrim
---1995-11-13	NOM-024-SSA2-1994	RESPUESTAS a los comentarios recibidos respecto del Proyecto de Norma Oficial Mexicana NOM-024-SSA2-1994, Para la prevenci??n y control de las infecciones respiratorias agudas en el primer nivel de atenci??n.
---1995-11-13	NOM-042-ZOO-1995	PROYECTO de Norma Oficial Mexicana NOM-042-ZOO-1995, Caracter?-sticas y especificaciones zoosanitarias para las instalaciones, equipo y operaci??n de unidades de regularizaci??n zoosanitaria para ganado bovino, equino, ovino y caprino.
---1995-11-13	NOM-044/2-SCT2-1995	PROYECTO de Norma Oficial Mexicana NOM-044/2-SCT2-1995, Instrucciones para la ejecuci??n de inspecciones y reparaciones programables de conservaci??n del equipo tractivo ferroviario. Parte 2, Inspecci??n trimestral o de 48,000 kil??metros de recorrido.
---1995-11-13	NOM-044/2-SCT2-1995	PROYECTO de Norma Oficial Mexicana NOM-044/2-SCT2-1995, Instrucciones para la ejecuci&oacute;n de inspecciones y reparaciones programables de conservaci&oacute;n del equipo tractivo ferroviario. Parte 2, Inspecci&oacute;n trimestral o de 48,000 kil&oacute;metros de recorrido.
---1995-11-13	NOM-077-ECOL-1995	NORMA Oficial Mexicana NOM-077-ECOL-1995, Que establece el procedimiento de medici??n para la verificaci??n de los niveles de emisi??n de la opacidad del humo proveniente del escape de los veh?-culos automotores en circulaci??n que usan diesel como combustible.
+-- Pobla la tabla notasnom
+WITH diario AS (select fecha,respuesta,servicio from dof),
+entries as (select fecha,servicio,unnestJSON(respuesta) from diario),
+diarioFull AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'diarioFull'),
+detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'detalleEdicion'),
+uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull))
+INSERT INTO notasnom(fecha, cod_nota,clavenom,clavenomnorm,titulo) SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo FROM uniqueEntries order by (regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
