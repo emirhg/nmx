@@ -1,0 +1,3 @@
+[submodule "csvoperations"]
+	path = csvoperations
+	url = https://github.com/emirhg/csvoperations

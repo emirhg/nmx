@@ -11,3 +11,11 @@ psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO usuario_catalogonom" cat
 nohup psql -h 127.0.0.1 -U admin_catalogonoms -d catalogonoms -c "insert into dof select * from getdoftable(date'1990-1-1', date'1990-12-31');"&
 
 nohup for year in {1990..2014}; do psql -h 127.0.0.1 -U admin_catalogonoms -d catalogonoms -c "SET client_min_messages TO WARNING;insert into dof select * from getdoftable(date'$year-1-1', date'$year-12-31');" ; done &
+
+ select distinct lower(entity2char(regexp_replace(getpartialSentence(clavenom,titulo),'NOM\s*-.*$',''))) from notasnom;
+
+WITH notasnomdistinct AS (SELECT distinct clavenomnorm from notasnom)
+select clavenomnorm from notasnomdistinct order by (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
+
+
+csvoperations/transformTSV.sh -s 1 -r 1,4-376 -c 2,3,4,10,11,14,15,18,19,22,23,28,29,30,55 -v 2,2 data/Matriz\ NOMs\ \(TODAS\).xlsx > data/NOMS-Knowledgebase.tsv
