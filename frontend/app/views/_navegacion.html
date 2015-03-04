@@ -1,0 +1,46 @@
+<!--Barra de navegación principal -->
+
+<nav class="navbar navbar-inverse  navbar-imco" role="navigation">
+	<div class="">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-colapsar-1">
+				<span class="sr-only">Expandir navegación</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+
+			<!-- Logo IMCO -->
+			<a class="navbar-brand" href="#!">
+				<img src="images/logos/logo_imco_blanco_transparente.png" alt="">
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="nav-colapsar-1">
+			<ul class="nav navbar-nav navbar-right navbar-social" >
+				<li>
+					<a href="https://facebook.com/imcomx"  tooltip-placement="bottom" tooltip="¡Síguenos en Facebook!" tooltip-popup-delay='1000' > <div class="aux  aux-nav facebook"><span class="icon-facebook"></span></div></a>
+				</li>
+				<li>
+					<a href="https://twitter.com/imcomx" class="logo-social"  tooltip-placement="bottom" tooltip="¡Síguenos en Twitter!" tooltip-popup-delay='1000' > <div class="aux aux-nav twitter"><span class="icon-twitter"></span></div></a>
+				</li>
+				<li>
+					<a href="https://youtube.com/imcomx" class="logo-social"  tooltip-placement="bottom" tooltip-popup-delay='800'  tooltip="¡Síguenos en YouTube!"> <div class="aux aux-nav youtube"><span class="icon-youtube"></span></div></a>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right navbar-principal" data-ng-controller="NavegacionCtrl" >
+				<li data-ng-repeat="elem in listaPaginas">
+					<a data-ng-href="{{elem.link}}">{{elem.titulo}}</a>
+				</li>
+			</ul>
+		</div>
+		<!-- FIN  nav-colapsar-1 -->
+		
+	</div>
+
+</nav>
+
+<!-- FIN Barra de navegación principal -->

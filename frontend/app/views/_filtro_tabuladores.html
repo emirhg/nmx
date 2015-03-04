@@ -1,0 +1,26 @@
+<tabset justified="true"  type="pills" class="filtro-tabs">
+	<tab data-ng-repeat="elem in listaTabs" heading="{{elem.titulo}}">
+		<div class="container-fluid filtros-nom">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-12">
+
+						<h1>{{elem.titulo}}</h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group">
+						<div class="col-sm-10">
+							<input  class="form-control" id="filtro-buscar" placeholder="Buscar NOMs...">
+						</div>
+						<div class="col-sm-2">
+							<button class="btn btn-default btn-block" type="submit">Buscar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br/><br/>
+		</div>
+	</tab>
+</tabset>
+

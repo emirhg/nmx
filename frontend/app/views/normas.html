@@ -1,0 +1,39 @@
+<div data-ng-controller="NormasCtrl">
+	<div data-ng-include="'views/_filtro_tabuladores.html'"></div>
+
+	<div class="container">
+		<div class="row">
+
+		</div>
+		<br/><br/>
+		<div class="row">
+			<div class="col-sm-12">
+				<div data-ng-repeat="elem in listadoNOMsActual" class="panel panel-default panel-norma panel-norma-home" data-ng-click="accederNorma(elem.clavenom)">
+					<div class="panel-body">
+						<!-- {{::elem.clavenom}} es como bindonce  -->
+						<h3>{{::elem.clavenom}}</h3>
+						<p>
+							{{::elem.titulo}}
+						</p>
+						<p>
+							<ul class="list-inline lista-instituciones">
+								<li><span class="normas-icono icon-Icons_Noms_GOB"></span></li>
+								<li><a href="">{{::elem.dependencia}}</a></li>
+								<!-- <li><a href="">SAGARPA</a></li> -->
+							</ul>
+						</p>		
+						<p>
+							<ul class="list-inline lista-instituciones">
+								<li><span class="normas-icono icon-Icons_Noms_CAL"></span></li>
+								<li>{{::elem.fecha}}</li>
+							</ul>
+						</p>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+<!-- 	
+</div>

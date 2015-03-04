@@ -1,0 +1,145 @@
+//Social
+$facebook-color:	#173062;
+$twitter-color:		#2274b2;
+$youtube-color:		#cd201f;
+
+$facebook-color: lighten($facebook-color, 20%);
+$twitter-color: 	lighten($twitter-color, 20%);
+$youtube-color: 	lighten($youtube-color, 20%);
+
+.aux{
+	border-radius: 		 50%;
+	background-color: 	lighten(rgb(55,55,55),20%) ;
+	
+	overflow:hidden;
+	color: white;
+
+
+	&.aux-nav{
+		width:  35px;
+		height: 35px;
+		span{
+			position: relative;
+			top: 			6px;
+			margin-left: 	6px;
+			font-size:  	22px;
+		}
+
+	}
+	&.aux-footer{
+		width:  35px;
+		height: 35px;
+		span{
+			position: relative;
+			top: 			6px;
+			margin-left: 	6px;
+			font-size:  	22px;
+		}
+	}
+
+
+	&:hover{
+		&.twitter{
+			background-color: $twitter-color;
+		}
+		&.facebook{
+			background-color: $facebook-color;
+
+		}
+		&.youtube{
+			background-color: $youtube-color;
+
+		}
+		span{
+			/*top: 			2px;
+			margin-left: 	2px;*/
+		}
+
+		background-color: white;
+	}
+}
+
+
+
+.aux:hover .icon-facebook{
+	color:   white ;
+	transition:.2s ease-in-out;
+	text-shadow: 
+	1px 1px 0px darken($facebook-color, 20%) ,
+	2px 2px 0px darken($facebook-color, 20%) ,
+	3px 3px 0px darken($facebook-color, 20%) ,
+	4px 4px 0px darken($facebook-color, 20%) ,
+	5px 5px 0px darken($facebook-color, 20%) ,
+	6px 6px 0px darken($facebook-color, 20%) ,
+	7px 7px 0px darken($facebook-color, 20%) ,
+	8px 8px 0px darken($facebook-color, 20%) ,
+	9px 9px 0px darken($facebook-color, 20%) ,
+	10px 10px 0px darken($facebook-color, 20%) ,
+	11px 11px 0px darken($facebook-color, 20%) ,
+	12px 12px 0px darken($facebook-color, 20%) ,
+	13px 13px 0px darken($facebook-color, 20%) ,
+	14px 14px 0px darken($facebook-color, 20%) ,
+	15px 15px 0px darken($facebook-color, 20%) ,
+	16px 16px 0px darken($facebook-color, 20%) ,
+	17px 17px 0px darken($facebook-color, 20%) ,
+	18px 18px 0px darken($facebook-color, 20%) ,
+	19px 19px 0px darken($facebook-color, 20%) ,
+	20px 20px 0px darken($facebook-color, 20%) ;
+
+}
+
+.aux:hover .icon-twitter{
+	color:   white;
+	transition:.2s ease-in-out;
+	text-shadow: 
+	1px 1px 0px darken($twitter-color, 20%),
+	2px 2px 0px darken($twitter-color, 20%),
+	3px 3px 0px darken($twitter-color, 20%),
+	4px 4px 0px darken($twitter-color, 20%),
+	5px 5px 0px darken($twitter-color, 20%),
+	6px 6px 0px darken($twitter-color, 20%),
+	7px 7px 0px darken($twitter-color, 20%),
+	8px 8px 0px darken($twitter-color, 20%),
+	9px 9px 0px darken($twitter-color, 20%),
+	10px 10px 0px darken($twitter-color, 20%),
+	11px 11px 0px darken($twitter-color, 20%),
+	12px 12px 0px darken($twitter-color, 20%),
+	13px 13px 0px darken($twitter-color, 20%),
+	14px 14px 0px darken($twitter-color, 20%),
+	15px 15px 0px darken($twitter-color, 20%),
+	16px 16px 0px darken($twitter-color, 20%),
+	17px 17px 0px darken($twitter-color, 20%),
+	18px 18px 0px darken($twitter-color, 20%),
+	19px 19px 0px darken($twitter-color, 20%),
+	20px 20px 0px darken($twitter-color, 20%);
+
+}
+
+
+.aux:hover .icon-youtube{
+	color:   white;
+	transition:.2s ease-in-out;
+	text-shadow: 
+	1px 1px 0px darken($youtube-color, 20%),
+	2px 2px 0px darken($youtube-color, 20%),
+	3px 3px 0px darken($youtube-color, 20%),
+	4px 4px 0px darken($youtube-color, 20%),
+	5px 5px 0px darken($youtube-color, 20%),
+	6px 6px 0px darken($youtube-color, 20%),
+	7px 7px 0px darken($youtube-color, 20%),
+	8px 8px 0px darken($youtube-color, 20%),
+	9px 9px 0px darken($youtube-color, 20%),
+	10px 10px 0px darken($youtube-color, 20%),
+	11px 11px 0px darken($youtube-color, 20%),
+	12px 12px 0px darken($youtube-color, 20%),
+	13px 13px 0px darken($youtube-color, 20%),
+	14px 14px 0px darken($youtube-color, 20%),
+	15px 15px 0px darken($youtube-color, 20%),
+	16px 16px 0px darken($youtube-color, 20%),
+	17px 17px 0px darken($youtube-color, 20%),
+	18px 18px 0px darken($youtube-color, 20%),
+	19px 19px 0px darken($youtube-color, 20%),
+	20px 20px 0px darken($youtube-color, 20%);
+
+}
+
