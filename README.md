@@ -7,6 +7,8 @@ La presente aplicación hace uso del API del DOF para identificar las publicacio
 ## Requerimientos del sistema
  - PostgreSQL >= 9.3
  - postgresql-plpython3
+ - Python 3.2+
+ - nltk http://www.nltk.org/install.html
 
 
 ## Instalación
