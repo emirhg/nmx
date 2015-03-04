@@ -1,0 +1,31 @@
+Registros NOMs
+--
+id,INT,PK
+nom_id,INT,FK
+titulo,TEXT
+fecha,DATE
+clavePublicacionDOF,
+link,
+linkPDF,
+dependencia,
+--
+//this is a comment
+// -- symbol separates sections
+//Field line format
+//[field name], [field type], [optional: Primary or Foreign key indicator - PK or FK (any case)]
+//index line format
+//[index name], [fields making it up] - there can be multiple fields making up an index
+
+NOMs
+--
+id,INT,PK
+dependencia_id,INT,FK
+titulo,TEXT
+fecha,DATE
+clavePublicacionDOF,
+link,
+linkPDF,
+dependencia,
+estatus,//-1,0,1
+
+--

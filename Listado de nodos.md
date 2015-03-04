@@ -18,6 +18,7 @@ Cada objeto debe de contener:
 * Título (como aparece en el DOF)
 * Fecha de publicación
 * Codigo dof 
+* Clave de nota
 * Link 
 * Dependencia
 * Comites (arreglo)
@@ -34,7 +35,8 @@ Ejemplo:
     "link": "http://www.dof.gob.mx/normasOficiales.php?codp=5492&view=si",
     "linkPDF": "http://www.dof.gob.mx/normasOficiales/5492/sct3a11_C/sct3a11_C.html",
     "dependencia": "SCT",
-    "comites": ["Comite SCT ", "ComitesCT2 "]
+    "comites": ["Comite SCT ", "ComitesCT2 "],
+    "vigente": 
 },...] ;
 ``
 
