@@ -1,6 +1,7 @@
 00_bosquejo/2008
 00_bosquejo/2014
 00_bosquejo/DOFs/
-data/
+data/*
+!data/NOMS-Knowledgebase.tsv
 #tester.sh
 textoPruebas.txt

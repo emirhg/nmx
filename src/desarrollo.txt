@@ -1,19 +1,21 @@
-psql -c "CREATE DATABASE catalogonoms;"
-psql -c "CREATE USER usuario_nom IDENTIFIED BY PASSWORD 'password';"
-psql -c "CREATE TABLE dof (fecha date, url text, respuesta json, encoding varchar(15));" catalogonoms
-psql -c "CREATE TABLE notas (fecha date, cod_nota int, claveNOM varchar(50), claveNOMNorm varchar(50), titulo text, url text);" catalogonoms
-psql -c "GRANT SELECT ON ALL TABLES ON SCHEMA public TO usuario_nom" catalogonoms
+psql -c "CREATE USER admin_catalogonoms WITH PASSWORD 'password.complicada';"
+psql -c "CREATE DATABASE catalogonoms OWNER admin_catalogonoms;"
+psql -c "CREATE USER usuario_catalogonom WITH PASSWORD 'password';"
+
+psql -c "CREATE TABLE dof (fecha date, url text, respuesta json, servicio text);" catalogonoms
+psql -c "CREATE TABLE notasNOM (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, etiqueta text, url text);" catalogonoms
+
+psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO usuario_catalogonom" catalogonoms
+#psql -c "GRANT ALL PRIVILIGES ON ALL TABLES IN SCHEMA public TO admin_catalogonoms" catalogonoms
+
+nohup psql -h 127.0.0.1 -U admin_catalogonoms -d catalogonoms -c "insert into dof select * from getdoftable(date'1990-1-1', date'1990-12-31');"&
+
+nohup for year in {1990..2014}; do psql -h 127.0.0.1 -U admin_catalogonoms -d catalogonoms -c "SET client_min_messages TO WARNING;insert into dof select * from getdoftable(date'$year-1-1', date'$year-12-31');" ; done &
+
+ select distinct lower(entity2char(regexp_replace(getpartialSentence(clavenom,titulo),'NOM\s*-.*$',''))) from notasnom;
+
+WITH notasnomdistinct AS (SELECT distinct clavenomnorm from notasnom)
+select clavenomnorm from notasnomdistinct order by (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
 
 
-#create UNIQUE INDEX idx_fecha_url_UNIQUE ON dof(fecha,url);
-
-nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 1900-1-1 1924-12-31' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
-nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 1925-1-1 1949-12-31' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
-nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 1950-1-1 1974-12-31' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
-nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 1975-1-1 1999-12-31' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
-nohup psql -c "\copy dof from PROGRAM  './src/downloadDOFJSON.py 2000-1-1' WITH CSV header ESCAPE '\"' QUOTE '\"';" catalogonoms &
-
-
-psql -c "select distinct (extract(year from fecha)), encoding, count(*) from dof where fecha>='1990-1-1' group by extract(year from fecha), encoding order by extract(year from fecha), encoding desc;" catalogonoms
-
-psql -c "copy (select respuesta from dof) to stdout WITH CSV;" catalogonoms | ./src/identifyNOMpublication.py -c3,5 -H -f "fecha|date,cod_nota|id,claveNOM,claveNOMNormalizada,titulo|tituloDecreto,url"
+csvoperations/transformTSV.sh -s 1 -r 1,4-376 -c 2,3,4,10,11,14,15,18,19,22,23,28,29,30,55 -v 2,2 data/Matriz\ NOMs\ \(TODAS\).xlsx > data/NOMS-Knowledgebase.tsv
