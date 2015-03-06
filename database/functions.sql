@@ -13,7 +13,7 @@ CREATE EXTENSION plpython3u;
 
 -- Esquema de la Base
 CREATE TABLE dof (fecha date, url text, respuesta json, servicio text);
-CREATE TABLE notasNOM (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, etiqueta text, url text);
+CREATE TABLE notasNOM (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, etiqueta text, urlnota text);
 CREATE TABLE clavesRenombradas (claveNOMActualizada text, claveNOMObsoleta text);
 
 ALTER TABLE dof OWNER TO admin_catalogonoms;
@@ -131,7 +131,9 @@ BEGIN
   diarioFull AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'diarioFull'),
   detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'detalleEdicion'),
   uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull))
-  INSERT INTO notasnom(fecha, cod_nota,clavenom,clavenomnorm,titulo) SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo FROM uniqueEntries order by (regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
+  INSERT INTO notasnom(fecha, cod_nota,clavenom,clavenomnorm,titulo,urlnota) SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo,
+  'http://diariooficial.gob.mx/nota_detalle.php?codigo='||cod_nota||'&fecha='||CASE WHEN length((extract(day from fecha))::text)=1 THEN '0' ELSE '' END || extract(day from fecha)||'/'||CASE WHEN length((extract(month from fecha))::text)=1 THEN '0' ELSE '' END || extract(month from fecha)||'/'||extract(year from fecha) AS urlnota
+  FROM uniqueEntries order by (regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
   RETURN NEW;
 END; $$ LANGUAGE plpgsql;
 
@@ -204,7 +206,7 @@ AS $$
   
   for match in matches:
       claveCorregida = match[1] + match[-1]
-      claveCorregida = claveCorregida.replace("nicos- NOM","NOM").replace("\\fNOM","NOM").replace('.)','')
+      claveCorregida = claveCorregida.replace("nicos- NOM","NOM").replace("electrónicos- NOM","NOM").replace("\\fNOM","NOM").replace('.)','')
       claveCorregida = re.sub('^[^\d]+$','',claveCorregida)
 
       if (len(claveCorregida)>0):
@@ -251,23 +253,65 @@ $$ LANGUAGE plpython3u;
 CREATE OR REPLACE FUNCTION getPartialSentence(word text, sentence text)
   RETURNS TEXT
 AS $$
-  DECLARE
-    partialSentence text;
-  BEGIN
-    SELECT (regexp_matches(sentence,'.*?\(?((?:\([^\)]+|[^\(]+|(\.\s+|^).*\(.*\)[^\)]+))'||word))[1] INTO partialSentence;
+  import re
+  regexpr = '.*?\(?((?:\([^\)]+|[^\(]+|(\.\s+|^).*\(.*\)[^\)]+))' + word
+  result = re.search(regexpr, sentence, re.IGNORECASE)
+  return result.group(0) if result != None else None;
+$$ LANGUAGE plpython3u;
 
-    RETURN partialSentence;
-  END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION classifyNote()
-  RETURNS TABLE(classifyNote TEXT)
+-- Requires NLTK http://www.nltk.org/
+CREATE OR REPLACE FUNCTION classifyNOM(clavenom text, titulo text)
+  RETURNS TEXT
 AS $$
-  result = []
-  for key,value in enumerate(plpy.execute('SELECT distinct etiqueta from notasNOM;')):
-    result.append(value['etiqueta'])
-  return result
+  import nltk
+  import re
+  import html.parser
+  import json
+  
+  def nom_features(clavenom,titulo):
+    featureset = {}
+    titulo = titulo.replace("'","\\'")
+    queryresult = plpy.execute("select lower(entity2char(getpartialSentence('"+clavenom+"',E'"+titulo+"'))) as context",1);
+
+    if queryresult.nrows() >0:
+      context = queryresult[0]['context'].strip() if queryresult[0]['context'] != None else ''
+      context = re.sub(clavenom + '.*$','',context, re.IGNORECASE)
+
+    for word in context.split(' '):
+      if word in featureset.keys():
+        featureset[word] = featureset[word]+1;
+      else:
+        featureset[word] = 1;
+
+    featureset['context'] = context;
+    featureset['firstword'] = context.split(' ')[0]
+    featureset['lastword'] = context.split(' ')[-1]
+    featureset['countwords'] = len(context.split(' '))
+    return featureset if len(context)>0 else ''
+
+  featuresets = []
+  knowledgeTable = plpy.execute("SELECT relname FROM pg_class WHERE relname='featuresets';")
+  if (knowledgeTable.nrows()==0):
+    plpy.execute('CREATE TEMPORARY TABLE featuresets(features text, etiqueta text)');
+  
+    knowledgeBase = plpy.execute('SELECT clavenom, titulo, etiqueta FROM notasnom WHERE etiqueta IS NOT NULL;')
+    
+    for value in knowledgeBase:
+      features = nom_features(value['clavenom'], value['titulo'])
+      featuresets.append((features, value['etiqueta']));
+      plpy.execute('INSERT INTO featuresets VALUES (\''+ json.dumps(features) + '\',\'' + value['etiqueta']+'\')')
+  else:
+    knowledgeBase = plpy.execute('SELECT features, etiqueta FROM featuresets;')
+    for value in knowledgeBase:
+      featuresets.append((json.loads(value['features']), value['etiqueta']));
+      
+  train_set = featuresets
+  classifier = nltk.NaiveBayesClassifier.train(train_set)
+
+  titulounescape =  html.parser.HTMLParser().unescape(titulo)
+  nom_featuresRes = nom_features(clavenom,titulounescape)
+  return classifier.classify(nom_featuresRes) if len(nom_featuresRes)>0 else None
+  
 $$ LANGUAGE plpython3u;
 
 
@@ -364,3 +408,15 @@ diarioFull AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COA
 detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'detalleEdicion'),
 uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull))
 INSERT INTO notasnom(fecha, cod_nota,clavenom,clavenomnorm,titulo) SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo FROM uniqueEntries order by (regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
+
+
+------- PRUEBA DE CONSULTA NOM
+
+with mejornota AS (select cod_nota,clavenom,max(titulo) titulo from notasnom group by cod_nota,clavenom), mejornotaconfecha as (select min(fecha) AS fecha, cod_nota,clavenom,titulo from mejornota NATURAL JOIN notasnom GROUP BY cod_nota,clavenom,titulo), notasnomunique AS (SELECT * from notasnom NATURAL JOIN mejornotaconfecha)
+
+------ Listado de normas vigentes
+
+WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM tmp_notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
+notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN tmp_notasnom)
+SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from notasnomrecientes JOIN vigencianoms on vigencianoms.clavenom=notasnomrecientes.clavenomnorm;
+
