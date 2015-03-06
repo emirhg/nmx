@@ -63,3 +63,10 @@ Al final se tiene una tabla, cuyos campos se encuentran separados por tabuladore
 ### identiyfyNOMpublication.py
 
 http://diariooficial.gob.mx/nota_detalle.php?codigo=[NNNNNN]&fecha=[DD/MM/YYYY]
+
+## TODO
+ - Vincular las NOMs que cambian de nombre pero siguen siendo la misma
+ - Eliminar duplicados de notas al insertar en DB
+ - Normalizar los separadores de campos en la clave de la nom (entre secretaria y año existen casos con "/")
+ - Corregir títulos con caráctares extraños (error en el DOF al insertar en DB con mala codificación), i.e., recuperar el mejor registro disponible
+ - Ajuste más fino de la Expresión Regular para extraer claves de NOMs (NOM - 115 - STPS - 1994 se captura como NOM-115; NOM-023-  \fPESC-1996 => NOM-023-)
