@@ -50,7 +50,7 @@
 									<div class="linea"></div>
 									<ul class="list-inline">
 										<li data-ng-repeat="elem in normaActual" >
-											<div class="contenedor" data-ng-class="seleccionaCategoriaNOM(elem.etiqueta)" tooltip-html-unsafe="{{'<strong>Tipo:</strong> '+seleccionaNombreNOM(elem.etiqueta) + '<br/><strong>Fecha:</strong> '+elem.fecha}}" >
+											<div class="contenedor" data-ng-class="seleccionaCategoriaNOM(elem.etiqueta)" tooltip-html-unsafe="{{'<strong>Tipo:</strong> '+seleccionaNombreNOM(elem.etiqueta) + '<br/><strong>Fecha:</strong> '+elem.fecha}}"  tooltip-placement="bottom" >
 												<span class="{{::'icon-'+seleccionaIcono(elem.etiqueta) }}"></span>
 											</div>
 											<!-- 	<div class="fecha" >{{elem.fecha}}</div> -->
@@ -73,7 +73,7 @@
 										<th>Tipo</th>
 										<th class="col-xs-1">Fecha</th>
 										<th>Título</th>
-										<th class="col-xs-1">Enlace</th>
+										<th >Enlace</th>
 									</tr>
 								</thead>
 								<tbody>

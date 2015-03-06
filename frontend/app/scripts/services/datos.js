@@ -17,7 +17,8 @@ angular.module('frontendApp')
 		var proyectosNorma = [];
 		var NOMsConsultadas = {};
 
-		var baseurl = 'http://backend.noms';
+		//var baseurl = 'http://backend.noms';
+		var baseurl = 'http://nomsapi.dev.imco.org.mx';
 
 		var getListadoNOMS = function(tamVentana, offsetVentana) {
 			//Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
