@@ -57,7 +57,7 @@ angular.module('frontendApp')
 			},
 			'Respuestas': {
 				icono: 'bullhorn',
-				nombre: 'Respuestas a los comentarios',
+				nombre: 'Respuestas a comentarios',
 				categoria: 'resp'
 			},
 			'Modificación': {
@@ -74,13 +74,21 @@ angular.module('frontendApp')
 		$scope.seleccionaCategoriaNOM = function selec(tipo) {
 			return $scope.equivalencias[tipo].categoria;
 
+		};	
+		$scope.seleccionaNombreNOM = function selec(tipo) {
+			return $scope.equivalencias[tipo].nombre;
+
 		};
 
 		$scope.guionRex = /-/g;
 
 		if ($routeParams.clave) {
-			datos.getNOM($routeParams.clave).then(function(datos) {
-				$scope.normaActual = datos;
+			$scope.claveActual = $routeParams.clave;
+			datos.getNOM($routeParams.clave).then(function(datos1) {
+				$scope.normaActual = datos1;
+				datos.getNOMgeneral($routeParams.clave).then(function(datos2) {
+					$scope.normaActualDetalle = datos2[0];
+				});
 			});
 		}
 	});

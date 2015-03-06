@@ -162,6 +162,18 @@ Route::get('noms', function() {
 			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from notasnomrecientes JOIN vigencianoms on vigencianoms.clavenom=notasnomrecientes.clavenomnorm;
 			")));
 	}
+	
+});
+Route::get('noms/{clave} ', function($clave) {
+
+
+	return json_encode( DB::select(DB::raw("
+		WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM tmp_notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
+		notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN tmp_notasnom)
+
+		SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from notasnomrecientes JOIN vigencianoms on vigencianoms.clavenom=notasnomrecientes.clavenomnorm where clavenomnorm like :clavenomnorm;
+		"),array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
+	
 
 });
 /*
@@ -197,7 +209,7 @@ Route::get('nom/{clave}', function( $clave){
 	SELECT DISTINCT fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo) 
 	FROM notasnomunique where clavenom like :clavenomnorm ORDER BY fecha ASC;"), 
 	array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
-	*/return  json_encode	(DB::select(DB::raw( "SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo) 
+	*/return  json_encode	(DB::select(DB::raw( "SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), url 
 FROM tmp_notasnom where clavenom like :clavenomnorm ORDER BY fecha ASC;"), 
 	array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
 
