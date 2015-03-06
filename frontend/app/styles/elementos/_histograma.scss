@@ -1,0 +1,73 @@
+div.contenedor-histograma{
+	//overflow-x:auto; 
+}
+#histograma{
+	width: 100%;
+	//position: relative;
+	//overflow-x: scroll;
+	div.linea{
+		width: 93%;
+		margin: 0 auto;
+		position: absolute;
+		z-index: 1;
+		border: 1px solid silver;
+		top: 60%;
+		text-align: center;
+		left: 3%;
+	}
+	ul{
+		position: relative;
+		z-index: 99;
+		display: table;
+		width: 100%;
+		//height: 100px;
+		li{
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+			position: relative;
+			div.fecha{
+				position: absolute;
+				min-width: 70px;
+				bottom: -15%;
+				left: 42%;
+			}
+			div.contenedor{
+				margin: 0 auto;
+				position: relative;
+				background-color: green;
+				width: 40px;
+				height: 40px;
+				border-radius: 30px;
+				span{
+					position: absolute;
+					top: 31%;
+					left: 30%;
+					color: white;
+					font-size: 16px;
+				}
+				&.nom{
+					width: 50px;
+					height: 50px;
+					background-color: #01CD9A;
+					span{
+						position: absolute;
+						top: 26%;
+						left: 26%;
+						color: white;
+						font-size: 24px;
+					}
+				}
+				$categorias: nulo,proymod,proymnom,otros,nom,resp,mod;
+				$colores: #01CD9A, #00C02A, #01CD9A, #084EA7, #FE9D00, #FE5F00, orange;
+
+				@for $i from 1 through length($categorias) {
+					&.#{nth($categorias,$i)}{
+						background-color: #{nth($colores,$i)};
+					}
+				}
+
+			}
+		}
+	}
+}

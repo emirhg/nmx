@@ -36,6 +36,7 @@
 							<h4 class="nom-subtitulo">Título</h4>
 							<p>
 								The GTAP Model also gives users a wide range of closure options, including unemployment, tax revenue replacement and fixed trade balance closures, and a selection of partial equilibrium closures (which facilitate comparison of results to studies based on partial equilibrium assumptions). 
+								
 							</p>
 						</div>
 					</div>
@@ -43,6 +44,20 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<h4 class="nom-subtitulo">Histográma</h4>
+							<br/>
+							<div class="contenedor-histograma">
+								<div id="histograma">
+									<div class="linea"></div>
+									<ul class="list-inline">
+										<li data-ng-repeat="elem in normaActual" >
+											<div class="contenedor" data-ng-class="seleccionaCategoriaNOM(elem.etiqueta)" tooltip-html-unsafe="{{'<strong>Tipo:</strong> '+elem.etiqueta}}" ><span class="{{'icon-'+seleccionaIcono(elem.etiqueta) }}"></span></div>
+											<!-- 	<div class="fecha" >{{elem.fecha}}</div> -->
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<br/>
 						</div>
 					</div>	
 					<div class="row">
@@ -52,30 +67,21 @@
 								<thead>
 									<tr>
 										<th>#</th>
-										<th>Proceso</th>
-										<th>Fecha</th>
+										<th></th>
 										<th>Tipo</th>
+										<th class="col-xs-1">Fecha</th>
 										<th>Título</th>
 										<th>Enlace</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<th scope="row">1</th>
-										<td>Mark</td>
-										<td>Otto</td>
-										<td>@mdo</td>
-									</tr>
-									<tr>
-										<th scope="row">2</th>
-										<td>Jacob</td>
-										<td>Thornton</td>
-										<td>@fat</td>
-									</tr>
-									<tr>
-										<th scope="row">3</th>
-										<td colspan="2">Larry the Bird</td>
-										<td>@twitter</td>
+									<tr data-ng-repeat="elem in normaActual">
+										<td>{{$index+1}}</td>
+										<td ><span class="{{'icon-'+seleccionaIcono(elem.etiqueta) }}"></span></td>
+										<td>{{elem.etiqueta}}</td>
+										<td>{{elem.fecha}}</td>
+										<td>{{elem.entity2char}}</td>
+										<td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td>
 									</tr>
 								</tbody>
 							</table>

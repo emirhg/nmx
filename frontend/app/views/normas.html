@@ -8,17 +8,17 @@
 		<br/><br/>
 		<div class="row">
 			<div class="col-sm-12">
-				<div data-ng-repeat="elem in listadoNOMsActual" class="panel panel-default panel-norma panel-norma-home" data-ng-click="accederNorma(elem.clavenom)">
+				<div data-ng-repeat="elem in listadoNOMsActual" class="panel panel-default panel-norma panel-norma-home" data-ng-click="accederNorma(elem.clavenomnorm)">
 					<div class="panel-body">
 						<!-- {{::elem.clavenom}} es como bindonce  -->
-						<h3>{{::elem.clavenom}}</h3>
+						<h3>{{elem.clavenomnorm}}</h3>
 						<p>
 							{{::elem.titulo}}
 						</p>
 						<p>
 							<ul class="list-inline lista-instituciones">
 								<li><span class="normas-icono icon-Icons_Noms_GOB"></span></li>
-								<li><a href="">{{::elem.dependencia}}</a></li>
+								<li><a href="">{{::elem.comite}}</a></li>
 								<!-- <li><a href="">SAGARPA</a></li> -->
 							</ul>
 						</p>		
@@ -35,5 +35,5 @@
 
 		</div>
 	</div>
-<!-- 	
+	
 </div>
