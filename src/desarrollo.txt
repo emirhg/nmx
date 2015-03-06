@@ -28,22 +28,55 @@ UPDATE notasnom SET etiqueta = knowledgebase.etiqueta FROM knowledgebase WHERE n
 
 
 
-DO $$
+CREATE OR REPLACE FUNCTION classifyNOM(clavenom text, titulo text)
+  RETURNS TEXT
+AS $$
   import nltk
-  clavenom = 'NOM-003-SCFI-2000'
-  titulo = 'Norma Oficial Mexicana NOM-003-SCFI-2000, Productos el??ctricos-Especificaciones de seguridad'
+  import re
+  import html.parser
+  import json
+  
+  def nom_features(clavenom,titulo):
+    featureset = {}
 
-  featureset = {}
+    queryresult = plpy.execute("select lower(entity2char(getpartialSentence('"+clavenom+"','"+titulo+"'))) as context",1);
 
-  queryresult = plpy.execute("select lower(entity2char(regexp_replace(getpartialSentence('"+clavenom+"','"+titulo+"'),'\s*NOM\s*-.*$',''))) as context",1);
+    if queryresult.nrows() > 0:
+      context = queryresult[0]['context'].strip()
+      context = re.sub(clavenom + '.*$','',context, re.IGNORECASE)
+    for word in context.split(' '):
+      if word in featureset.keys():
+        featureset[word] = featureset[word]+1;
+      else:
+        featureset[word] = 1;
 
-  if queryresult.nrows() >0:
-    context = queryresult[0]['context'].strip()
+    featureset['context'] = context;
+    featureset['firstword'] = context.split(' ')[0]
+    featureset['lastword'] = context.split(' ')[-1]
+    featureset['countwords'] = len(context.split(' '))
+    return featureset
 
-  featureset['context'] = context;
-  featureset['firstword'] = context.split(' ')[0]
-  featureset['lastword'] = context.split(' ')[-1]
-  featureset['countwords'] = len(context.split(' '))
+  featuresets = []
+  knowledgeTable = plpy.execute("SELECT relname FROM pg_class WHERE relname='featuresets';")
+  if (knowledgeTable.nrows()==0):
+    plpy.execute('CREATE TEMPORARY TABLE featuresets(features text, etiqueta text)');
+  
+    knowledgeBase = plpy.execute('SELECT clavenom, titulo, etiqueta FROM notasnom WHERE etiqueta IS NOT NULL;')
+    
+    for value in knowledgeBase:
+      features = nom_features(value['clavenom'], value['titulo'])
+      featuresets.append((features, value['etiqueta']));
+      plpy.execute('INSERT INTO featuresets VALUES (\''+ json.dumps(features) + '\',\'' + value['etiqueta']+'\')')
+  else:
+    knowledgeBase = plpy.execute('SELECT features, etiqueta FROM featuresets;')
+    for value in knowledgeBase:
+      featuresets.append((json.loads(value['features']), value['etiqueta']));
+      
+  train_set = featuresets
+  classifier = nltk.NaiveBayesClassifier.train(train_set)
 
-  plpy.info(featureset)
+  titulounescape =  html.parser.HTMLParser().unescape(titulo)
+
+  return classifier.classify(nom_features(clavenom,titulounescape))
+  
 $$ LANGUAGE plpython3u;

@@ -206,7 +206,7 @@ AS $$
   
   for match in matches:
       claveCorregida = match[1] + match[-1]
-      claveCorregida = claveCorregida.replace("nicos- NOM","NOM").replace("\\fNOM","NOM").replace('.)','')
+      claveCorregida = claveCorregida.replace("nicos- NOM","NOM").replace("electrónicos- NOM","NOM").replace("\\fNOM","NOM").replace('.)','')
       claveCorregida = re.sub('^[^\d]+$','',claveCorregida)
 
       if (len(claveCorregida)>0):
@@ -256,20 +256,66 @@ AS $$
   DECLARE
     partialSentence text;
   BEGIN
-    SELECT (regexp_matches(sentence,'.*?\(?((?:\([^\)]+|[^\(]+|(\.\s+|^).*\(.*\)[^\)]+))'||word))[1] INTO partialSentence;
+    SELECT (regexp_matches(sentence,'.*?\(?((?:\([^\)]+|[^\(]+|(\.\s+|^).*\(.*\)[^\)]+))'|| regexp_replace(regexp_replace(word,'\\','\\\\'),'(\-|\.)','\\\1')))[1] INTO partialSentence;
 
+    RAISE NOTICE 'SENTENCE: %\r\nWORD: %\r\nPARTIAL: %', sentence, word, partialSentence;
     RETURN partialSentence;
   END;
 $$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION classifyNote()
-  RETURNS TABLE(classifyNote TEXT)
+-- Requires NLTK http://www.nltk.org/
+CREATE OR REPLACE FUNCTION classifyNOM(clavenom text, titulo text)
+  RETURNS TEXT
 AS $$
-  result = []
-  for key,value in enumerate(plpy.execute('SELECT distinct etiqueta from notasNOM;')):
-    result.append(value['etiqueta'])
-  return result
+  import nltk
+  import re
+  import html.parser
+  import json
+  
+  def nom_features(clavenom,titulo):
+    featureset = {}
+
+    queryresult = plpy.execute("select lower(entity2char(getpartialSentence('"+clavenom+"','"+titulo+"'))) as context",1);
+
+    plpy.info('\n\tNROWS: ' + str(queryresult.nrows()) + '\n\tResult: ' + str(queryresult))
+    if queryresult.nrows() >0:
+      context = queryresult[0]['context'].strip() if queryresult[0]['context'] != None else ''
+      context = re.sub(clavenom + '.*$','',context, re.IGNORECASE)
+    for word in context.split(' '):
+      if word in featureset.keys():
+        featureset[word] = featureset[word]+1;
+      else:
+        featureset[word] = 1;
+
+    featureset['context'] = context;
+    featureset['firstword'] = context.split(' ')[0]
+    featureset['lastword'] = context.split(' ')[-1]
+    featureset['countwords'] = len(context.split(' '))
+    return featureset
+
+  featuresets = []
+  knowledgeTable = plpy.execute("SELECT relname FROM pg_class WHERE relname='featuresets';")
+  if (knowledgeTable.nrows()==0):
+    plpy.execute('CREATE TEMPORARY TABLE featuresets(features text, etiqueta text)');
+  
+    knowledgeBase = plpy.execute('SELECT clavenom, titulo, etiqueta FROM notasnom WHERE etiqueta IS NOT NULL;')
+    
+    for value in knowledgeBase:
+      features = nom_features(value['clavenom'], value['titulo'])
+      featuresets.append((features, value['etiqueta']));
+      plpy.execute('INSERT INTO featuresets VALUES (\''+ json.dumps(features) + '\',\'' + value['etiqueta']+'\')')
+  else:
+    knowledgeBase = plpy.execute('SELECT features, etiqueta FROM featuresets;')
+    for value in knowledgeBase:
+      featuresets.append((json.loads(value['features']), value['etiqueta']));
+      
+  train_set = featuresets
+  classifier = nltk.NaiveBayesClassifier.train(train_set)
+
+  titulounescape =  html.parser.HTMLParser().unescape(titulo)
+
+  return classifier.classify(nom_features(clavenom,titulounescape)) if len(context)>0 else None
+  
 $$ LANGUAGE plpython3u;
 
 
