@@ -7,3 +7,8 @@ data/*
 textoPruebas.txt
 backNOM/composer.phar
 backNOM/composer.lock
+node_modules
+dist
+.tmp
+.sass-cache
+bower_components
