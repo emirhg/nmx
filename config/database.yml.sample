@@ -1,0 +1,9 @@
+# Configuración para el acceso a la base de datos
+
+production:
+	adapter: postgresql
+	database: candidatotransparente
+	host: localhost
+	username: root
+	password: 
+	encoding: utf-8
