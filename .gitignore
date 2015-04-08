@@ -2,7 +2,12 @@
 00_bosquejo/2014
 00_bosquejo/DOFs/
 data/*
-!data/NOMS-Knowledgebase.tsv
+#!data/NOMS-Knowledgebase.tsv
+#!data/lemario-general-del-espanol.txt
+#!data/clavesRenombradas.csv
+#!data/dof.csv
+#!data/knowledgebase.csv
+
 #tester.sh
 textoPruebas.txt
 backNOM/composer.phar
