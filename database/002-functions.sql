@@ -296,7 +296,7 @@ AS $$
   if (knowledgeTable.nrows()==0):
     plpy.execute('CREATE TEMPORARY TABLE featuresets(features text, etiqueta text)');
   
-    knowledgeBase = plpy.execute('SELECT clavenom, titulo, etiqueta FROM notasnom WHERE etiqueta IS NOT NULL AND humanRevision=True;')
+    knowledgeBase = plpy.execute('SELECT clavenom, titulo, etiqueta FROM notasnom WHERE etiqueta IS NOT NULL AND revisionHumana=True;')
     
     for value in knowledgeBase:
       features = nom_features(value['clavenom'], value['titulo'])
