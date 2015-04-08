@@ -7,18 +7,24 @@ CREATE DATABASE catalogonoms OWNER admin_catalogonoms;
 
 -- Extensiones requeridas
 CREATE EXTENSION plpython3u;
+CREATE EXTENSION fuzzystrmatch;
 
 -- Conexión a la Base
 \C catalogonoms;
 
 -- Esquema de la Base
 CREATE TABLE dof (fecha date, url text, respuesta json, servicio text);
-CREATE TABLE notasNOM (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, etiqueta text, urlnota text);
+CREATE TABLE notasNOM (fecha date, cod_nota int, claveNOM text, claveNOMNorm text, titulo text, etiqueta text, urlnota text, revisionHumana bool, PRIMARY KEY (cod_nota,claveNOMNorm));
 CREATE TABLE clavesRenombradas (claveNOMActualizada text, claveNOMObsoleta text);
 
 ALTER TABLE dof OWNER TO admin_catalogonoms;
 ALTER TABLE notasNOM OWNER TO admin_catalogonoms;
 ALTER TABLE clavesRenombradas OWNER TO admin_catalogonoms;
+
+-- Tablas auxiliares
+CREATE TABLE sp_lemario(word text primary key);
+\COPY sp_lemario FROM './data/lemario-general-del-espanol.txt' WITH CSV;
+
 
 -- Permisos de usuario
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO usuario_catalogonom
@@ -26,7 +32,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO usuario_catalogonom
 -- Inicialización parcial de datos
 \COPY clavesRenombradas FROM './data/clavesRenombradas.csv' WITH CSV HEADER;
 
--- Functiones de aplicación
+-- Funciones de aplicación
 
 CREATE OR REPLACE FUNCTION getDataFromURL (urlrequest text)
   RETURNS json
@@ -130,16 +136,39 @@ BEGIN
   entries as (select fecha,servicio,unnestJSON(respuesta) from diario),
   diarioFull AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'diarioFull'),
   detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'detalleEdicion'),
-  uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull))
-  INSERT INTO notasnom(fecha, cod_nota,clavenom,clavenomnorm,titulo,urlnota) SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo,
+  uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull)),
+  firstNote AS (SELECT cod_nota,min(fecha) as fecha FROM uniqueEntries group by cod_nota),
+  insertValue as (SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo,
   'http://diariooficial.gob.mx/nota_detalle.php?codigo='||cod_nota||'&fecha='||CASE WHEN length((extract(day from fecha))::text)=1 THEN '0' ELSE '' END || extract(day from fecha)||'/'||CASE WHEN length((extract(month from fecha))::text)=1 THEN '0' ELSE '' END || extract(month from fecha)||'/'||extract(year from fecha) AS urlnota
-  FROM uniqueEntries order by (regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[1],(regexp_matches(normalizaClaveNOM(getclavenom),'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[3];
-  RETURN NEW;
+  FROM uniqueEntries NATURAL JOIN firstNote)
+ 
+  INSERT INTO notasNom (select * from insertValue);
 END; $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER insertNOMData AFTER INSERT ON dof
     FOR EACH ROW EXECUTE PROCEDURE insertNOMData();
     
+--- Elimina evita la inserción de duplicados y en caso de que exista un mejor registro actualiza el título para evitar errores de codificación
+
+CREATE OR REPLACE FUNCTION beforeInsertNotasNOM() RETURNS trigger AS $beforeInsertNotasNOM$
+    DECLARE
+      title text;
+    BEGIN
+        IF EXISTS (SELECT cod_nota,claveNOMNorm FROM notasNOM WHERE cod_nota = NEW.cod_nota AND claveNOMNorm = NEW.claveNOMNorm) THEN
+          IF EXISTS (with words as (select distinct regexp_split_to_table(NEW.titulo, E'\\s+|\\-+|\\.+|,+|\\(|\\)|;|\\\\|"') as word) select word from words where word ~* '(^|\w)\?[?\-!.]') THEN
+            RETURN NULL;
+          ELSE
+            UPDATE notasNOM SET titulo = NEW.titulo WHERE cod_nota = NEW.cod_nota AND claveNOMNorm = NEW.claveNOMNorm;
+            RETURN NULL;
+          END IF;
+        END IF;
+        RETURN NEW;
+    END;
+$beforeInsertNotasNOM$ LANGUAGE plpgsql;
+
+CREATE TRIGGER beforeInsertNotasNOM BEFORE INSERT ON notasNom
+    FOR EACH ROW EXECUTE PROCEDURE beforeInsertNotasNOM();
+
 
 CREATE OR REPLACE FUNCTION unnestJSON(jsonstring json)
   RETURNS TABLE ( unnestJSON json)
@@ -218,7 +247,7 @@ $$ LANGUAGE plpython3u;
 CREATE OR REPLACE FUNCTION normalizaClaveNOM(claveNOM text)
   RETURNS text
 AS $$
-  import re
+  import re, logging
   global clavenom
   clavenom = clavenom.upper();
   clavenom = re.sub('\s*/\s*','/',clavenom)
@@ -245,7 +274,10 @@ AS $$
   claveNOMRenombrada = plpy.execute("SELECT claveNOMActualizada from clavesRenombradas where claveNOMObsoleta = '" + claveNOMNormalizada + "'",1)
 
   if claveNOMRenombrada.nrows() > 0:
-    claveNOMNormalizada = claveNOMRenombrada[0]['claveNOMActualizada']
+    try:
+      claveNOMNormalizada = claveNOMRenombrada[0]['claveNOMActualizada']
+    except Exception as inst:
+      logging.error(inst);
   
   return claveNOMNormalizada
 $$ LANGUAGE plpython3u;
@@ -393,6 +425,97 @@ end;
 $body$
 language plpgsql immutable;
 
+--- Funciones auxiliares
+CREATE OR REPLACE FUNCTION "titlecase" (
+  "v_inputstring" varchar
+)
+RETURNS varchar AS
+$body$
+/*
+select * from Format_TitleCase('MR DOG BREATH');
+select * from Format_TitleCase('each word, mcclure of this string:shall be
+transformed');
+select * from Format_TitleCase(' EACH WORD HERE SHALL BE TRANSFORMED	TOO
+incl. mcdonald o''neil o''malley mcdervet');
+select * from Format_TitleCase('mcclure and others');
+select * from Format_TitleCase('J & B ART');
+select * from Format_TitleCase('J&B ART');
+select * from Format_TitleCase('J&B ART J & B ART this''s art''s house''s
+problem''s 0''shay o''should work''s EACH WORD HERE SHALL BE TRANSFORMED
+TOO incl. mcdonald o''neil o''malley mcdervet');
+*/
+
+DECLARE
+   v_Index  INTEGER;
+   v_Char  CHAR(1);
+   v_OutputString  VARCHAR(4000);
+   SWV_InputString VARCHAR(4000);
+
+BEGIN
+   SWV_InputString := v_InputString;
+   SWV_InputString := LTRIM(RTRIM(SWV_InputString)); --cures problem where string starts with blank space
+   v_OutputString := LOWER(SWV_InputString);
+   v_Index := 1;
+   v_OutputString := OVERLAY(v_OutputString placing
+UPPER(SUBSTR(SWV_InputString,1,1)) from 1 for 1); -- replaces 1st char of Output with uppercase of 1st char from Input
+   WHILE v_Index <= LENGTH(SWV_InputString) LOOP
+      v_Char := SUBSTR(SWV_InputString,v_Index,1); -- gets loop's working character
+      IF v_Char IN('m','M','
+',';',':','!','?',',','.','_','-','/','&','''','(',CHR(9)) then
+		 --END4
+         IF v_Index+1 <= LENGTH(SWV_InputString) then
+            IF v_Char = '''' AND UPPER(SUBSTR(SWV_InputString,v_Index+1,1))
+<> 'S' AND SUBSTR(SWV_InputString,v_Index+2,1) <> REPEAT(' ',1) then  -- if the working char is an apost and the letter after that is not S
+               v_OutputString := OVERLAY(v_OutputString placing
+UPPER(SUBSTR(SWV_InputString,v_Index+1,1)) from v_Index+1 for 1);
+            ELSE 
+               IF v_Char = '&' then    -- if the working char is an &
+                  IF(SUBSTR(SWV_InputString,v_Index+1,1)) = ' ' then
+                     v_OutputString := OVERLAY(v_OutputString placing
+UPPER(SUBSTR(SWV_InputString,v_Index+2,1)) from v_Index+2 for 1);
+                  ELSE
+                     v_OutputString := OVERLAY(v_OutputString placing
+UPPER(SUBSTR(SWV_InputString,v_Index+1,1)) from v_Index+1 for 1);
+                  END IF;
+               ELSE
+                  IF UPPER(v_Char) != 'M' AND
+(SUBSTR(SWV_InputString,v_Index+1,1) <> REPEAT(' ',1) AND
+SUBSTR(SWV_InputString,v_Index+2,1) <> REPEAT(' ',1)) then
+                     v_OutputString := OVERLAY(v_OutputString placing
+UPPER(SUBSTR(SWV_InputString,v_Index+1,1)) from v_Index+1 for 1);
+                  END IF;
+               END IF;
+            END IF;
+
+					-- special case for handling "Mc" as in McDonald
+            IF UPPER(v_Char) = 'M' AND
+UPPER(SUBSTR(SWV_InputString,v_Index+1,1)) = 'C' then
+               v_OutputString := OVERLAY(v_OutputString placing
+UPPER(SUBSTR(SWV_InputString,v_Index,1)) from v_Index for 1);
+							--MAKES THE C LOWER CASE.
+               v_OutputString := OVERLAY(v_OutputString placing
+LOWER(SUBSTR(SWV_InputString,v_Index+1,1)) from v_Index+1 for 1);
+							-- makes the letter after the C UPPER case
+               v_OutputString := OVERLAY(v_OutputString placing
+UPPER(SUBSTR(SWV_InputString,v_Index+2,1)) from v_Index+2 for 1);
+							--WE TOOK CARE OF THE CHAR AFTER THE C (we handled 2 letters instead of only 1 as usual), SO WE NEED TO ADVANCE.
+               v_Index := v_Index+1;
+            END IF;
+         END IF;
+      END IF; --END3
+
+      v_Index := v_Index+1;
+   END LOOP; --END2
+
+   RETURN coalesce(v_OutputString,'');
+END;
+$body$
+LANGUAGE 'plpgsql'
+VOLATILE
+CALLED ON NULL INPUT
+SECURITY INVOKER
+COST 100;
+
 -- Prueba
 WITH diario AS (select fecha,respuesta,servicio from getdoftable('1995-11-13')),
 entries as (select fecha,servicio,unnestJSON(respuesta) from diario),
@@ -420,3 +543,15 @@ WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM tmp_notasnom 
 notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN tmp_notasnom)
 SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from notasnomrecientes JOIN vigencianoms on vigencianoms.clavenom=notasnomrecientes.clavenomnorm;
 
+
+
+
+
+---- Diccionario
+with words as (select distinct regexp_split_to_table(titulo, E'\\s+|\\-+|\\.+|,+|\\(|\\)|;|\\\\|"') as word,titulo  from notasnom) insert into dict select DISTINCT words.word, sp_lemario.word FROM words,(SELECT word from sp_lemario UNION SELECT titlecase(word) FROM sp_lemario) AS sp_lemario where words.word ~* '(^|\w)\?[?\-!.]' AND levenshtein_less_equal(regexp_replace(words.word,'\?|!',''),sp_lemario.word ,1,2,2,2)<=2  AND sp_lemario.word ~* '[ñáéíóúöü]' ORDER BY words.word, sp_lemario.word;
+
+
+--- 8,999 palabras distintas
+--- 11,824 Palabras mál codificadas
+--- 1,022 Palabras únicas mal codificadas
+--- 602 Palabras únicas corregidas

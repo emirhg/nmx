@@ -203,14 +203,8 @@ Route::get('noms', function()
 
 });*/
 Route::get('nom/{clave}', function( $clave){
-	/*return  json_encode	(DB::select(DB::raw( "with mejornota AS (select cod_nota,clavenom,max(titulo) titulo from notasnom group by cod_nota,clavenom),
-		mejornotaconfecha as (select min(fecha) AS fecha, cod_nota,clavenom,titulo from mejornota NATURAL JOIN notasnom
-			GROUP BY cod_nota,clavenom,titulo), notasnomunique AS (SELECT * from notasnom NATURAL JOIN mejornotaconfecha)
-	SELECT DISTINCT fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo) 
-	FROM notasnomunique where clavenom like :clavenomnorm ORDER BY fecha ASC;"), 
-	array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
-	*/return  json_encode	(DB::select(DB::raw( "SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), url 
-FROM tmp_notasnom where clavenom like :clavenomnorm ORDER BY fecha ASC;"), 
+	return  json_encode	(DB::select(DB::raw( "SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), url 
+FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"), 
 	array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
 
 });

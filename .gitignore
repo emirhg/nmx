@@ -7,3 +7,4 @@ data/*
 textoPruebas.txt
 backNOM/composer.phar
 backNOM/composer.lock
+config/database.yml
