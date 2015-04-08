@@ -100,7 +100,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION insertNOMData() RETURNS trigger
 AS $$
 BEGIN
-  WITH diario AS (select NEW.fecha,NEW.respuesta,NEW.servicio FROM dof AS NEW limit 50),
+  WITH diario AS (select NEW.fecha,NEW.respuesta,NEW.servicio),
   entries as (select fecha,servicio,unnestJSON(respuesta) from diario),
   diarioFull AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'diarioFull'),
   detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'detalleEdicion'),
