@@ -1,39 +1,110 @@
 <div data-ng-controller="NormasCtrl">
-	<div data-ng-include="'views/_filtro_tabuladores.html'"></div>
-
-	<div class="container">
-		<div class="row">
-
-		</div>
-		<br/><br/>
-		<div class="row">
-			<div class="col-sm-12">
-				<div data-ng-repeat="elem in listadoNOMsActual" class="panel panel-default panel-norma panel-norma-home" data-ng-click="accederNorma(elem.clavenomnorm)">
-					<div class="panel-body">
-						<!-- {{::elem.clavenom}} es como bindonce  -->
-						<h3>{{elem.clavenomnorm}}</h3>
-						<p>
-							{{::elem.titulo}}
-						</p>
-						<p>
-							<ul class="list-inline lista-instituciones">
-								<li><span class="normas-icono icon-Icons_Noms_GOB"></span></li>
-								<li><a href="">{{::elem.comite}}</a></li>
-								<!-- <li><a href="">SAGARPA</a></li> -->
-							</ul>
-						</p>		
-						<p>
-							<ul class="list-inline lista-instituciones">
-								<li><span class="normas-icono icon-Icons_Noms_CAL"></span></li>
-								<li>{{::elem.fecha}}</li>
-							</ul>
-						</p>
-					</div>
-				</div>
-
-			</div>
-
-		</div>
-	</div>
-	
+    <div data-ng-include="'views/_filtro_tabuladores.html'"></div>
+    <div class="container">
+        <div class="row">
+            <br>
+            <br>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="btn-group btn-block" dropdown is-open="filtros.ordenar.isopen">
+                    <button type="button" class="btn btn-primary btn-block dropdown-toggle" dropdown-toggle>
+                        Ordenar por <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Ascendente</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Fecha</a></li>
+                        <li><a href="#">Secretaria</a></li>
+                        <li><a href="#">Cómite</a></li>
+                        <li><a href="#">Sector</a></li>
+                        <li><a href="#">Clave</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="btn-group btn-block" dropdown is-open="filtros.secretaria.isopen">
+                    <button type="button" class="btn btn-primary btn-block dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                        Secretaría <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Todos</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="btn-group btn-block" dropdown is-open="filtros.comite.isopen">
+                    <button type="button" class="btn btn-primary btn-block dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                        Comité <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Todos</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="btn-group btn-block">
+                    <button data-toggle="dropdown" class="btn btn-default btn-block dropdown-toggle">City <span data-label-placement="" ng-model="filtro.ciudad">Moscow</span> <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <input type="radio" id="ex4_1" name="ex4" value="1" checked="">
+                            <label for="ex4_1">New York</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="ex4_2" name="ex4" value="2">
+                            <label for="ex4_2">Moscow</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="ex4_3" name="ex4" value="3">
+                            <label for="ex4_3">Tokyo</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="ex4_4" name="ex4" value="4">
+                            <label for="ex4_4">Paris</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <div class="row">
+            <div class="col-sm-12">
+                <div data-ng-repeat="elem in listadoNOMsActual" class="panel panel-default panel-norma panel-norma-home" data-ng-click="accederNorma(elem.clavenomnorm)">
+                    <div class="panel-body">
+                        <!-- {{::elem.clavenom}} es como bindonce  -->
+                        <h3>{{elem.clavenomnorm}}</h3>
+                        <p>
+                            {{::elem.titulo}}
+                        </p>
+                        <p>
+                            <ul class="list-inline lista-instituciones">
+                                <li><span class="normas-icono icon-Icons_Noms_GOB"></span></li>
+                                <li><a href="">{{::elem.comite}}</a></li>
+                                <!-- <li><a href="">SAGARPA</a></li> -->
+                            </ul>
+                        </p>
+                        <p>
+                            <ul class="list-inline lista-instituciones">
+                                <li><span class="normas-icono icon-Icons_Noms_CAL"></span></li>
+                                <li>{{::elem.fecha}}</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
