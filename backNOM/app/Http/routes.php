@@ -61,20 +61,29 @@ FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 /** Consultas relacionadas a la dependencia **/
 
 Route::get('dependencia/{dependencia?}', function($dependencia=null) {
-
+	if ($dependencia == null){
 		return json_encode( DB::select(DB::raw("SELECT DISTINCT secretaria AS dependencia from comite")));
-	
+	}
 });
 
 
 Route::get('producto/{producto?}', function($producto=null) {
-
-		return json_encode( DB::select(DB::raw('select DISTINCT unnest(producto::text[]) as "producto" from vigencianoms ORDER BY producto')));
 	
+	if ($producto == null){
+		$sqlQuery = 'select DISTINCT unnest(producto::text[]) as "producto" from vigencianoms ORDER BY producto';
+	}else {
+		$producto = urldecode($producto);
+		$sqlQuery = "select * from vigencianoms WHERE (lower(producto))::text[] @> ARRAY[lower('$producto')] ORDER BY clavenomnorm";
+	}
+	return json_encode( DB::select(DB::raw($sqlQuery)));
 });
 
 Route::get('rama/{rama?}', function($rama=null) {
-
-		return json_encode( DB::select(DB::raw('select DISTINCT unnest(rama::text[]) as "rama" from vigencianoms ORDER BY rama')));
-	
+	if ($rama == null){
+		$sqlQuery = 'select DISTINCT unnest(rama::text[]) as "rama" from vigencianoms ORDER BY rama';
+	}else {
+		$rama = urldecode($rama);
+		$sqlQuery = "select * from vigencianoms WHERE (lower(rama)::text[]) @> ARRAY[lower('$rama')] ORDER BY clavenomnorm";
+	}
+	return json_encode( DB::select(DB::raw($sqlQuery)));
 });
