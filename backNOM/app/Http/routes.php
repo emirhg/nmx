@@ -70,20 +70,53 @@ Route::get('dependencia/{dependencia?}', function($dependencia=null) {
 Route::get('producto/{producto?}', function($producto=null) {
 	
 	if ($producto == null){
-		$sqlQuery = 'select DISTINCT unnest(producto::text[]) as "producto" from vigencianoms ORDER BY producto';
+		$sqlQuery = 'WITH productos AS (select DISTINCT unnest(producto::text[]) as "producto" from vigencianoms ORDER BY producto)
+		SELECT array_to_json(array_agg(producto)) as producto from productos';
 	}else {
 		$producto = urldecode($producto);
-		$sqlQuery = "select * from vigencianoms WHERE (lower(producto))::text[] @> ARRAY[lower('$producto')] ORDER BY clavenomnorm";
+		$sqlQuery = "WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
+			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom),
+			detalleNOM AS (SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes)
+
+			select clavenomnorm, estatus, array_to_json(producto::text[]) producto, array_to_json(rama::text[]) rama, comite from vigencianoms NATURAL JOIN detalleNOM WHERE (lower(producto))::text[] @> ARRAY[lower('$producto')] ORDER BY clavenomnorm";
 	}
-	return json_encode( DB::select(DB::raw($sqlQuery)));
+
+	$result = DB::select(DB::raw($sqlQuery));
+	foreach ($result as $row){
+		if (property_exists($row,'producto')){
+			$row->producto = json_decode($row->producto);
+		}
+
+		if (property_exists($row,'rama')){
+			$row->rama = json_decode($row->rama);
+		}
+	}
+	
+	return json_encode( $result);
 });
 
 Route::get('rama/{rama?}', function($rama=null) {
 	if ($rama == null){
-		$sqlQuery = 'select DISTINCT unnest(rama::text[]) as "rama" from vigencianoms ORDER BY rama';
+		$sqlQuery = "WITH ramas AS (select DISTINCT unnest(rama::text[]) as rama from vigencianoms ORDER BY rama)
+		SELECT array_to_json(array_agg(rama)) as rama from ramas";
 	}else {
 		$rama = urldecode($rama);
-		$sqlQuery = "select * from vigencianoms WHERE (lower(rama)::text[]) @> ARRAY[lower('$rama')] ORDER BY clavenomnorm";
+		$sqlQuery = "WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
+			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom),
+			detalleNOM AS (SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes)
+			select clavenomnorm, estatus, array_to_json(producto::text[]) producto, array_to_json(rama::text[]) rama, comite from vigencianoms NATURAL JOIN detalleNOM WHERE (lower(rama)::text[]) @> ARRAY[lower('$rama')] ORDER BY clavenomnorm";
 	}
-	return json_encode( DB::select(DB::raw($sqlQuery)));
+
+	$result = DB::select(DB::raw($sqlQuery));
+	foreach ($result as $row){
+		if (property_exists($row,'producto')){
+			$row->producto = json_decode($row->producto);
+		}
+
+		if (property_exists($row,'rama')){
+			$row->rama = json_decode($row->rama);
+		}
+	}
+
+	return json_encode($result);
 });
