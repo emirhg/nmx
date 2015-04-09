@@ -4,11 +4,7 @@
             <div class="col-xs-12">
                 <br>
                 <h2>NOMs POR DEPENDENCIA</h2>
-                <button class="btn btn-sm">SEMARNAT</button>
-                <button class="btn btn-sm">SEMARNAT</button>
-                <button class="btn btn-sm">SEMARNAT</button>
-                <button class="btn btn-sm">SEMARNAT</button>
-                <button class="btn btn-sm">SEMARNAT</button>
+                <button data-ng-repeat="elem in dependencias " class="btn btn-sm" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.dependencia}}</button>
             </div>
         </div>
         <div class="row">
@@ -17,47 +13,42 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-8">
-                <ui-select ng-model="person.selected" theme="select2" ng-disabled="disabled" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="BIEN O SERVICIO">{{$select.selected.name}}</ui-select-match>
-                    <ui-select-choices repeat="person in people | propsFilter: {name: $select.search, age: $select.search}">
-                        <div ng-bind-html="person.name | highlight: $select.search"></div>
-                        <small>
-							        email: {{person.email}}
-							        age:
-							         <span ng-bind-html="''+person.age | highlight: $select.search"></span>
-							      </small>
+            <div class="col-sm-6">
+                <ui-select ng-model="seleccion.producto" theme="select2" style="min-width: 300px; width:100%;">
+                    <ui-select-match placeholder="BIEN O SERVICIO">{{$select.selected}}</ui-select-match>
+                    <ui-select-choices repeat="elem in productos  | filter: $select.search">
+                        <div ng-bind-html="elem | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>
-            <label class="col-sm-4 ">{{seleccion.tipo || 'Ejemplo: agua, trigo, semillas...'}}</label>
+            <div class="col-xs-2">
+                <button class="btn btn-xs">BUSCAR</button>
+            </div>
+            <label class="col-sm-4 ">{{seleccion.producto || 'Ejemplo: agua, trigo, semillas...'}}</label>
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h2>NOMs POR TIPO DE BIEN O SERVICIO</h2>
+                <h2>NOMs POR RAMA ECONÓMICA</h2>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-8">
-                <ui-select ng-model="person.selected" theme="select2" ng-disabled="disabled" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="RAMA ECONÓMICA">{{$select.selected.name}}</ui-select-match>
-                    <ui-select-choices repeat="person in people | propsFilter: {name: $select.search, age: $select.search}">
-                        <div ng-bind-html="person.name | highlight: $select.search"></div>
-                        <small>
-							        email: {{person.email}}
-							        age:
-							         <span ng-bind-html="''+person.age | highlight: $select.search"></span>
-							      </small>
+            <div class="col-sm-6">
+                <ui-select ng-model="seleccion.rama" theme="select2" style="min-width: 300px; width:100%;">
+                    <ui-select-match placeholder="BIEN O SERVICIO">{{$select.selected}}</ui-select-match>
+                    <ui-select-choices repeat="elem in ramas  | filter: $select.search">
+                        <div ng-bind-html="elem | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
             </div>
-            <label class="col-sm-4 ">{{seleccion.tipo || 'Ejemplo: agricultura, pesca, hospitales...'}}</label>
+            <div class="col-xs-2">
+                <button class="btn btn-xs">BUSCAR</button>
+            </div>
+            <label class="col-sm-4 ">{{seleccion.rama || 'Ejemplo: agricultura, pesca, hospitales...'}}</label>
         </div>
         <div class="row">
             <br>
             <br>
             <div class="col-xs-12">
-                <button class="btn btn-LG">BUSCAR</button>
             </div>
         </div>
         <br>

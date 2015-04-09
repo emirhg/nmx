@@ -29,6 +29,10 @@ angular
                 templateUrl: 'views/normas.html',
                 controller: 'NormasCtrl'
             })
+            .when('/dependencia/:siglas', {
+                templateUrl: 'views/dependencia.html',
+                controller: 'NormasCtrl'
+            })
             .when('/glosario', {
                 templateUrl: 'views/glosario.html',
                 controller: 'NormasCtrl'
