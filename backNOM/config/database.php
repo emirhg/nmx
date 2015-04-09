@@ -66,10 +66,10 @@ return [
 
 	'pgsql' => [
 	'driver'   => 'pgsql',
-	'host'     => 'dev.imco.org.mx', //env('DB_HOST', 'dev.imco.org.mx'),
-	'database' =>  'catalogonoms',//env('DB_DATABASE', 'catalogonoms'),
-	'username' => 'admin_catalogonoms',//env('DB_USERNAME', 'admin_catalogonoms'),
-	'password' => 'password.complicada',//env('DB_PASSWORD', 'password.complicada'),
+	'host'     => env('DB_HOST', 'localhost'),
+	'database' => env('DB_DATABASE', 'catalogonoms'),
+	'username' => env('DB_USERNAME', 'admin_catalogonoms'),
+	'password' => env('DB_PASSWORD', 'password.complicada'),
 	'charset'  => 'utf8',
 	'prefix'   => '',
 	'schema'   => 'public',

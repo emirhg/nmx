@@ -57,3 +57,11 @@ FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 	array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
 
 });
+
+/** Consultas relacionadas a la dependencia **/
+
+Route::get('dependencia/{dependencia?}', function($dependencia=null) {
+
+		return json_encode( DB::select(DB::raw("SELECT DISTINCT secretaria AS dependencia from comite")));
+	
+});

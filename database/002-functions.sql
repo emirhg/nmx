@@ -106,11 +106,11 @@ BEGIN
   detalleEdicion AS ( select distinct fecha,servicio,getClaveNOM(unnestjson),btrim(COALESCE((unnestjson->'titulo')::text,(unnestjson->'tituloDecreto')::text,'SIN TITULO'),'"') AS titulo, btrim(COALESCE((unnestjson->'id')::text,(unnestjson->'cod_nota')::text,'404'),'"') AS cod_nota from entries WHERE servicio = 'detalleEdicion'),
   uniqueEntries AS (SELECT * FROM diarioFull UNION SELECT * FROM detalleEdicion WHERE cod_nota not in (SELECT DISTINCT cod_nota from diarioFull)),
   firstNote AS (SELECT cod_nota,min(fecha) as fecha FROM uniqueEntries group by cod_nota),
-  insertValue as (SELECT fecha,cod_nota::int,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNormalizada,titulo,
+  insertValue as (SELECT fecha,cod_nota::int AS cod_nota,getclavenom as claveNOM,normalizaClaveNOM(getclavenom) as claveNOMNorm,titulo,
   'http://diariooficial.gob.mx/nota_detalle.php?codigo='||cod_nota||'&fecha='||CASE WHEN length((extract(day from fecha))::text)=1 THEN '0' ELSE '' END || extract(day from fecha)||'/'||CASE WHEN length((extract(month from fecha))::text)=1 THEN '0' ELSE '' END || extract(month from fecha)||'/'||extract(year from fecha) AS urlnota
   FROM uniqueEntries NATURAL JOIN firstNote)
  
-  INSERT INTO notasNom(fecha, cod_nota, clavenom, clavenomnorm, titulo, urlnota)  (select * from insertValue);
+  INSERT INTO notasNom(fecha, cod_nota, clavenom, clavenomnorm, titulo, urlnota)  (select fecha, cod_nota, clavenom, clavenomnorm, fixBadEncoding(entity2char(titulo)), urlnota from insertValue);
 
   RETURN NEW;
 END; $$ LANGUAGE plpgsql;
@@ -139,6 +139,40 @@ $beforeInsertNotasNOM$ LANGUAGE plpgsql;
 CREATE TRIGGER beforeInsertNotasNOM BEFORE INSERT ON notasNom
     FOR EACH ROW EXECUTE PROCEDURE beforeInsertNotasNOM();
 
+
+--- Crea un string parseable a arreglo de strings y actualiza los productos y ramos si la NOM ya existe
+CREATE OR REPLACE FUNCTION beforeInsertVigenciaNOM() RETURNS TRIGGER AS $$
+BEGIN
+
+  IF NEW.producto IS NOT NULL THEN
+      NEW.producto:= '{"'||replace(NEW.producto,'"','\"')||'"}';
+  END IF;
+
+  IF NEW.rama IS NOT NULL THEN
+      NEW.rama:= '{"'||replace(NEW.rama,'"','\"')||'"}';
+  END IF;
+
+  IF EXISTS (SELECT clavenomnorm from vigenciaNOMs WHERE claveNOMNorm=NEW.claveNOMNorm) THEN
+    NEW.updated_at:= NOW();
+    UPDATE vigenciaNOMs set
+      estatus = COALESCE(NEW.estatus,estatus),
+      producto = (SELECT (ARRAY(SELECT DISTINCT UNNEST(array_cat(NEW.producto::text[], (COALESCE(producto, '{}'))::text[])) ORDER BY 1))::text),
+      rama = (SELECT (ARRAY(SELECT DISTINCT UNNEST(array_cat(NEW.rama::text[], (COALESCE(rama, '{}'))::text[])) ORDER BY 1))::text),
+      updated_at = NOW()
+      WHERE clavenomnorm = NEW.clavenomnorm;   
+    RETURN NULL;
+  END IF;
+  NEW.created_at:= NOW();
+  NEW.updated_at:= NOW();
+  RETURN NEW;
+END
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER beforeInsertVigenciaNOM BEFORE INSERT ON vigenciaNOMs
+  FOR EACH ROW EXECUTE PROCEDURE beforeInsertVigenciaNOM();
+
+
+------------------------
 
 CREATE OR REPLACE FUNCTION unnestJSON(jsonstring json)
   RETURNS TABLE ( unnestJSON json)
@@ -458,3 +492,16 @@ VOLATILE
 CALLED ON NULL INPUT
 SECURITY INVOKER
 COST 100;
+
+---- Fix bad encoding using dictionary
+CREATE OR REPLACE FUNCTION fixBadEncoding(t text) RETURNS text AS
+$$
+  DECLARE r record;
+BEGIN
+  for r in
+    SELECT distinct dic.wrong, dic.good FROM diccionario dic INNER JOIN (SELECT wrong[2] AS wrong FROM regexp_matches(t, '(^|\s)(\w*(\?.-?)\w*)', 'g') wrong) s ON s.wrong = dic.wrong
+  loop
+    t:= replace(t,r.wrong,r.good);
+  end loop;
+  RETURN t;
+END$$ LANGUAGE plpgsql;

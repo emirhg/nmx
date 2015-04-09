@@ -30,8 +30,14 @@ insert into character_entity (ch, name) values
 
 -- Inicialización parcial de datos
 \COPY sp_lemario FROM './data/lemario-general-del-espanol.txt' WITH CSV;
+\COPY diccionario FROM './data/diccionario.csv' WITH CSV HEADER;
+
 \COPY clavesRenombradas FROM './data/clavesRenombradas.csv' WITH CSV HEADER;
 \COPY knowledgeBase FROM './data/knowledgebase.csv' WITH CSV HEADER;
 \COPY DOF FROM './data/dof.csv' WITH CSV HEADER;
+\COPY comites(secretaria,descripcion_comite,comite,reseña_comite) FROM PROGRAM 'xlsx2csv -m -s 1 -d "tab" NOMs\,\ dependencias\,\ reseñas\ dependencias\,\ rama\ economica\ y\ tipo\ de\ bien\ o\ servicio.xlsx  | cut -f2-5' WITH CSV HEADER DELIMITER E'\t';
+
 
 UPDATE notasNOM SET etiqueta = knowledgeBase.etiqueta, revisionHumana=True FROM knowledgeBase WHERE knowledgeBase.clavenomnorm=notasNOM.claveNOMNorm AND knowledgeBase.urlnota=notasNOM.urlnota;
+
+update notasnom set titulo = fixbadencoding(titulo) WHERE EXISTS (SELECT regexp_matches(titulo, '(^|\s)(\w*(\?.-?)\w*)', 'g'));
