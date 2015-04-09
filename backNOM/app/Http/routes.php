@@ -62,8 +62,34 @@ FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 
 Route::get('dependencia/{dependencia?}', function($dependencia=null) {
 	if ($dependencia == null){
-		return json_encode( DB::select(DB::raw("SELECT DISTINCT secretaria AS dependencia from comite")));
+		$sqlQuery = "SELECT DISTINCT secretaria AS dependencia from comite";
+	}else{
+		$sqlQuery = "WITH detalleDependencia AS (SELECT secretaria AS dependencia, comite, descripcion_comite, reseña_comite from comite WHERE lower(secretaria)=lower('$dependencia')),
+
+		nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
+		notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom),
+
+		nomsDetalle AS (SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comites, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes),
+		
+		nomsPorComite AS (SELECT UNNEST(string_to_array(comites, '/')) comite, clavenomnorm FROM nomsDetalle),
+
+		nomsDeLaDependencia AS (SELECT * FROM nomsPorComite NATURAL JOIN detalleDependencia)
+
+		SELECT dependencia, comite, descripcion_comite, reseña_comite, '['||string_agg('{\"clavenomnorm\":\"'||clavenomnorm||'\"'
+		|| ',\"fecha\":\"'||fecha||'\"'
+		|| ',\"comite\":\"'||comite||'\"'
+		|| ',\"titulo\":\"'||titulo||'\"'
+		, '},')||'}]' as normas FROM nomsDeLaDependencia Natural JOIN nomsDetalle GROUP BY dependencia, comite, descripcion_comite, reseña_comite";
+
 	}
+	$result = DB::select(DB::raw($sqlQuery));
+	foreach ($result as $row){
+		if (property_exists($row,'normas')){
+			//var_dump($row->normas);
+			$row->normas = json_decode($row->normas);
+		}
+	}
+	return json_encode($result);
 });
 
 
