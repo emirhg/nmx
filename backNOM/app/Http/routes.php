@@ -65,3 +65,16 @@ Route::get('dependencia/{dependencia?}', function($dependencia=null) {
 		return json_encode( DB::select(DB::raw("SELECT DISTINCT secretaria AS dependencia from comite")));
 	
 });
+
+
+Route::get('producto/{producto?}', function($producto=null) {
+
+		return json_encode( DB::select(DB::raw('select DISTINCT unnest(producto::text[]) as "producto" from vigencianoms ORDER BY producto')));
+	
+});
+
+Route::get('rama/{rama?}', function($rama=null) {
+
+		return json_encode( DB::select(DB::raw('select DISTINCT unnest(rama::text[]) as "rama" from vigencianoms ORDER BY rama')));
+	
+});
