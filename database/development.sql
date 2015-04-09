@@ -82,34 +82,6 @@ END$$ LANGUAGE plpgsql;
 ------------------------------------------------------------------------
 ----- Trigger before insert vigencianom -----------------
 
-CREATE OR REPLACE FUNCTION beforeInsertVigenciaNOM() RETURNS TRIGGER AS $$
-BEGIN
-
-  IF NEW.producto IS NOT NULL THEN
-      NEW.producto:= '{"'||replace(NEW.producto,'"','\"')||'"}';
-  END IF;
-
-  IF NEW.rama IS NOT NULL THEN
-      NEW.rama:= '{"'||replace(NEW.rama,'"','\"')||'"}';
-  END IF;
-
-  IF EXISTS (SELECT clavenomnorm from vigenciaNOMs WHERE claveNOMNorm=NEW.claveNOMNorm) THEN
-    NEW.updated_at:= NOW();
-    UPDATE vigenciaNOMs set
-      estatus = COALESCE(NEW.estatus,estatus),
-      producto = (SELECT (ARRAY(SELECT DISTINCT UNNEST(array_cat(NEW.producto::text[], (COALESCE(producto, '{}'))::text[])) ORDER BY 1))::text),
-      rama = (SELECT (ARRAY(SELECT DISTINCT UNNEST(array_cat(NEW.rama::text[], (COALESCE(rama, '{}'))::text[])) ORDER BY 1))::text),
-      updated_at = NOW();
-    RETURN NULL;
-  END IF;
-  NEW.created_at:= NOW();
-  NEW.updated_at:= NOW();
-  RETURN NEW;
-END
-$$ LANGUAGE PLPGSQL;
-
-CREATE TRIGGER beforeInsertVigenciaNOM BEFORE INSERT ON vigenciaNOMs
-  FOR EACH ROW EXECUTE PROCEDURE beforeInsertVigenciaNOM();
 
 \copy vigenciaNOMs(clavenomnorm,producto,rama) FROM STDIN
 NOM-001-CONAGUA-2011 	Agua	Agua y suministro de gas por ductos

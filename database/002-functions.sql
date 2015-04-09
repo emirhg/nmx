@@ -143,6 +143,7 @@ CREATE TRIGGER beforeInsertNotasNOM BEFORE INSERT ON notasNom
 --- Crea un string parseable a arreglo de strings y actualiza los productos y ramos si la NOM ya existe
 CREATE OR REPLACE FUNCTION beforeInsertVigenciaNOM() RETURNS TRIGGER AS $$
 BEGIN
+  NEW.clavenomnorm = btrim(NEW.clavenomnorm,' ');
 
   IF NEW.producto IS NOT NULL THEN
       NEW.producto:= '{"'||replace(NEW.producto,'"','\"')||'"}';
