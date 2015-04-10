@@ -32,6 +32,8 @@
                     </div>
                     <div class="row" data-ng-repeat="elem in dependenciaActual.comites">
                         <div class="col-sm-3">
+                            <br>
+                            <button class="btn btn-nom " data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.comite}}</button>
                             <h5 class="nom-subtitulo">{{::elem.comite}} <small>{{::elem.descripcion_comite}}</small></h5>
                         </div>
                         <div class="col-sm-7">
@@ -41,29 +43,31 @@
                             <p>{{::elem.normas.length}}</p>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="panel panel-default panel-norma">
+                <div class="panel-body">
                     <div class="row" data-ng-repeat="comite in dependenciaActual.comites">
                         <div class="col-sm-12">
-                            <h4 class="nom-subtitulo">Histórico</h4>
+                            <h4 class="nom-subtitulo">NOMS {{::comite.comite}}</h4>
                             <table class="table table-condensed table-hover">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th></th>
-                                        <th class="col-xs-3">Clave</th>
                                         <th class="col-xs-1">Fecha</th>
+                                        <th class="col-xs-3">Clave</th>
                                         <th>Título</th>
-                                        <th>Enlace</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr data-ng-repeat="elem in comite.normas">
                                         <td>{{::$index+1}}</td>
-                                        <td><span class="{{::'icon-'+seleccionaIcono(elem.etiqueta) }}"></span></td>
-                                        <td>{{::elem.clavenomnorm}}</td>
                                         <td>{{::elem.fecha}}</td>
+                                        <td>
+                                            <button class="btn btn-nom-blanco" data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.clavenomnorm}}</button>
+                                        </td>
                                         <td>{{::elem.titulo}}</td>
                                         <!-- 		<td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
-                                        <td><a data-ng-href="{{elem.url}}" target="_blank">Link a DOF</a></td>
                                     </tr>
                                 </tbody>
                             </table>

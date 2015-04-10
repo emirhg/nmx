@@ -8,7 +8,11 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-    .controller('DependenciaCtrl', function($scope, $routeParams, datos) {
+    .controller('DependenciaCtrl', function($scope, $location, $routeParams, datos) {
+        $scope.accederNorma = function accederNorma(claveNOM) {
+            console.log('accederNorma' + claveNOM);
+            $location.path('/nom/' + encodeURIComponent(claveNOM));
+        };
         $scope.dependenciaActual = {
             siglas: $routeParams.siglas,
         };
