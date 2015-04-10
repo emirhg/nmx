@@ -3,11 +3,13 @@
 00_bosquejo/DOFs/
 data/*
 #!data/NOMS-Knowledgebase.tsv
-#!data/lemario-general-del-espanol.txt
-#!data/clavesRenombradas.csv
+!data/lemario-general-del-espanol.txt
+!data/clavesRenombradas.csv
+!data/diccionario.csv
+!data/comite.csv
 #!data/dof.csv
-#!data/knowledgebase.csv
-
+!data/knowledgebase.csv
+!data/vigencianoms.csv
 #tester.sh
 textoPruebas.txt
 backNOM/composer.phar
