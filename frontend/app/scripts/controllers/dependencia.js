@@ -8,10 +8,14 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-  .controller('DependenciaCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+    .controller('DependenciaCtrl', function($scope, $routeParams, datos) {
+        $scope.dependenciaActual = {
+            siglas: $routeParams.siglas,
+        };
+        datos.getFullDependencias($routeParams.siglas).then(function exito(resultado) {
+            $scope.dependenciaActual.comites = resultado;
+        }, function error(error) {
+            $scope.dependenciaActula = {};
+            console.log('Error en getFullDependencias');
+        });
+    });

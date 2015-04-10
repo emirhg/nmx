@@ -31,7 +31,7 @@ angular
             })
             .when('/dependencia/:siglas', {
                 templateUrl: 'views/dependencia.html',
-                controller: 'NormasCtrl'
+                controller: 'DependenciaCtrl'
             })
             .when('/glosario', {
                 templateUrl: 'views/glosario.html',

@@ -1,0 +1,10 @@
+.btn-nom {
+    font-size: 20px;
+    padding: 10px;
+    background-color: #19516A;
+    color: #51A1C1;
+    &:hover {
+        background-color: #51A2C3;
+        color: white;
+    }
+}

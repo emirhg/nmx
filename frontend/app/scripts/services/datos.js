@@ -114,6 +114,29 @@ angular.module('frontendApp')
 
             return deferred.promise;
         };
+        var fullDependencias = {};
+        var getFullDependencias = function getDependencias(dependencia) {
+            console.log('getDependencias..');
+            var deferred = $q.defer();
+            $http({
+                method: 'GET',
+                url: baseurl + '/dependencia/' + encodeURIComponent(dependencia),
+            }).success(function(data) {
+                fullDependencias[dependencia] = angular.fromJson(data);
+                console.log(fullDependencias[dependencia]);
+                if (dependencias.lenght !== 0) {
+                    deferred.resolve(fullDependencias[dependencia]);
+                } else {
+                    deferred.reject(fullDependencias[dependencia]);
+                }
+            }).error(function(data) {
+                console.log('Error');
+                console.log(data);
+                deferred.reject(data);
+            });
+            return deferred.promise;
+        };
+
         var productos = [];
         var getProductos = function getProductos() {
             console.log('getProductos..');
@@ -172,6 +195,7 @@ angular.module('frontendApp')
             getDependencias: getDependencias,
             getProductos: getProductos,
             getRamas: getRamas,
+            getFullDependencias: getFullDependencias
         };
 
     });
