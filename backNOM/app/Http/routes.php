@@ -85,7 +85,6 @@ Route::get('dependencia/{dependencia?}', function($dependencia=null) {
 	$result = DB::select(DB::raw($sqlQuery));
 	foreach ($result as $row){
 		if (property_exists($row,'normas')){
-			//var_dump($row->normas);
 			$row->normas = json_decode($row->normas);
 		}
 	}

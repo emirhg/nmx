@@ -500,7 +500,7 @@ $$
   DECLARE r record;
 BEGIN
   for r in
-    SELECT distinct dic.wrong, dic.good FROM diccionario dic INNER JOIN (SELECT wrong[2] AS wrong FROM regexp_matches(t, '(^|\s)(\w*(\?.-?)\w*)', 'g') wrong) s ON s.wrong = dic.wrong
+    SELECT distinct dic.wrong, dic.good FROM diccionario dic INNER JOIN (SELECT wrong[2] AS wrong FROM regexp_matches(t, '(^|\s|\(|\-|")(\w*(\?.\w*)+\w*)', 'g') wrong) s ON s.wrong = dic.wrong
   loop
     t:= replace(t,r.wrong,r.good);
   end loop;
