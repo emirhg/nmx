@@ -1,46 +1,79 @@
 <div data-ng-controller="NormasCtrl">
-    <div data-ng-include="'views/_filtro_tabuladores.html'"></div>
+    <!--     <div data-ng-include="'views/_filtro_tabuladores.html'"></div> -->
+    <tabset justified="true" type="pills" class="filtro-tabs">
+        <tab data-ng-repeat="elem in listaTabs" heading="{{elem.titulo}}">
+            <div class="container-fluid filtros-nom">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1>{{elem.titulo}}</h1>
+                        </div>
+                    </div>
+                </div>
+        </tab>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input class="form-control" id="filtro-buscar" ng-model="buscar.input" placeholder="Buscar NOMs...">
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-block" type="submit" ng-click=" buscar.go = buscar.input">Buscar</button>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        </div>
+    </tabset>
     <div class="container">
         <div class="row">
             <br>
             <br>
         </div>
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-6 col-sm-offset-0">
                 <div class="btn-group btn-block" dropdown is-open="filtros.ordenar.isopen">
-                    <button type="button" class="btn btn-primary btn-block dropdown-toggle" dropdown-toggle>
+                    <button type="button" class="btn btn-nom  btn-block dropdown-toggle" dropdown-toggle>
                         Ordenar por <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Ascendente</a></li>
+                        <li>
+                            <a href ng-model="reverse" ng-init="reverse=true" btn-checkbox>{{ reverse ? 'Ascendente' : 'Deescendente'}}</a>
+                        </li>
                         <li class="divider"></li>
-                        <li><a href="#">Fecha</a></li>
-                        <li><a href="#">Secretaria</a></li>
-                        <li><a href="#">Cómite</a></li>
-                        <li><a href="#">Sector</a></li>
-                        <li><a href="#">Clave</a></li>
+                        <li>
+                            <a href ng-model="orden" btn-radio="'fecha'">Fecha </a></li>
+                        <li>
+                            <a href ng-model="orden" btn-radio="'titulo'">Titulo</a></li>
+                        <li>
+                            <a href ng-model="orden" btn-radio="'comite'">Cómite </a></li>
+                        <li>
+                            <a href ng-model="orden" btn-radio="'sector'">Sector </a></li>
+                        <li>
+                            <a href ng-model="orden" btn-radio="'clavenomnorm'">Clave</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-nom  btn-block " ng-click="reiniciarFiltros()">
+                    Reiniciar
+                </button>
+            </div>
+            <!--  <div class="col-sm-3">
                 <div class="btn-group btn-block" dropdown is-open="filtros.secretaria.isopen">
-                    <button type="button" class="btn btn-primary btn-block dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                    <button type="button" class="btn btn-nom  btn-block dropdown-toggle" dropdown-toggle ng-disabled="disabled">
                         Secretaría <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#">Todos</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
+                        <li ng-repeat="elem in dependencias"><a href ng-click="dependencia = elem.dependencia">{{elem.dependencia}}</a></li>
                     </ul>
                 </div>
-            </div>
-            <div class="col-sm-3">
+            </div> -->
+            <!--   <div class="col-sm-3">
                 <div class="btn-group btn-block" dropdown is-open="filtros.comite.isopen">
-                    <button type="button" class="btn btn-primary btn-block dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                    <button type="button" class="btn btn-nom  btn-block dropdown-toggle" dropdown-toggle ng-disabled="disabled">
                         Comité <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
@@ -56,7 +89,7 @@
             </div>
             <div class="col-sm-3">
                 <div class="btn-group btn-block">
-                    <button data-toggle="dropdown" class="btn btn-default btn-block dropdown-toggle">City <span data-label-placement="" ng-model="filtro.ciudad">Moscow</span> <span class="caret"></span></button>
+                    <button data-toggle="dropdown" class="btn btn-nom btn-block dropdown-toggle">City <span data-label-placement="" ng-model="filtro.ciudad">Moscow</span> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li>
                             <input type="radio" id="ex4_1" name="ex4" value="1" checked="">
@@ -76,29 +109,34 @@
                         </li>
                     </ul>
                 </div>
+            </div> -->
+        </div>
+        <div class="row" ng-show="seleccion">
+            <div class="col-xs-12">
+                <h1>{{seleccion }} <small>{{seleccionFiltro }}</small> </h1>
             </div>
         </div>
         <br/>
         <br/>
-        <div class="row">
-            <div class="col-sm-12">
-                <div data-ng-repeat="elem in listadoNOMsActual" class="panel panel-default panel-norma panel-norma-home" data-ng-click="accederNorma(elem.clavenomnorm)">
-                    <div class="panel-body">
+        <div ng-hide="seleccion" class="row ">
+            <div class="col-sm-12 ">
+                <div data-ng-repeat="elem in listadoNOMsActual | orderBy : orden : reverse | filter: buscar.go" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clavenomnorm) ">
+                    <div class="panel-body ">
                         <!-- {{::elem.clavenom}} es como bindonce  -->
                         <h3>{{elem.clavenomnorm}}</h3>
                         <p>
                             {{::elem.titulo}}
                         </p>
                         <p>
-                            <ul class="list-inline lista-instituciones">
-                                <li><span class="normas-icono icon-Icons_Noms_GOB"></span></li>
-                                <li><a href="">{{::elem.comite}}</a></li>
-                                <!-- <li><a href="">SAGARPA</a></li> -->
+                            <ul class="list-inline lista-instituciones ">
+                                <li><span class="normas-icono icon-Icons_Noms_GOB "></span></li>
+                                <li><a href=" ">{{::elem.comite}}</a></li>
+                                <!-- <li><a href=" ">SAGARPA</a></li> -->
                             </ul>
                         </p>
                         <p>
-                            <ul class="list-inline lista-instituciones">
-                                <li><span class="normas-icono icon-Icons_Noms_CAL"></span></li>
+                            <ul class="list-inline lista-instituciones ">
+                                <li><span class="normas-icono icon-Icons_Noms_CAL "></span></li>
                                 <li>{{::elem.fecha}}</li>
                             </ul>
                         </p>
@@ -106,5 +144,33 @@
                 </div>
             </div>
         </div>
+        <!-- Lista filtrada por producto o rama -->
+        <div ng-show="seleccion" class="row ">
+            <div class="col-sm-12 ">
+                <div data-ng-repeat="elem in listadoNOMsSeleccion" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clavenomnorm) ">
+                    <div class="panel-body ">
+                        <!-- {{::elem.clavenom}} es como bindonce  -->
+                        <h3>{{elem.clavenomnorm}}</h3>
+                        <p>
+                            {{::elem.titulo}}
+                        </p>
+                        <p>
+                            <ul class="list-inline lista-instituciones ">
+                                <li><span class="normas-icono icon-Icons_Noms_GOB "></span></li>
+                                <li><a href=" ">{{::elem.comite}}</a></li>
+                                <!-- <li><a href=" ">SAGARPA</a></li> -->
+                            </ul>
+                        </p>
+                        <p>
+                            <ul class="list-inline lista-instituciones ">
+                                <li><span class="normas-icono icon-Icons_Noms_CAL "></span></li>
+                                <li>{{::elem.fecha}}</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Lista filtrada por producto o rama -->
     </div>
 </div>

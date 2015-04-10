@@ -1,8 +1,14 @@
 div.contenedor-histograma{
 	//overflow-x:auto; 
+min-height: 110px;
+	  overflow: auto;
+  overflow-y: hidden;
+  overflow-x: auto;
+
 }
 #histograma{
 	width: 100%;
+	height: 110px;
 	//position: relative;
 	//overflow-x: scroll;
 	div.linea{
@@ -16,21 +22,29 @@ div.contenedor-histograma{
 		left: 3%;
 	}
 	ul{
+		height: 100%;
 		position: relative;
 		z-index: 99;
 		display: table;
 		width: 100%;
 		//height: 100px;
+		scroll: auto;
+
 		li{
-			display: table-cell;
+			display: table-cell; 
 			vertical-align: middle;
 			text-align: center;
+			min-width: 110px;
 			position: relative;
-			div.fecha{
-				position: absolute;
-				min-width: 70px;
-				bottom: -15%;
-				left: 42%;
+			div.fecha {
+			/*   position: absolute;
+			  min-width: 72px;
+			  bottom: -36%;
+			  left: 23%; */
+			    position: absolute;
+  min-width: 72px;
+  bottom: 0px;
+  left: 25%;
 			}
 			div.contenedor{
 				margin: 0 auto;
@@ -47,19 +61,19 @@ div.contenedor-histograma{
 					font-size: 16px;
 				}
 				&.nom{
-					width: 50px;
-					height: 50px;
+					width: 57px;
+					height: 57px;
 					background-color: #01CD9A;
 					span{
 						position: absolute;
 						top: 26%;
 						left: 26%;
 						color: white;
-						font-size: 24px;
+						font-size: 27px;
 					}
 				}
-				$categorias: nulo,proymod,proymnom,otros,nom,resp,mod;
-				$colores: #01CD9A, #00C02A, #01CD9A, #084EA7, #FE9D00, #FE5F00, #1363CA;
+				$categorias: nulo,proymod,proymnom,otros,nom,resp,mod,cancel,mir;
+				$colores: #01CD9A, #00C02A, #01CD9A, #084EA7, #FE9D00, #FE5F00, #1363CA, pink,purple;
 
 				@for $i from 1 through length($categorias) {
 					&.#{nth($categorias,$i)}{

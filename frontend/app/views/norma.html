@@ -16,13 +16,13 @@
                         </div>
                         <div class="col-sm-4">
                             <!-- <h4 class="nom-subtitulo">Fecha publicación</h4>
-							<h3>13-02-1990</h3> -->
+                            <h3>13-02-1990</h3> -->
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <!-- <h4 class="nom-subtitulo">Dependencias</h4>
-							<h3 class="nom-titulo"> <a href="">Sagarpa</a> &middot;<a href="">SECRE</a></h3> -->
+                            <h4 class="nom-subtitulo">Dependencias</h4>
+                            <h3 class="nom-titulo"> <a href="#/dependencia/XXX">XXX</a> &middot;<ahref="#/XXX">XXX</a></h3>
                             <h4 class="nom-subtitulo">Comités</h4>
                             <ul class="list-unstyled">
                                 <li>
@@ -49,7 +49,9 @@
                                             <div class="contenedor" data-ng-class="seleccionaCategoriaNOM(elem.etiqueta)" tooltip-html-unsafe="{{'<strong>Tipo:</strong> '+seleccionaNombreNOM(elem.etiqueta) + '<br/><strong>Fecha:</strong> '+elem.fecha}}" tooltip-placement="bottom">
                                                 <span class="{{::'icon-'+seleccionaIcono(elem.etiqueta) }}"></span>
                                             </div>
-                                            <!-- 	<div class="fecha" >{{elem.fecha}}</div> -->
+                                            <div class="fecha">
+                                                {{elem.fecha}}
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -57,6 +59,10 @@
                             <br/>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="panel panel-default panel-norma">
+                <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12">
                             <h4 class="nom-subtitulo">Historial</h4>
@@ -78,7 +84,7 @@
                                         <td>{{::seleccionaNombreNOM(elem.etiqueta)}}</td>
                                         <td>{{::elem.fecha}}</td>
                                         <td>{{::elem.entity2char}}</td>
-                                        <!-- 		<td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
+                                        <!--        <td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
                                         <td><a data-ng-href="{{elem.url}}" target="_blank">Link a DOF</a></td>
                                     </tr>
                                 </tbody>

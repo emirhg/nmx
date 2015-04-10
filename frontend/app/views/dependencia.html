@@ -1,0 +1,80 @@
+<div class="container">
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default panel-norma">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h4 class="nom-subtitulo">Depenedencia</h4>
+                            <h2 class="nom-titulo">{{::dependenciaActual.siglas}}</h2>
+                        </div>
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                            <!-- <h4 class="nom-subtitulo">Fecha publicación</h4>
+							<h3>13-02-1990</h3> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <!-- <h4 class="nom-subtitulo">Dependencias</h4>
+							<h3 class="nom-titulo"> <a href="">Sagarpa</a> &middot;<a href="">SECRE</a></h3> -->
+                            <h4 class="nom-subtitulo">Comités</h4>
+                        </div>
+                        <div class="col-sm-7">
+                            <h4 class="nom-subtitulo">Título</h4>
+                        </div>
+                        <div class="col-sm-2">
+                            <h4 class="nom-subtitulo">Normas Vigentes</h4>
+                        </div>
+                    </div>
+                    <div class="row" data-ng-repeat="elem in dependenciaActual.comites">
+                        <div class="col-sm-3">
+                            <br>
+                            <button class="btn btn-nom disabled" data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.comite}}</button>
+                            <h5 class="nom-subtitulo">{{::elem.comite}} <small>{{::elem.descripcion_comite}}</small></h5>
+                        </div>
+                        <div class="col-sm-7">
+                            <p>{{::elem['reseña_comite']}}</p>
+                        </div>
+                        <div class="col-sm-2">
+                            <p>{{::elem.normas.length}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default panel-norma">
+                <div class="panel-body">
+                    <div class="row" data-ng-repeat="comite in dependenciaActual.comites">
+                        <div class="col-sm-12">
+                            <h4 class="nom-subtitulo">NOMS {{::comite.comite}}</h4>
+                            <table class="table table-condensed table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="col-xs-1">Fecha</th>
+                                        <th class="col-xs-3">Clave</th>
+                                        <th>Título</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-ng-repeat="elem in comite.normas">
+                                        <td>{{::$index+1}}</td>
+                                        <td>{{::elem.fecha}}</td>
+                                        <td>
+                                            <button class="btn btn-nom-blanco" data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.clavenomnorm}}</button>
+                                        </td>
+                                        <td>{{::elem.titulo}}</td>
+                                        <!-- 		<td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
