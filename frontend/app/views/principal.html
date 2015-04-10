@@ -3,13 +3,16 @@
         <div class="row">
             <div class="col-xs-12">
                 <br>
-                <h2>NOMs POR DEPENDENCIA</h2>
-                <button data-ng-repeat="elem in dependencias " class="btn btn-nom" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.dependencia}}</button>
+                <h1>NOMs POR DEPENDENCIA</h1>
+                <button data-ng-repeat="elem in dependencias " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.dependencia}}</button>
+                <br>
+                <br>
+                <br>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h2>NOMs POR TIPO DE BIEN O SERVICIO</h2>
+                <h1>NOMs POR TIPO DE BIEN O SERVICIO</h1>
             </div>
         </div>
         <div class="row">
@@ -22,13 +25,16 @@
                 </ui-select>
             </div>
             <div class="col-xs-2">
-                <button class="btn btn-xs">BUSCAR</button>
+                <button class="btn btn-sm btn-nom-blanco ">BUSCAR</button>
             </div>
-            <label class="col-sm-4 ">{{seleccion.producto || 'Ejemplo: agua, trigo, semillas...'}}</label>
+            <label class="col-sm-4 " style="color:  #19516A">{{seleccion.producto || 'Ejemplo: agua, trigo, semillas...'}}</label>
+            <br>
+            <br>
+            <br>
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h2>NOMs POR RAMA ECONÓMICA</h2>
+                <h1>NOMs POR RAMA ECONÓMICA</h1>
             </div>
         </div>
         <div class="row">
@@ -41,9 +47,12 @@
                 </ui-select>
             </div>
             <div class="col-xs-2">
-                <button class="btn btn-xs">BUSCAR</button>
+                <button class="btn btn-sm btn-nom-blanco ">BUSCAR</button>
             </div>
-            <label class="col-sm-4 ">{{seleccion.rama || 'Ejemplo: agricultura, pesca, hospitales...'}}</label>
+            <label class="col-sm-4  " style="color:  #19516A">{{seleccion.rama || 'Ejemplo: agricultura, pesca, hospitales...'}}</label>
+            <br>
+            <br>
+            <br>
         </div>
         <div class="row">
             <br>

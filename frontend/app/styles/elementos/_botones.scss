@@ -1,9 +1,33 @@
+button,
+a {
+    &:focus {
+        outline: none !important;
+    }
+}
+
 .btn-nom {
-    font-size: 20px;
-    padding: 10px;
+    border-radius: 30px;
     background-color: #19516A;
     color: #51A1C1;
-    &:hover {
+    min-width: 144px;
+    &:hover, &:focus {
+        background-color: #51A2C3;
+        color: white;
+    }
+}
+
+.btn-huge {
+    margin: 12px 9px;
+    font-size: 20px;
+    padding: 10px;
+}
+
+.btn-nom-blanco {
+    border-radius: 30px;
+    background-color: #FFFFFF;
+    color: #51A1C1;
+    min-width: 144px;
+    &:hover, &:focus {
         background-color: #51A2C3;
         color: white;
     }
