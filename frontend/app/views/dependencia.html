@@ -33,7 +33,7 @@
                     <div class="row" data-ng-repeat="elem in dependenciaActual.comites">
                         <div class="col-sm-3">
                             <br>
-                            <button class="btn btn-nom " data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.comite}}</button>
+                            <button class="btn btn-nom disabled" data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.comite}}</button>
                             <h5 class="nom-subtitulo">{{::elem.comite}} <small>{{::elem.descripcion_comite}}</small></h5>
                         </div>
                         <div class="col-sm-7">

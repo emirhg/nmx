@@ -9,6 +9,7 @@
  */
 angular.module('frontendApp')
     .controller('NormasCtrl', function($scope, $location, datos, $routeParams) {
+        console.log($routeParams);
         $scope.listaTabs = [{
             titulo: 'NOMs Vigentes',
             clave: 'vigente'
@@ -19,10 +20,24 @@ angular.module('frontendApp')
             titulo: 'NOMs Canceladas',
             clave: 'cancelada'
         }];
+
+        datos.getDependencias().then(function exito(resultado) {
+            $scope.dependencias = resultado;
+        }, function error(argument) {
+            $scope.dependencias = [];
+            console.log('Error en getDependencias');
+        });
+
         $scope.accederNorma = function accederNorma(claveNOM) {
             console.log('accederNorma' + claveNOM);
             $location.path('/nom/' + encodeURIComponent(claveNOM));
         };
+
+        $scope.buscar = {};
+        $scope.reiniciarFiltros = function reiniciarFiltros() {
+            $scope.buscar = {};
+            $scope.orden = '';
+        }
         $scope.listadoNOMsActual = [];
         datos.getListadoNOMS().then(function(datos) {
             $scope.listadoNOMsActual = datos;
@@ -90,5 +105,22 @@ angular.module('frontendApp')
                     $scope.normaActualDetalle = datos2[0];
                 });
             });
+        } else {
+            for (var llave in $routeParams) break;
+            console.log(llave);
+
+            if (llave) {
+                $scope.seleccion = llave;
+                $scope.seleccionFiltro = decodeURIComponent($routeParams[llave]);
+                console.log($scope.seleccionFiltro);
+
+                $scope.listadoNOMsSeleccion = [];
+                datos.getListadoNOMsSeleccion(llave, $routeParams[llave]).then(function(datos) {
+                    $scope.listadoNOMsSeleccion = datos;
+                });
+            }
         }
+
+
+
     });

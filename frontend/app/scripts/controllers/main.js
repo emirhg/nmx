@@ -40,11 +40,25 @@ angular.module('frontendApp')
             console.log('Ir a dependencia: ' + index + ' ' + dependencia);
             $location.path('/dependencia/' + dependencia);
         };
-
         $scope.seleccion = {
             rama: '',
             producto: ''
         };
+
+        $scope.filtraRama = function filtraRama(cualSeleccion) {
+            console.log('Ir a seleccion: ' + cualSeleccion + ' ' + $scope.seleccion[cualSeleccion]);
+
+            if ($scope.seleccion[cualSeleccion]) {
+                console.log('Ir a seleccion: ' + cualSeleccion + ' ' + $scope.seleccion[cualSeleccion]);
+                var search = {};
+                search[cualSeleccion] = encodeURIComponent($scope.seleccion[cualSeleccion]);
+                $location.path('/noms').search(search);
+            }
+
+        };
+
+
+
 
 
     });

@@ -25,7 +25,7 @@
                 </ui-select>
             </div>
             <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco ">BUSCAR</button>
+                <button class="btn btn-sm btn-nom-blanco " data-ng-click="filtraRama('producto')">BUSCAR</button>
             </div>
             <label class="col-sm-4 " style="color:  #19516A">{{seleccion.producto || 'Ejemplo: agua, trigo, semillas...'}}</label>
             <br>
@@ -47,7 +47,7 @@
                 </ui-select>
             </div>
             <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco ">BUSCAR</button>
+                <button class="btn btn-sm btn-nom-blanco " data-ng-click="filtraRama('rama')">BUSCAR</button>
             </div>
             <label class="col-sm-4  " style="color:  #19516A">{{seleccion.rama || 'Ejemplo: agricultura, pesca, hospitales...'}}</label>
         </div>

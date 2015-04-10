@@ -48,6 +48,30 @@ angular.module('frontendApp')
             return deferred.promise;
 
         };
+
+        var getListadoNOMsSeleccion = function(llave, seleccion) {
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+
+            $http({
+                    method: 'GET',
+                    //url: 'scripts/datos/todasNOMsTest.json',
+                    url: baseurl + '/' + llave + '/' + seleccion,
+                })
+                .success(function(data) {
+                    normasVigentes = angular.copy(data);
+                    deferred.resolve(data);
+                })
+                .error(function(data) {
+                    console.log('Error');
+                    console.log(data);
+                    deferred.reject(data);
+                });
+
+            return deferred.promise;
+
+        };
         var getNOM = function(claveNOM) {
             console.log('NOM:' + claveNOM);
 
@@ -195,7 +219,8 @@ angular.module('frontendApp')
             getDependencias: getDependencias,
             getProductos: getProductos,
             getRamas: getRamas,
-            getFullDependencias: getFullDependencias
+            getFullDependencias: getFullDependencias,
+            getListadoNOMsSeleccion: getListadoNOMsSeleccion
         };
 
     });
