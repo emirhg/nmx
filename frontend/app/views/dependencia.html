@@ -21,10 +21,10 @@
                         <div class="col-sm-3">
                             <!-- <h4 class="nom-subtitulo">Dependencias</h4>
 							<h3 class="nom-titulo"> <a href="">Sagarpa</a> &middot;<a href="">SECRE</a></h3> -->
-                            <h4 class="nom-subtitulo">Comités</h4>
+                            <h4 class="nom-subtitulo">Comités (CCNN)</h4>
                         </div>
                         <div class="col-sm-7">
-                            <h4 class="nom-subtitulo">Título</h4>
+                            <h4 class="nom-subtitulo">Reseña</h4>
                         </div>
                         <div class="col-sm-2">
                             <h4 class="nom-subtitulo">Normas Vigentes</h4>
@@ -33,11 +33,11 @@
                     <div class="row" data-ng-repeat="elem in dependenciaActual.comites">
                         <div class="col-sm-3">
                             <br>
-                            <button class="btn btn-nom disabled" data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.comite}}</button>
+                            <button class="btn btn-nom " data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.comite}}</button>
                             <h5 class="nom-subtitulo">{{::elem.comite}} <small>{{::elem.descripcion_comite}}</small></h5>
                         </div>
                         <div class="col-sm-7">
-                            <p>{{::elem['reseña_comite']}}</p>
+                            <p class="text-justify">{{::elem['reseña_comite']}}</p>
                         </div>
                         <div class="col-sm-2">
                             <p>{{::elem.normas.length}}</p>

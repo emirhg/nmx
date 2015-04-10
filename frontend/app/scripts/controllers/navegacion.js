@@ -23,6 +23,12 @@ angular.module('frontendApp')
             link: '/',
             titulo: 'Proyectos NOMs'
         }, {
+            link: '#/proceso',
+            titulo: '¿Cómo se hacen las NOMs?'
+        }, {
+            link: '#/metodologia',
+            titulo: 'Metodología'
+        }, {
             link: '/',
             titulo: 'Contacto'
         }, ];
