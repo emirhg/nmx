@@ -16,10 +16,11 @@ angular.module('frontendApp')
         }, {
             titulo: 'Proyectos de NOM',
             clave: 'proyecto'
-        }, {
-            titulo: 'NOMs Canceladas',
-            clave: 'cancelada'
-        }];
+        }, /*{
+    titulo: 'NOMs Canceladas',
+    clave: 'cancelada'
+}
+*/];
 
         datos.getDependencias().then(function exito(resultado) {
             $scope.dependencias = resultado;
