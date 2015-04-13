@@ -85,6 +85,12 @@ FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 
 		$result->historial = $historial;
 
+		$comite = DB::select(DB::raw("SELECT  secretaria, nombre_secretaria, comite, descripcion_comite from comite WHERE :clavenomnorm like ('%'||comite||'%')ORDER BY secretaria, comite ASC;"),
+		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
+
+		$result->comite = $comite;
+
+
 		return json_encode($result);
 
 
