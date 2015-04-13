@@ -1,6 +1,6 @@
 div.contenedor-histograma{
 	//overflow-x:auto; 
-min-height: 110px;
+min-height: 140px;
 	  overflow: auto;
   overflow-y: hidden;
   overflow-x: auto;
@@ -17,7 +17,7 @@ min-height: 110px;
 		position: absolute;
 		z-index: 1;
 		border: 1px solid silver;
-		top: 60%;
+		top: 52%;
 		text-align: center;
 		left: 3%;
 	}
@@ -35,6 +35,7 @@ min-height: 110px;
 			vertical-align: middle;
 			text-align: center;
 			min-width: 110px;
+			width: 110px;
 			position: relative;
 			div.fecha {
 			/*   position: absolute;
@@ -42,9 +43,18 @@ min-height: 110px;
 			  bottom: -36%;
 			  left: 23%; */
 			    position: absolute;
-  min-width: 72px;
-  bottom: 0px;
-  left: 25%;
+				width: 100%;
+				text-align: center;
+				bottom: 0px;
+			}
+			div.etiquta{
+				width: 100%;
+				height: 40px;
+				position: absolute;
+				min-width: 110px;
+				top: -5px;
+				margin-top:3px;
+				//left: 28%;
 			}
 			div.contenedor{
 				margin: 0 auto;
