@@ -38,8 +38,8 @@ Route::get('noms', function () {
 
 });
 Route::get('noms/{clave} ', function ($clave) {
-
 	$clave = urldecode($clave);
+
 	return json_encode(DB::select(DB::raw("
 		WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 		notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
@@ -51,7 +51,7 @@ Route::get('noms/{clave} ', function ($clave) {
 
 Route::get('nom/{clave}', function ($clave) {
 	$clave = urldecode($clave);
-
+	return $clave;
 	return json_encode(DB::select(DB::raw("SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), urlnota AS url
 FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%')));
