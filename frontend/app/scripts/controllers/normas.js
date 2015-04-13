@@ -8,7 +8,7 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-    .controller('NormasCtrl', function($scope, $location, datos, $routeParams) {
+    .controller('NormasCtrl', function($scope, $location, datos, $routeParams, $anchorScroll) {
         console.log($routeParams);
         $scope.listaTabs = [{
                 titulo: 'NOMs Vigentes',
@@ -23,6 +23,16 @@ angular.module('frontendApp')
             }
             */
         ];
+
+
+        $scope.irComite = function irComite(comite, hash) {
+            console.log('Ir a comite: ' + comite);
+            $location.path('/dependencia/' + comite);
+            $location.hash(hash);
+            $anchorScroll();
+            //reset to old to keep any additional routing logic from kicking in
+
+        };
 
         datos.getDependencias().then(function exito(resultado) {
             $scope.dependencias = resultado;
@@ -82,6 +92,11 @@ angular.module('frontendApp')
                 icono: 'quill',
                 nombre: 'Modicación',
                 categoria: 'mod'
+            },
+            'Cancelación': {
+                icono: 'cross',
+                nombre: 'Cancelación',
+                categoria: 'cancel'
             }
         };
         $scope.seleccionaIcono = function selec(tipo) {
@@ -104,7 +119,7 @@ angular.module('frontendApp')
             $scope.claveActual = decodeURIComponent($routeParams.clave);
             console.log('NOM:  ' + $scope.claveActual);
             datos.getNOM($scope.claveActual).then(function(datos1) {
-                $scope.normaActual = datos1;
+                $scope.normaActual = angular.fromJson(datos1);;
                 datos.getNOMgeneral($scope.claveActual).then(function(datos2) {
                     $scope.normaActualDetalle = datos2[0];
                     console.log($scope.normaActualDetalle);
