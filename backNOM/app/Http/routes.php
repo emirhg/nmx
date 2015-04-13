@@ -74,13 +74,13 @@ FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
 
 		$ramayProducto = DB::select(DB::raw("
-		Select rama, producto from vigencianoms where clavenomnorm like :clavenomnorm limit 1;
+		Select array_to_json(rama::text[]) as rama, array_to_json(producto::text[]) as producto from vigencianoms where clavenomnorm like :clavenomnorm limit 1;
 		"), array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
 
 		$result = new stdClass;
 		foreach ($ramayProducto as $row){
-			$result->rama = $row->rama;
-			$result->producto = $row->producto;
+			$result->rama = json_decode($row->rama);
+			$result->producto = json_decode($row->producto);
 		}
 
 		$result->historial = $historial;
