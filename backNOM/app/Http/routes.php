@@ -47,7 +47,7 @@ Route::get('noms/{clave} ', function ($clave) {
 
 		SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes where clavenomnorm like :clavenomnorm;
 		"), array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
-
+/*
 
 		$ramayProducto = DB::select(DB::raw("
 		Select rama, producto from vigencianoms where clavenomnorm like :clavenomnorm limit 1;
@@ -60,8 +60,9 @@ Route::get('noms/{clave} ', function ($clave) {
 		}
 
 		$result->historial = $historial;
+		*/
 
-		return json_encode($result);
+		return json_encode($historial);
 
 })->where('clave', '(.*)');
 
@@ -71,7 +72,6 @@ Route::get('nom/{clave}', function ($clave) {
 	$historial = DB::select(DB::raw("SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), urlnota AS url
 FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
-		
 
 		$ramayProducto = DB::select(DB::raw("
 		Select rama, producto from vigencianoms where clavenomnorm like :clavenomnorm limit 1;
@@ -84,6 +84,12 @@ FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 		}
 
 		$result->historial = $historial;
+
+		$comite = DB::select(DB::raw("SELECT  secretaria, nombre_secretaria, comite, descripcion_comite from comite WHERE :clavenomnorm like ('%'||comite||'%')ORDER BY secretaria, comite ASC;"),
+		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
+
+		$result->comite = $comite;
+
 
 		return json_encode($result);
 
