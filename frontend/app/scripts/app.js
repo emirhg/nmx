@@ -40,6 +40,9 @@ angular
             .when('/glosario', {
                 templateUrl: 'views/glosario.html',
                 controller: 'NormasCtrl'
+            }).when('/proceso', {
+                templateUrl: 'views/proceso.html',
+                controller: 'MainCtrl'
             })
             .when('/nom/:clave', {
                 templateUrl: 'views/norma.html',

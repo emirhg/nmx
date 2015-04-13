@@ -9,20 +9,21 @@
                             <h1>{{elem.titulo}}</h1>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input class="form-control" id="filtro-buscar" ng-model="buscar.input" placeholder="Buscar NOMs...">
+                            </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-default btn-block" type="submit" ng-click=" buscar.go = buscar.input">Buscar</button>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
                 </div>
         </tab>
-        <div class="row">
-            <div class="form-group">
-                <div class="col-sm-10">
-                    <input class="form-control" id="filtro-buscar" ng-model="buscar.input" placeholder="Buscar NOMs...">
-                </div>
-                <div class="col-sm-2">
-                    <button class="btn btn-default btn-block" type="submit" ng-click=" buscar.go = buscar.input">Buscar</button>
-                </div>
-            </div>
-        </div>
-        <br/>
-        <br/>
         </div>
     </tabset>
     <div class="container">

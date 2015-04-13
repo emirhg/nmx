@@ -11,16 +11,18 @@ angular.module('frontendApp')
     .controller('NormasCtrl', function($scope, $location, datos, $routeParams) {
         console.log($routeParams);
         $scope.listaTabs = [{
-            titulo: 'NOMs Vigentes',
-            clave: 'vigente'
-        }, {
-            titulo: 'Proyectos de NOM',
-            clave: 'proyecto'
-        }, /*{
-    titulo: 'NOMs Canceladas',
-    clave: 'cancelada'
-}
-*/];
+                titulo: 'NOMs Vigentes',
+                clave: 'vigente'
+            }, {
+                titulo: 'Proyectos de NOM',
+                clave: 'proyecto'
+            },
+            /*{
+                titulo: 'NOMs Canceladas',
+                clave: 'cancelada'
+            }
+            */
+        ];
 
         datos.getDependencias().then(function exito(resultado) {
             $scope.dependencias = resultado;
@@ -104,6 +106,7 @@ angular.module('frontendApp')
                 $scope.normaActual = datos1;
                 datos.getNOMgeneral($routeParams.clave).then(function(datos2) {
                     $scope.normaActualDetalle = datos2[0];
+                    console.log($scope.normaActualDetalle);
                 });
             });
         } else {
