@@ -10,31 +10,18 @@
                             <h4 class="nom-subtitulo">Norma Oficial Mexicana</h4>
                             <h3 class="nom-titulo">{{claveActual}}</h3>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
                             <h4 class="nom-subtitulo">Fecha publicación</h4>
                             <h3>{{normaActualDetalle.fecha}}</h3>
-                        </div>
-                        <div class="col-sm-3">
-                            <h4 class="nom-subtitulo">Rama económica</h4>
-                            <h3>Rama económica</h3>
-                        </div>
-                        <div class="col-sm-3">
-                            <!-- <h4 class="nom-subtitulo">Rama económica</h4>
-<h3>Rama económica</h3>
- -->
-                            <h4 class="nom-subtitulo">Bien o servicio regulado</h4>
-                            <h3>Bien</h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
                             <h4 class="nom-subtitulo">Dependencias</h4>
-                            <h3 class="nom-titulo"> <a href="#/dependencia/XXX">XXX</a> &middot;<ahref="#/XXX">XXX</a></h3>
-                            <h4 class="nom-subtitulo">Comités</h4>
                             <ul class="list-unstyled">
                                 <li>
-                                    <h3><a href="">{{normaActualDetalle.comite}}</a></h3></li>
-                                <!-- <li><h3><a href="">Comite 2</a></h3></li> -->
+                                    <button class="btn btn-nom " data-ng-repeat="elem in normaActual.comite" data-ng-click=" irComite(elem.secretaria,'')">{{::elem.secretaria}}</button>
+                                </li>
                             </ul>
                         </div>
                         <div class="col-sm-8">
@@ -45,6 +32,24 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-sm-4">
+                            <h4 class="nom-subtitulo">Comités</h4>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <button class="btn btn-nom btn-nom-blanco" data-ng-repeat="elem in normaActual.comite " data-ng-click="irComite(elem.secretaria, elem.comite) ">{{::elem.comite}}</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-3">
+                            <h4 class="nom-subtitulo">Rama económica</h4>
+                            <h3>{{::normaActual.rama}}</h3>
+                        </div>
+                        <div class="col-sm-3">
+                            <h4 class="nom-subtitulo">Bien o servicio regulado</h4>
+                            <h3>{{::normaActual.producto}}</h3>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-12">
                             <h4 class="nom-subtitulo">Linea de tiempo</h4>
                             <br/>
@@ -52,7 +57,7 @@
                                 <div id="histograma">
                                     <div class="linea"></div>
                                     <ul class="list-inline">
-                                        <li data-ng-repeat="elem in normaActual">
+                                        <li data-ng-repeat="elem in normaActual.historial">
                                             <div class="etiquta">
                                                 {{elem.etiqueta}}
                                             </div>
@@ -88,7 +93,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr data-ng-repeat="elem in normaActual">
+                                    <tr data-ng-repeat="elem in normaActual.historial">
                                         <td>{{::$index+1}}</td>
                                         <td><span class="{{::'icon-'+seleccionaIcono(elem.etiqueta) }}"></span></td>
                                         <td>{{::seleccionaNombreNOM(elem.etiqueta)}}</td>
