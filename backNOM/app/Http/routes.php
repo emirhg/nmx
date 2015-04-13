@@ -40,6 +40,7 @@ Route::get('noms', function() {
 });
 Route::get('noms/{clave} ', function($clave) {
 
+	$clave = urldecode($clave);
 
 	return json_encode( DB::select(DB::raw("
 		WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),

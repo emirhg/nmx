@@ -13,16 +13,15 @@ update notasnom set clavenomnorm = 'NOM-AA-005-1980' WHERE clavenomnorm='NOM-AA-
 
 update notasnom set clavenomnorm = regexp_replace(clavenomnorm, '[LI](\d{3})','1\1') WHERE EXISTS (select regexp_matches(clavenomnorm,'[LI]\d{3}$'));
 
+update notasnom set clavenom = 'NOM-Z-005-l985', clavenomnorm = 'NOM-Z-005-1985' WHERE clavenomnorm='NOM-Z-005-L985-DIBUJ';
+update notasnom set clavenom = 'NOM-PA-CCAT-023 / 93', clavenomnorm = 'NOM-PA-CCAT-023/93' WHERE clavenomnorm='NOM-PA-CCAT-023';
+update notasnom set clavenom = 'NOM-C-123. 1974', clavenomnorm = 'NOM-C-123-1974' WHERE clavenomnorm='NOM-C-123';
+update notasnom set clavenom = 'NOM-F-365-S-198O', clavenomnorm = 'NOM-F-365-S-1980' WHERE clavenomnorm='NOM-F-365-S-198';
+
 
 
 
 update notasnom set clavenom = 'NOM-024-SCFI-  \f1998', clavenomnorm = 'NOM-024-SCFI-1998' WHERE clavenomnorm='NOM-024-SCFI-';
 update notasnom set clavenom = 'NOM-033-SCFI', clavenomnorm = 'NOM-033-SCFI-1994', etiqueta= 'Cancelación', revisionHumana=true WHERE clavenomnorm='NOM-033-SCF';
-
-
-
-update notasnom set clavenom = 'NOM-243-   SSA1-2010', clavenomnorm = 'NOM-243-SSA1-2010' WHERE clavenomnorm='NOM-243-';
-update notasnom set clavenom = 'NOM-243-   SSA1-2010', clavenomnorm = 'NOM-243-SSA1-2010' WHERE clavenomnorm='NOM-243-';
-update notasnom set clavenom = 'NOM-243-   SSA1-2010', clavenomnorm = 'NOM-243-SSA1-2010' WHERE clavenomnorm='NOM-243-';
-update notasnom set clavenom = 'NOM-243-   SSA1-2010', clavenomnorm = 'NOM-243-SSA1-2010' WHERE clavenomnorm='NOM-243-';
-
+update notasnom set clavenom = 'PROY-NOM-015-CONAGUA-  \f2007', clavenomnorm = 'PROY-NOM-015-CONAGUA-2007' WHERE clavenomnorm='PROY-NOM-015-CONAGUA-';
+update notasnom set clavenom = 'PROY-NOM-131-SSA1-  \f2011', clavenomnorm = 'PROY-NOM-131-SSA1-2011' WHERE clavenomnorm='PROY-NOM-131-SSA1-';

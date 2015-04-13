@@ -26,3 +26,8 @@ BEGIN
   end loop;
   RETURN t;
 END$$ LANGUAGE plpgsql;
+
+
+ WITH claves as (select distinct regexp_replace(clavenomnorm, '(^((NOM|PROY|EM|MOD)-)+)?(.*?)((-?\d{4}|/\d{1,4}))?$', '\4') clave from notasnom WHERE extract (year from fecha)>=1990 order by clave)
+
+ 
