@@ -70,7 +70,7 @@ Route::get('nom/{clave}', function ($clave) {
 	$clave = urldecode($clave);
 
 	$historial = DB::select(DB::raw("SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), urlnota AS url
-FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
+FROM (SELECT * FROM notasnom UNION SELECT fecha, null as cod_nota, null as clavenom, clavenomnorm, null as titulo, etiqueta, urlmir, null as revisionhumana FROM mir) notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
 
 		$ramayProducto = DB::select(DB::raw("
