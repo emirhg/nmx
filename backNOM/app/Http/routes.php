@@ -38,7 +38,7 @@ Route::get('noms', function () {
 
 });
 Route::get('noms/{clave} ', function ($clave) {
-	$clave = urldecode($clave);
+	$clave = rawurldecode($clave);
 
 	return json_encode(DB::select(DB::raw("
 		WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
@@ -47,16 +47,16 @@ Route::get('noms/{clave} ', function ($clave) {
 		SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes where clavenomnorm like :clavenomnorm;
 		"), array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%')));
 
-});
+})->where('clave', '(.*)');
 
 Route::get('nom/{clave}', function ($clave) {
-	$clave = urldecode($clave);
-	return $clave;
+	$clave = rawurldecode($clave);
+
 	return json_encode(DB::select(DB::raw("SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), urlnota AS url
 FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%')));
 
-});
+})->where('clave', '(.*)');
 
 /** Consultas relacionadas a la dependencia **/
 
