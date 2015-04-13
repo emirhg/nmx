@@ -9,7 +9,7 @@
 | It's a breeze. Simply tell Laravel the URIs it should respond to
 | and give it the controller to call when that URI is requested.
 |
-*/
+ */
 
 Route::get('/', 'WelcomeController@index');
 
@@ -18,60 +18,60 @@ Route::get('home', 'HomeController@index');
 Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
-	]);
+]);
 
-Route::get('noms', function() {
+Route::get('noms', function () {
 
-	if(Input::get('tamPagina') && Input::get('pagina') ){
-		return json_encode( DB::select(DB::raw("
+	if (Input::get('tamPagina') && Input::get('pagina')) {
+		return json_encode(DB::select(DB::raw("
 			WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
 			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes;
 			")));
-	}
-	else{
-		return json_encode( DB::select(DB::raw("
+	} else {
+		return json_encode(DB::select(DB::raw("
 			WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
 			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes ;
 			")));
 	}
-	
-});
-Route::get('noms/{clave} ', function($clave) {
 
+
+});
+Route::get('noms/{clave} ', function ($clave) {
 	$clave = urldecode($clave);
 
-	return json_encode( DB::select(DB::raw("
+	return json_encode(DB::select(DB::raw("
 		WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 		notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
 
 		SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes where clavenomnorm like :clavenomnorm;
-		"),array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
-	
+		"), array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%')));
 
-});
+})->where('clave', '(.*)');
 
-Route::get('nom/{clave}', function( $clave){
-	return  json_encode	(DB::select(DB::raw( "SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), urlnota AS url 
-FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"), 
-	array('clavenomnorm'=> '%'. substr( $clave,3,-4).'%') ));
+Route::get('nom/{clave}', function ($clave) {
+	$clave = urldecode($clave);
 
-});
+	return json_encode(DB::select(DB::raw("SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), urlnota AS url
+FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
+		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%')));
+
+})->where('clave', '(.*)');
 
 /** Consultas relacionadas a la dependencia **/
 
-Route::get('dependencia/{dependencia?}', function($dependencia=null) {
-	if ($dependencia == null){
+Route::get('dependencia/{dependencia?}', function ($dependencia = null) {
+	if ($dependencia == null) {
 		$sqlQuery = "SELECT DISTINCT secretaria AS dependencia from comite";
-	}else{
+	} else {
 		$sqlQuery = "WITH detalleDependencia AS (SELECT secretaria AS dependencia, comite, descripcion_comite, reseña_comite from comite WHERE lower(secretaria)=lower('$dependencia')),
 
 		nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 		notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom),
 
 		nomsDetalle AS (SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comites, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes),
-		
+
 		nomsPorComite AS (SELECT UNNEST(string_to_array(comites, '/')) comite, clavenomnorm FROM nomsDetalle),
 
 		nomsDeLaDependencia AS (SELECT * FROM nomsPorComite NATURAL JOIN detalleDependencia)
@@ -84,21 +84,20 @@ Route::get('dependencia/{dependencia?}', function($dependencia=null) {
 
 	}
 	$result = DB::select(DB::raw($sqlQuery));
-	foreach ($result as $row){
-		if (property_exists($row,'normas')){
+	foreach ($result as $row) {
+		if (property_exists($row, 'normas')) {
 			$row->normas = json_decode($row->normas);
 		}
 	}
 	return json_encode($result);
 });
 
+Route::get('producto/{producto?}', function ($producto = null) {
 
-Route::get('producto/{producto?}', function($producto=null) {
-	
-	if ($producto == null){
+	if ($producto == null) {
 		$sqlQuery = 'WITH productos AS (select DISTINCT unnest(producto::text[]) as "producto" from vigencianoms ORDER BY producto)
 		SELECT array_to_json(array_agg(producto)) as producto from productos';
-	}else {
+	} else {
 		$producto = urldecode($producto);
 		$sqlQuery = "WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom),
@@ -108,24 +107,24 @@ Route::get('producto/{producto?}', function($producto=null) {
 	}
 
 	$result = DB::select(DB::raw($sqlQuery));
-	foreach ($result as $row){
-		if (property_exists($row,'producto')){
+	foreach ($result as $row) {
+		if (property_exists($row, 'producto')) {
 			$row->producto = json_decode($row->producto);
 		}
 
-		if (property_exists($row,'rama')){
+		if (property_exists($row, 'rama')) {
 			$row->rama = json_decode($row->rama);
 		}
 	}
-	
-	return json_encode( $result);
+
+	return json_encode($result);
 });
 
-Route::get('rama/{rama?}', function($rama=null) {
-	if ($rama == null){
+Route::get('rama/{rama?}', function ($rama = null) {
+	if ($rama == null) {
 		$sqlQuery = "WITH ramas AS (select DISTINCT unnest(rama::text[]) as rama from vigencianoms ORDER BY rama)
 		SELECT array_to_json(array_agg(rama)) as rama from ramas";
-	}else {
+	} else {
 		$rama = urldecode($rama);
 		$sqlQuery = "WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom),
@@ -134,12 +133,12 @@ Route::get('rama/{rama?}', function($rama=null) {
 	}
 
 	$result = DB::select(DB::raw($sqlQuery));
-	foreach ($result as $row){
-		if (property_exists($row,'producto')){
+	foreach ($result as $row) {
+		if (property_exists($row, 'producto')) {
 			$row->producto = json_decode($row->producto);
 		}
 
-		if (property_exists($row,'rama')){
+		if (property_exists($row, 'rama')) {
 			$row->rama = json_decode($row->rama);
 		}
 	}
