@@ -6,21 +6,19 @@
             <div class="panel panel-default panel-norma">
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <h4 class="nom-subtitulo">Depenedencia</h4>
                             <h2 class="nom-titulo">{{::dependenciaActual.siglas}}</h2>
                         </div>
-                        <div class="col-sm-4">
-                        </div>
-                        <div class="col-sm-4">
-                            <!-- <h4 class="nom-subtitulo">Fecha publicación</h4>
-							<h3>13-02-1990</h3> -->
+                        <div class="col-sm-7">
+                            <h4 class="nom-subtitulo">Nombre completo</h4>
+                            <h3>{{::dependenciaActual.comites[0].nombre_dependencia}}</h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3">
                             <!-- <h4 class="nom-subtitulo">Dependencias</h4>
-							<h3 class="nom-titulo"> <a href="">Sagarpa</a> &middot;<a href="">SECRE</a></h3> -->
+                            <h3 class="nom-titulo"> <a href="">Sagarpa</a> &middot;<a href="">SECRE</a></h3> -->
                             <h4 class="nom-subtitulo">Comités (CCNN)</h4>
                         </div>
                         <div class="col-sm-7">
@@ -67,7 +65,7 @@
                                             <button class="btn btn-nom-blanco" data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.clavenomnorm}}</button>
                                         </td>
                                         <td>{{::elem.titulo}}</td>
-                                        <!-- 		<td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
+                                        <!--        <td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
                                     </tr>
                                 </tbody>
                             </table>
