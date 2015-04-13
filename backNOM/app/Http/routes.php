@@ -102,7 +102,7 @@ Route::get('dependencia/{dependencia?}', function ($dependencia = null) {
 	if ($dependencia == null) {
 		$sqlQuery = "SELECT DISTINCT secretaria AS dependencia from comite";
 	} else {
-		$sqlQuery = "WITH detalleDependencia AS (SELECT secretaria AS dependencia, comite, descripcion_comite, reseña_comite from comite WHERE lower(secretaria)=lower('$dependencia')),
+		$sqlQuery = "WITH detalleDependencia AS (SELECT secretaria AS dependencia, nombre_secretaria as nombre_dependencia, comite, descripcion_comite, reseña_comite from comite WHERE lower(secretaria)=lower('$dependencia')),
 
 		nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 		notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom),
@@ -113,11 +113,11 @@ Route::get('dependencia/{dependencia?}', function ($dependencia = null) {
 
 		nomsDeLaDependencia AS (SELECT * FROM nomsPorComite NATURAL JOIN detalleDependencia)
 
-		SELECT dependencia, comite, descripcion_comite, reseña_comite, '['||string_agg('{\"clavenomnorm\":\"'||clavenomnorm||'\"'
+		SELECT dependencia, nombre_dependencia, comite, descripcion_comite, reseña_comite, '['||string_agg('{\"clavenomnorm\":\"'||clavenomnorm||'\"'
 		|| ',\"fecha\":\"'||fecha||'\"'
 		|| ',\"comite\":\"'||comite||'\"'
 		|| ',\"titulo\":\"'||titulo||'\"'
-		, '},')||'}]' as normas FROM nomsDeLaDependencia Natural JOIN nomsDetalle GROUP BY dependencia, comite, descripcion_comite, reseña_comite";
+		, '},')||'}]' as normas FROM nomsDeLaDependencia Natural JOIN nomsDetalle GROUP BY dependencia, nombre_dependencia, comite, descripcion_comite, reseña_comite";
 
 	}
 	$result = DB::select(DB::raw($sqlQuery));
