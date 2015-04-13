@@ -102,9 +102,10 @@ angular.module('frontendApp')
 
         if ($routeParams.clave) {
             $scope.claveActual = decodeURIComponent($routeParams.clave);
-            datos.getNOM($routeParams.clave).then(function(datos1) {
+            console.log('NOM:  ' + $scope.claveActual);
+            datos.getNOM($scope.claveActual).then(function(datos1) {
                 $scope.normaActual = datos1;
-                datos.getNOMgeneral($routeParams.clave).then(function(datos2) {
+                datos.getNOMgeneral($scope.claveActual).then(function(datos2) {
                     $scope.normaActualDetalle = datos2[0];
                     console.log($scope.normaActualDetalle);
                 });
@@ -119,7 +120,7 @@ angular.module('frontendApp')
                 console.log($scope.seleccionFiltro);
 
                 $scope.listadoNOMsSeleccion = [];
-                datos.getListadoNOMsSeleccion(llave, $routeParams[llave]).then(function(datos) {
+                datos.getListadoNOMsSeleccion(llave, $scope.seleccionFiltro).then(function(datos) {
                     $scope.listadoNOMsSeleccion = datos;
                 });
             }
