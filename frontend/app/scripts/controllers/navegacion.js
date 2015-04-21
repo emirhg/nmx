@@ -29,7 +29,7 @@ angular.module('frontendApp')
             link: '#/metodologia',
             titulo: 'Metodología'
         }, {
-            link: '/',
+            link: '#/contacto',
             titulo: 'Contacto'
         }, ];
     });

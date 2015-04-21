@@ -20,7 +20,6 @@ angular.module('frontendApp')
         datos.getFullDependencias($routeParams.siglas).then(function exito(resultado) {
             $scope.dependenciaActual.comites = resultado;
             $anchorScroll();
-
         }, function error(error) {
             $scope.dependenciaActula = {};
             console.log('Error en getFullDependencias');
