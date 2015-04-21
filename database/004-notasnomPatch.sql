@@ -19,6 +19,12 @@ update notasnom set clavenom = 'NOM-C-123. 1974', clavenomnorm = 'NOM-C-123-1974
 update notasnom set clavenom = 'NOM-F-365-S-198O', clavenomnorm = 'NOM-F-365-S-1980' WHERE clavenomnorm='NOM-F-365-S-198';
 
 
+update vigencianoms set clavenomnorm = regexp_replace(clavenomnorm, '-(\d{2})-TUR', '-0\1-TUR') where clavenomnorm ~ '-\d{2}-TUR';
+UPDATE vigencianoms SET clavenomnorm=regexp_replace(clavenomnorm, '([^\w])(FITO|ZOO|PESC)([^\w])', '\1SAG/\2\3') where clavenomnorm ~ '[^\w(SAG)/](FITO|ZOO|PESC)[^\w]';
+UPDATE notasnom SET clavenomnorm=regexp_replace(clavenomnorm, '([^\w])(FITO|ZOO|PESC)([^\w])', '\1SAG/\2\3') where clavenomnorm ~ '[^\w(SAG)/](FITO|ZOO|PESC)[^\w]';
+update notasnom set clavenomnorm= regexp_replace(clavenomnorm, '-CNA-', '-CONAGUA-') where clavenomnorm like '%-CNA%';
+
+
 
 
 update notasnom set clavenom = 'NOM-024-SCFI-  \f1998', clavenomnorm = 'NOM-024-SCFI-1998' WHERE clavenomnorm='NOM-024-SCFI-';
