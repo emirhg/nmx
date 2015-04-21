@@ -1,0 +1,29 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 style="  font-family: 'Exo 2';">Metodología</h1>
+            <br>
+            <br>
+            <ol>
+                <li>
+                    Descargamos la información diaria del DOF (desde 1910) a través de dos webservices del Diario Oficial de la Federación (DOF), los cuales se complementan e integran toda la información.
+                </li>
+                <li>
+                    Identificamos todas las publicaciones de las Normas Oficiales Mexicanas (NOMs) a través de un clasificador bayesiano de una librería para procesamiento de lenguaje.
+                </li>
+                <li>
+                    Creamos un registro para cada clave de una norma mencionada en el título de la publicación del DOF, estandarizando la información y creando una base de datos con más de 8,100 documentos relacionados directamente a las NOMs.
+                </li>
+                <li>
+                    Realizamos distintas verificaciones para corroborar que todos los documentos de una NOM se hayan incluido en su ficha técnica, incluida una revisión manual de las 740 NOMs vigentes al 31 de marzo de 2015.
+                </li>
+                <li>
+                    Hicimos una API que genera una URL para consultar la publicación original del DOF.
+                </li>
+                <li>
+                    Con base en toda la documentación recopilada, elaboramos este sitio web que expone toda la información de las Normas Oficiales Mexicanas de forma automática y actualizada. Esta labor la llevamos a cabo con un clasificador automático (aprendizaje de máquina) para que la plataforma descargue todos los días el DOF e identifique las publicaciones de NOM de acuerdo a nuestras matrices de información.
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
