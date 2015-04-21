@@ -10,6 +10,7 @@ data/*
 #!data/dof.csv
 !data/knowledgebase.csv
 !data/vigencianoms.csv
+!data/mir.csv
 #tester.sh
 textoPruebas.txt
 backNOM/composer.phar
