@@ -26,13 +26,13 @@ Route::get('noms', function () {
 		return json_encode(DB::select(DB::raw("
 			WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
-			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes;
+			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes WHERE estatus='Vigente';
 			")));
 	} else {
 		return json_encode(DB::select(DB::raw("
 			WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
-			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes ;
+			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes WHERE  estatus='Vigente';
 			")));
 	}
 
@@ -45,7 +45,7 @@ Route::get('noms/{clave} ', function ($clave) {
 		WITH nomReciente AS (SELECT clavenomnorm, max(fecha) AS fecha FROM notasnom  WHERE etiqueta= 'NOM' GROUP BY clavenomnorm),
 		notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
 
-		SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes where clavenomnorm like :clavenomnorm;
+		SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes WHERE clavenomnorm like :clavenomnorm;
 		"), array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
 /*
 
@@ -70,7 +70,7 @@ Route::get('nom/{clave}', function ($clave) {
 	$clave = urldecode($clave);
 
 	$historial = DB::select(DB::raw("SELECT  fecha,cod_nota, clavenomnorm, etiqueta, entity2char(titulo), urlnota AS url
-FROM notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
+FROM (SELECT * FROM notasnom UNION SELECT fecha, null as cod_nota, null as clavenom, clavenomnorm, 'Manifestación de Impacto Regulatorio' as titulo, etiqueta, urlmir, null as revisionhumana FROM mir) notasnom where clavenomnorm like :clavenomnorm ORDER BY fecha ASC;"),
 		array('clavenomnorm' => '%' . substr($clave, 3, -4) . '%'));
 
 		$ramayProducto = DB::select(DB::raw("
@@ -181,4 +181,16 @@ Route::get('rama/{rama?}', function ($rama = null) {
 	}
 
 	return json_encode($result);
+});
+//** Listado de proyectos **//
+
+Route::get('proyecto', function () {
+		$sqlQuery = "WITH nomReciente AS (SELECT clavenomnorm, min(fecha) AS fecha FROM notasnom GROUP BY clavenomnorm),
+			notasNOMRecientes AS (SELECT * from nomreciente NATURAL JOIN notasnom)
+			SELECT fecha,clavenomnorm,trim(both '-' from (regexp_matches(clavenomnorm,'NOM(?:[^a-z0-9])(\d[a-z0-9\/]*[^a-z0-9])?([a-z][a-z0-9\/]*(?:[^a-z0-9](?:[a-z][a-z0-9\/]*[^a-z0-9]?)?)?)?(\d[a-z0-9\/]*[^a-z0-9])?','gi'))[2]) as comite, titulo from vigencianoms NATURAL LEFT JOIN notasnomrecientes WHERE estatus='Proyecto';";
+
+		$result = DB::select(DB::raw($sqlQuery));
+
+		return json_encode($result);
+
 });
