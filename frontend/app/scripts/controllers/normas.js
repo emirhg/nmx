@@ -97,6 +97,36 @@ angular.module('frontendApp')
                 icono: 'cross',
                 nombre: 'Cancelación',
                 categoria: 'cancel'
+            },
+            'MIR Proyecto': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Otros': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Proyecto': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Proyecto Modificación': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Anteproyecto Modificación': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Modificación Acuerdo': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
             }
         };
         $scope.seleccionaIcono = function selec(tipo) {
@@ -109,7 +139,9 @@ angular.module('frontendApp')
 
         };
         $scope.seleccionaNombreNOM = function selec(tipo) {
-            return $scope.equivalencias[tipo].nombre;
+            if (tipo) {
+                return $scope.equivalencias[tipo].nombre;
+            }
 
         };
 
