@@ -49,6 +49,34 @@ angular.module('frontendApp')
 
         };
 
+        var getListadoProyectoNOMS = function(tamVentana, offsetVentana) {
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            if (proyectosNorma.lenght > 0) {
+                console.log('Vigentes');
+                deferred.resolve(proyectosNorma);
+            } else {
+
+                $http({
+                        method: 'GET',
+                        //url: 'scripts/datos/todasNOMsTest.json',
+                        url: baseurl + '/proyecto',
+                    })
+                    .success(function(data) {
+                        proyectosNorma = angular.copy(data);
+                        return deferred.resolve(data);
+                    })
+                    .error(function(data) {
+                        console.log('Error');
+                        console.log(data);
+                        deferred.reject(data);
+                    });
+            }
+            return deferred.promise;
+
+        };
+
         var getListadoNOMsSeleccion = function(llave, seleccion) {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
             var deferred = $q.defer();
@@ -220,7 +248,8 @@ angular.module('frontendApp')
             getProductos: getProductos,
             getRamas: getRamas,
             getFullDependencias: getFullDependencias,
-            getListadoNOMsSeleccion: getListadoNOMsSeleccion
+            getListadoNOMsSeleccion: getListadoNOMsSeleccion,
+            getListadoProyectoNOMS: getListadoProyectoNOMS
         };
 
     });
