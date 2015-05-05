@@ -9,6 +9,27 @@
  */
 angular.module('frontendApp')
     .factory('datos', function($http, $q) {
+
+        /*        console.log("" +
+                    " _____  ____    ____   ______    ___    \n" +
+                    "|_   _||_   \\  /   _|.' ___  | .'   `.  \n" +
+                    "  | |    |   \\/   | / .'   \\_|/  .-.  \\ \n" +
+                    "  | |    | |\\  /| | | |       | |   | | \n" +
+                    " _| |_  _| |_\\/_| |_\\ `.___.'\\\\  `-'  / \n" +
+                    "|_____||_____||_____|`.____ .' `.___.'  \n" +
+                    "                                        \n");*/
+
+        console.log(
+            "                                              \n" +
+            "`7MM  `7MMM.     ,MM   .g8\"\"\"bgd   .g8\"\"8q.   \n" +
+            "  MM    MMMb    dPMM .dP'     `M .dP'    `YM. \n" +
+            "  MM    M YM   ,M MM dM'       ` dM'      `MM \n" +
+            "  MM    M  Mb  M' MM MM          MM        MM \n" +
+            "  MM    M  YM.P'  MM MM.         MM.      ,MP \n" +
+            "  MM    M  `YM'   MM `Mb.        `Mb.    ,P'  \n" +
+            "  MML.  ML. `'    MML. `\"bmmmd'    `\"bHM88\"  \n" +
+            "                                              \n");
+
         // Service logic
         // ...
         var normasVigentes = [];
@@ -54,7 +75,7 @@ angular.module('frontendApp')
             var deferred = $q.defer();
             // Resolve the deferred $q object before returning the promise
             if (proyectosNorma.lenght > 0) {
-                console.log('Vigentes');
+                console.log('Proyectos');
                 deferred.resolve(proyectosNorma);
             } else {
 

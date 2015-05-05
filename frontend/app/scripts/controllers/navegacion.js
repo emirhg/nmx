@@ -20,7 +20,7 @@ angular.module('frontendApp')
             link: '#/glosario',
             titulo: 'Glosario'
         }, {
-            link: '/',
+            link: '#/proyectos_nom',
             titulo: 'Proyectos NOMs'
         }, {
             link: '#/proceso',

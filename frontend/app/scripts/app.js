@@ -29,6 +29,10 @@ angular
                 templateUrl: 'views/normas.html',
                 controller: 'NormasCtrl'
             })
+            .when('/proyectos_nom', {
+                templateUrl: 'views/proyectos.html',
+                controller: 'ProyectosCtrl'
+            })
             .when('/noms/:seleccion', {
                 templateUrl: 'views/normas.html',
                 controller: 'NormasCtrl'

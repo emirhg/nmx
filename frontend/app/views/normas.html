@@ -1,12 +1,13 @@
 <div data-ng-controller="NormasCtrl">
     <!--     <div data-ng-include="'views/_filtro_tabuladores.html'"></div> -->
     <tabset justified="true" type="pills" class="filtro-tabs">
-        <tab data-ng-repeat="elem in listaTabs" heading="{{elem.titulo}}">
+        <tab>
+            <!-- heading="NOMS VIGENTES" -->
             <div class="container-fluid filtros-nom">
                 <div class="container">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h1>{{elem.titulo}}</h1>
+                            <h1>NOMs Vigentes</h1>
                         </div>
                     </div>
                     <div class="row">
@@ -23,8 +24,33 @@
                         <br>
                     </div>
                 </div>
+            </div>
         </tab>
+        <!-- <tab heading="Proyectos de NOM">
+    <div class="container-fluid filtros-nom">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>Proyectos de NOM</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-sm-10">
+                        <input class="form-control" id="filtro-buscar" ng-model="buscar.input" placeholder="Buscar NOMs...">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-default btn-block" type="submit" ng-click=" buscar.go = buscar.input">Buscar</button>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <br>
+            </div>
         </div>
+    </div>
+</tab>
+ -->
     </tabset>
     <div class="container">
         <div class="row">

@@ -1,0 +1,59 @@
+<tabset justified="true" type="pills" class="filtro-tabs">
+    <tab>
+        <div class="container-fluid filtros-nom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h1>Proyectos de NOM</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input class="form-control" id="filtro-buscar" ng-model="buscar.input" placeholder="Buscar NOMs...">
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-default btn-block" type="submit" ng-click=" buscar.go = buscar.input">Buscar</button>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </tab>
+</tabset>
+<div class="container">
+    <div class="col-xs-12">
+        <!-- Lista filtrada por producto o rama -->
+        <div class="row ">
+            <br>
+            <br>
+            <div class="col-sm-12 ">
+                <div data-ng-repeat="elem in proyectos" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clavenomnorm) ">
+                    <div class="panel-body ">
+                        <!-- {{::elem.clavenom}} es como bindonce  -->
+                        <h3>{{elem.clavenomnorm}}</h3>
+                        <p>
+                            {{::elem.titulo}}
+                        </p>
+                        <p>
+                            <ul class="list-inline lista-instituciones ">
+                                <li><span class="normas-icono icon-Icons_Noms_GOB "></span></li>
+                                <li><a href=" ">{{::elem.comite}}</a></li>
+                                <!-- <li><a href=" ">SAGARPA</a></li> -->
+                            </ul>
+                        </p>
+                        <p>
+                            <ul class="list-inline lista-instituciones ">
+                                <li><span class="normas-icono icon-Icons_Noms_CAL "></span></li>
+                                <li>{{::elem.fecha}}</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
