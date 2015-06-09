@@ -97,7 +97,7 @@ Route::get('nom/{clave}', function ($clave) {
 
 Route::get('dependencia/{dependencia?}', function ($dependencia = null) {
 	if ($dependencia == null) {
-		$sqlQuery = "SELECT DISTINCT secretaria AS dependencia from comite ORDER BY secretaria;";
+		$sqlQuery = "SELECT DISTINCT secretaria AS dependencia from comite ORDER BY secretaria, comite;";
 	} else {
 		$sqlQuery = "WITH detalleDependencia AS (SELECT secretaria AS dependencia, nombre_secretaria as nombre_dependencia, comite, descripcion_comite, reseña_comite from comite WHERE lower(secretaria)=lower('$dependencia')),
 
