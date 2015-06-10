@@ -11,14 +11,16 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group">
-                            <div class="col-sm-10">
-                                <input class="form-control" id="filtro-buscar" ng-model="buscar.input" placeholder="Buscar NOMs...">
+                        <form ng-submit="buscar.go = buscar.input">
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input class="form-control" id="filtro-buscar" ng-model="buscar.input" placeholder="Buscar NOMs...">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-default btn-block" type="submit" ng-click=" buscar.go = buscar.input">Buscar</button>
+                                </div>
                             </div>
-                            <div class="col-sm-2">
-                                <button class="btn btn-default btn-block" type="submit" ng-click=" buscar.go = buscar.input">Buscar</button>
-                            </div>
-                        </div>
+                        </form>
                         <br>
                         <br>
                         <br>
@@ -65,7 +67,7 @@
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href ng-model="reverse" ng-init="reverse=true" btn-checkbox>{{ reverse ? 'Ascendente' : 'Deescendente'}}</a>
+                            <a href ng-model="reverse" ng-init="reverse=true" btn-checkbox>{{ reverse ? 'Ascendente' : 'Descendente'}}</a>
                         </li>
                         <li class="divider"></li>
                         <li>
@@ -140,7 +142,7 @@
         </div>
         <div class="row" ng-show="seleccion">
             <div class="col-xs-12">
-                <h1>{{seleccion }} <small>{{seleccionFiltro }}</small> </h1>
+                <h1>{{::seleccion }} <small>{{::seleccionFiltro }}</small> </h1>
             </div>
         </div>
         <br/>
@@ -150,14 +152,15 @@
                 <div data-ng-repeat="elem in listadoNOMsActual | orderBy : orden : reverse | filter: buscar.go" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clavenomnorm) ">
                     <div class="panel-body ">
                         <!-- {{::elem.clavenom}} es como bindonce  -->
-                        <h3>{{elem.clavenomnorm}}</h3>
-                        <p>
-                            {{::elem.titulo}}
+                        <h3>{{::elem.clavenomnorm}}</h3>
+                        <p data-ng-bind-html="elem.titulo | highlight:buscar.go ">
                         </p>
                         <p>
                             <ul class="list-inline lista-instituciones ">
                                 <li><span class="normas-icono icon-Icons_Noms_GOB "></span></li>
-                                <li><a href=" ">{{::elem.comite}}</a></li>
+                                <li>
+                                    <a ng-href=" " data-ng-bind-html="elem.comite | highlight:buscar.go"></a>
+                                </li>
                                 <!-- <li><a href=" ">SAGARPA</a></li> -->
                             </ul>
                         </p>
@@ -174,17 +177,18 @@
         <!-- Lista filtrada por producto o rama -->
         <div ng-show="seleccion" class="row ">
             <div class="col-sm-12 ">
-                <div data-ng-repeat="elem in listadoNOMsSeleccion" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clavenomnorm) ">
+                <div data-ng-repeat="elem in listadoNOMsSeleccion | orderBy : orden : reverse | filter: buscar.go" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clavenomnorm) ">
                     <div class="panel-body ">
                         <!-- {{::elem.clavenom}} es como bindonce  -->
-                        <h3>{{elem.clavenomnorm}}</h3>
-                        <p>
-                            {{::elem.titulo}}
+                        <h3>{{::elem.clavenomnorm}}</h3>
+                        <p data-ng-bind-html="elem.titulo | highlight:buscar.go ">
                         </p>
                         <p>
                             <ul class="list-inline lista-instituciones ">
                                 <li><span class="normas-icono icon-Icons_Noms_GOB "></span></li>
-                                <li><a href=" ">{{::elem.comite}}</a></li>
+                                <li>
+                                    <a href=" " data-ng-bind-html="elem.comite | highlight:buscar.go "></a>
+                                </li>
                                 <!-- <li><a href=" ">SAGARPA</a></li> -->
                             </ul>
                         </p>
