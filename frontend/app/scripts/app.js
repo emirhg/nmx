@@ -17,7 +17,8 @@ angular
         'ngSanitize',
         'ngTouch',
         'ui.bootstrap',
-        'ui.select'
+        'ui.select',
+        'angular-loading-bar'
     ])
     .config(function($routeProvider, uiSelectConfig) {
         $routeProvider
