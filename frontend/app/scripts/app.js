@@ -18,7 +18,8 @@ angular
         'ngTouch',
         'ui.bootstrap',
         'ui.select',
-        'angular-loading-bar'
+        'angular-loading-bar',
+        'imco'
     ])
     .config(function($routeProvider, uiSelectConfig) {
         $routeProvider

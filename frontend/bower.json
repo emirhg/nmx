@@ -13,7 +13,8 @@
     "angular-bootstrap": "~0.12.0",
     "angular-ui-select": "~0.11.2",
     "select2": "~3.4.5",
-    "angular-loading-bar": "~0.7.1"
+    "angular-loading-bar": "~0.7.1",
+    "angular-utils-imco": "hugomosh/angular-utils-imco"
   },
   "devDependencies": {
     "angular-mocks": "^1.3.0"
