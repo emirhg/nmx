@@ -18,7 +18,13 @@ angular.module('frontendApp')
             siglas: $routeParams.siglas,
         };
         datos.getFullDependencias($routeParams.siglas).then(function exito(resultado) {
+            var totalNOMs = 0;
+            for (var i = 0; i < resultado.length; i++) {
+                totalNOMs += resultado[i].normas.length;
+            };
+            $scope.dependenciaActual.totalNOMs = totalNOMs;
             $scope.dependenciaActual.comites = resultado;
+
             $anchorScroll();
         }, function error(error) {
             $scope.dependenciaActula = {};
