@@ -38,8 +38,8 @@ angular.module('frontendApp')
         var proyectosNorma = [];
         var NOMsConsultadas = {};
 
-        //var baseurl = 'http://backend.noms';
-        var baseurl = 'http://nomsapi.dev.imco.org.mx';
+        //var baseurl = 'http://nomsapi.dev.imco.org.mx';
+        var baseurl = 'http://apiv3.dev.imco.org.mx/catalogonoms';
 
 
         var getListadoNOMS = function(tamVentana, offsetVentana) {
