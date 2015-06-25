@@ -18,7 +18,9 @@ angular
         'ngTouch',
         'ui.bootstrap',
         'ui.select',
-        'angular-loading-bar'
+        'angular-loading-bar',
+        'imco',
+        'ngDonutsD3'
     ])
     .config(function($routeProvider, uiSelectConfig) {
         $routeProvider
@@ -60,6 +62,10 @@ angular
             })
             .when('/nom/:clave', {
                 templateUrl: 'views/norma.html',
+                controller: 'NormasCtrl'
+            })
+            .when('/test', {
+                templateUrl: 'views/test.html',
                 controller: 'NormasCtrl'
             })
             .otherwise({
