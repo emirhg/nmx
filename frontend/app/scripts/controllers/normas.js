@@ -9,7 +9,7 @@
  */
 angular.module('frontendApp')
     .controller('NormasCtrl', function($scope, $location, datos, $routeParams, $anchorScroll) {
-        console.log($routeParams);
+        //console.log($routeParams);
         $scope.listaTabs = [{
                 titulo: 'NOMs Vigentes',
                 clave: 'vigente'
@@ -26,7 +26,7 @@ angular.module('frontendApp')
 
 
         $scope.irComite = function irComite(comite, hash) {
-            console.log('Ir a comite: ' + comite);
+            //console.log('Ir a comite: ' + comite);
             $location.path('/dependencia/' + comite);
             $location.hash(hash);
             $anchorScroll();
@@ -36,13 +36,13 @@ angular.module('frontendApp')
 
         datos.getDependencias().then(function exito(resultado) {
             $scope.dependencias = resultado;
-        }, function error(argument) {
+        }, function error(errorData) {
             $scope.dependencias = [];
-            console.log('Error en getDependencias');
+            console.log('Error en getDependencias' + errorData);
         });
 
         $scope.accederNorma = function accederNorma(claveNOM) {
-            console.log('accederNorma' + claveNOM);
+            //console.log('accederNorma' + claveNOM);
             $location.path('/nom/' + encodeURIComponent(claveNOM));
         };
 
@@ -50,11 +50,12 @@ angular.module('frontendApp')
         $scope.reiniciarFiltros = function reiniciarFiltros() {
             $scope.buscar = {};
             $scope.orden = '';
-        }
+        };
         $scope.listadoNOMsActual = [];
         datos.getListadoNOMS().then(function(datos) {
             $scope.listadoNOMsActual = datos;
         });
+
         $scope.normaActual = {};
 
         $scope.equivalencias = {
@@ -108,7 +109,7 @@ angular.module('frontendApp')
                 nombre: 'MIR',
                 categoria: 'mir'
             },
-            'MIR Proyecto': {
+            'MIR Anteproyecto': {
                 icono: 'briefcase',
                 nombre: 'MIR',
                 categoria: 'mir'
@@ -149,22 +150,24 @@ angular.module('frontendApp')
 
         if ($routeParams.clave) {
             $scope.claveActual = decodeURIComponent($routeParams.clave);
-            console.log('NOM:  ' + $scope.claveActual);
+            //console.log('NOM:  ' + $scope.claveActual);
             datos.getNOM($scope.claveActual).then(function(datos1) {
-                $scope.normaActual = angular.fromJson(datos1);;
+                $scope.normaActual = angular.fromJson(datos1);
                 datos.getNOMgeneral($scope.claveActual).then(function(datos2) {
                     $scope.normaActualDetalle = datos2[0];
-                    console.log($scope.normaActualDetalle);
+                    //console.log($scope.normaActualDetalle);
                 });
             });
         } else {
-            for (var llave in $routeParams) break;
-            console.log(llave);
+            for (var llave in $routeParams) { //TODO - no me acuerdo que hace esto - creo que obtiene el key
+                break;
+            }
+
 
             if (llave) {
                 $scope.seleccion = llave;
                 $scope.seleccionFiltro = decodeURIComponent($routeParams[llave]);
-                console.log($scope.seleccionFiltro);
+                //console.log($scope.seleccionFiltro);
 
                 $scope.listadoNOMsSeleccion = [];
                 datos.getListadoNOMsSeleccion(llave, $scope.seleccionFiltro).then(function(datos) {

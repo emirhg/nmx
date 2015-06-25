@@ -9,36 +9,35 @@
  */
 angular.module('frontendApp')
     .factory('datos', ['$http', '$q', 'utils', function($http, $q, utils) {
-        utils.imprimeIMCO("#0A809D");
+        utils.imprimeIMCO('#0A809D');
         // Service logic
         // ...
         var normasVigentes = [];
-        var listadoNOMs = [];
-        var normasCanceladas = [];
+        //var listadoNOMs = [];
+        //var normasCanceladas = [];
         var proyectosNorma = [];
-        var NOMsConsultadas = {};
+        //var NOMsConsultadas = {};
 
         //var baseurl = 'http://nomsapi.dev.imco.org.mx';
         var baseurl = 'http://apiv3.dev.imco.org.mx/catalogonoms';
 
 
-        var getListadoNOMS = function(tamVentana, offsetVentana) {
+        var getListadoNOMS = function() {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
             var deferred = $q.defer();
             // Resolve the deferred $q object before returning the promise
-            if (normasVigentes.lenght > 0) {
-                console.log('Vigentes');
+            if (normasVigentes.length > 0) {
+                //console.log('Vigentes');
                 deferred.resolve(normasVigentes);
             } else {
-
                 $http({
                         method: 'GET',
-                        //url: 'scripts/datos/todasNOMsTest.json',
                         url: baseurl + '/noms',
                     })
                     .success(function(data) {
+                        //console.log('GET Vigentes');
                         normasVigentes = angular.copy(data);
-                        return deferred.resolve(data);
+                        return deferred.resolve(normasVigentes);
                     })
                     .error(function(data) {
                         console.log('Error');
@@ -47,15 +46,14 @@ angular.module('frontendApp')
                     });
             }
             return deferred.promise;
-
         };
 
-        var getListadoProyectoNOMS = function(tamVentana, offsetVentana) {
+        var getListadoProyectoNOMS = function() {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
             var deferred = $q.defer();
             // Resolve the deferred $q object before returning the promise
-            if (proyectosNorma.lenght > 0) {
-                console.log('Proyectos');
+            if (proyectosNorma.length > 0) {
+                //console.log('Proyectos');
                 deferred.resolve(proyectosNorma);
             } else {
 
@@ -65,8 +63,9 @@ angular.module('frontendApp')
                         url: baseurl + '/proyecto',
                     })
                     .success(function(data) {
+                        //console.log('GET Proyectos');
                         proyectosNorma = angular.copy(data);
-                        return deferred.resolve(data);
+                        return deferred.resolve(proyectosNorma);
                     })
                     .error(function(data) {
                         console.log('Error');
@@ -82,14 +81,12 @@ angular.module('frontendApp')
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
             var deferred = $q.defer();
             // Resolve the deferred $q object before returning the promise
-
             $http({
                     method: 'GET',
-                    //url: 'scripts/datos/todasNOMsTest.json',
                     url: baseurl + '/' + llave + '/' + seleccion,
                 })
                 .success(function(data) {
-                    normasVigentes = angular.copy(data);
+                    //normasVigentes = angular.copy(data);
                     deferred.resolve(data);
                 })
                 .error(function(data) {
@@ -100,9 +97,11 @@ angular.module('frontendApp')
 
             return deferred.promise;
 
-        };
+        }; //TODO
+
+
         var getNOM = function(claveNOM) {
-            console.log('NOM:' + claveNOM);
+            //console.log('NOM:' + claveNOM);
 
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
             var deferred = $q.defer();
@@ -123,7 +122,7 @@ angular.module('frontendApp')
 
         };
         var getNOMgeneral = function(claveNOM) {
-            console.log('NOM:' + claveNOM);
+            //console.log('NOM:' + claveNOM);
 
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
             var deferred = $q.defer();
@@ -145,7 +144,7 @@ angular.module('frontendApp')
         };
         var dependencias = [];
         var getDependencias = function getDependencias() {
-            console.log('getDependencias..');
+            //console.log('getDependencias..');
             var deferred = $q.defer();
 
             $http({
@@ -153,7 +152,6 @@ angular.module('frontendApp')
                 url: baseurl + '/dependencia',
             }).success(function(data) {
                 dependencias = angular.fromJson(data);
-                console.log(dependencias);
                 if (dependencias.lenght !== 0) {
                     deferred.resolve(dependencias);
                 } else {
@@ -169,14 +167,13 @@ angular.module('frontendApp')
         };
         var fullDependencias = {};
         var getFullDependencias = function getDependencias(dependencia) {
-            console.log('getDependencias..');
+            //console.log('getDependencias..');
             var deferred = $q.defer();
             $http({
                 method: 'GET',
                 url: baseurl + '/dependencia/' + encodeURIComponent(dependencia),
             }).success(function(data) {
                 fullDependencias[dependencia] = angular.fromJson(data);
-                console.log(fullDependencias[dependencia]);
                 if (dependencias.lenght !== 0) {
                     deferred.resolve(fullDependencias[dependencia]);
                 } else {
@@ -192,7 +189,7 @@ angular.module('frontendApp')
 
         var productos = [];
         var getProductos = function getProductos() {
-            console.log('getProductos..');
+            //console.log('getProductos..');
             var deferred = $q.defer();
 
             $http({
@@ -200,7 +197,7 @@ angular.module('frontendApp')
                 url: baseurl + '/producto',
             }).success(function(data) {
                 productos = angular.fromJson(data[0].producto);
-                console.log(productos);
+                //console.log(productos);
                 if (productos.lenght !== 0) {
                     deferred.resolve(productos);
                 } else {
@@ -217,7 +214,7 @@ angular.module('frontendApp')
 
         var ramas = [];
         var getRamas = function getRamas() {
-            console.log('getRamas..');
+            //console.log('getRamas..');
             var deferred = $q.defer();
 
             $http({
@@ -225,7 +222,7 @@ angular.module('frontendApp')
                 url: baseurl + '/rama',
             }).success(function(data) {
                 ramas = angular.fromJson(data[0].rama);
-                console.log(ramas);
+                //console.log(ramas);
                 if (ramas.lenght !== 0) {
                     deferred.resolve(ramas);
                 } else {

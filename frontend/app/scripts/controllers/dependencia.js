@@ -21,14 +21,14 @@ angular.module('frontendApp')
             var totalNOMs = 0;
             for (var i = 0; i < resultado.length; i++) {
                 totalNOMs += resultado[i].normas.length;
-            };
+            }
             $scope.dependenciaActual.totalNOMs = totalNOMs;
             $scope.dependenciaActual.comites = resultado;
 
             $anchorScroll();
-        }, function error(error) {
+        }, function error(dataError) {
             $scope.dependenciaActula = {};
-            console.log('Error en getFullDependencias');
+            console.log('Error en getFullDependencias' + dataError);
         });
 
         $scope.irComite = function irComite(comite) {
@@ -38,5 +38,5 @@ angular.module('frontendApp')
             $anchorScroll();
             //reset to old to keep any additional routing logic from kicking in
             $location.hash(old);
-        }
+        };
     });

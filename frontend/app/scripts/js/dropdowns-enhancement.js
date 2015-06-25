@@ -3,7 +3,7 @@
  * http://behigh.github.io/bootstrap_dropdowns_enhancement/
  * ========================================================================
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
+ * ======================================================================== 
 
 (function($) {
     "use strict";
@@ -264,4 +264,4 @@
         })
         .on('change' + namespace, '.dropdown-menu > li > input[type="checkbox"], .dropdown-menu > li > input[type="radio"]', proto.change)
         .on('keydown' + namespace, toggle + ', [role="menu"], [role="listbox"]', proto.keydown)
-}(jQuery));
+}(jQuery)); */
