@@ -91,7 +91,7 @@ angular.module('frontendApp')
             },
             'Modificación': {
                 icono: 'quill',
-                nombre: 'Modicación',
+                nombre: 'Modificación',
                 categoria: 'mod'
             },
             'Cancelación': {
