@@ -26,7 +26,7 @@
                         </div>
                         <div class="col-sm-8">
                             <h4 class="nom-subtitulo">Título</h4>
-                            <p>
+                            <p class="text-justify">
                                 {{normaActualDetalle.titulo}}
                             </p>
                         </div>
@@ -104,7 +104,7 @@
                                         <td><span class="{{::'icon-'+seleccionaIcono(elem.etiqueta) }}"></span></td>
                                         <td>{{::seleccionaNombreNOM(elem.etiqueta)}}</td>
                                         <td>{{::elem.fecha}}</td>
-                                        <td>{{::elem.entity2char}}</td>
+                                        <td class="text-justify">{{::elem.entity2char}}</td>
                                         <!--        <td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
                                         <td><a data-ng-href="{{elem.url}}" target="_blank">Link a DOF</a></td>
                                     </tr>

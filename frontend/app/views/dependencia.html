@@ -63,17 +63,17 @@
                                             <th>#</th>
                                             <th class="col-xs-1">Fecha</th>
                                             <th class="col-xs-3">Clave</th>
-                                            <th>Título</th>
+                                            <th class="col-xs-8">Título</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr data-ng-repeat="elem in comite.normas">
                                             <td>{{::$index+1}}</td>
-                                            <td>{{::elem.fecha}}</td>
-                                            <td>
+                                            <td class="col-xs-1">{{::elem.fecha}}</td>
+                                            <td class="col-xs-3">
                                                 <button class="btn btn-nom-blanco" data-ng-click="accederNorma(elem.clavenomnorm)">{{::elem.clavenomnorm}}</button>
                                             </td>
-                                            <td>{{::elem.titulo}}</td>
+                                            <td class="col-xs-8 text-justify">{{::elem.titulo}}</td>
                                             <!--        <td><a data-ng-href="{{'http://diariooficial.gob.mx/nota_detalle.php?codigo='+ elem.cod_nota+ '&fecha='+ elem.fecha.replace(guionRex,'/')}}">Link a DOF</a></td> -->
                                         </tr>
                                     </tbody>
