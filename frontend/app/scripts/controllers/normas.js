@@ -37,8 +37,8 @@ angular.module('frontendApp')
         };
         $scope.facebook = function() {
             facebookM.capiton = 'Todo sobre la norma: ' + $scope.claveActual + ', en';
-            facebook.link = $location.absUrl();
-            facebook.redirect_uri = $location.absUrl();
+            facebookM.link = $location.absUrl();
+            facebookM.redirect_uri = $location.absUrl();
             socialShareImco.facebook(facebookM);
         };
 
