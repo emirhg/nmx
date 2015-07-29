@@ -14,6 +14,17 @@
                             <h4 class="nom-subtitulo">Fecha publicación</h4>
                             <h3>{{normaActualDetalle.fecha}}</h3>
                         </div>
+                        <div class="col-sm-2 col-sm-offset-2">
+                            <h4 class="nom-subtitulo">Compartir</h4>
+                            <ul class="list-inline">
+                                <li style="cursor:pointer">
+                                    <div class="aux  aux-nav facebook" tooltip-placement="bottom" tooltip="¡Comparte NOM en Facebook!"><span class="icon-facebook"></span></div>
+                                </li>
+                                <li style="cursor:pointer" data-ng-click="share('twitter', claveActual)">
+                                    <div class="aux aux-nav twitter" tooltip-placement="bottom" tooltip="¡Comparte NOM en Twitter!"><span class="icon-twitter"></span></div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
