@@ -25,8 +25,11 @@ angular.module('frontendApp')
         ];
 
         var facebookM = {
-            capiton: "Todo sobre la norma"
-        }
+            capiton: 'Todo sobre la norma',
+
+
+        };
+
         var tweetM = {};
         $scope.tweet = function() {
             tweetM.text = 'Todo sobre la norma: ' + $scope.claveActual + ', en';
@@ -34,6 +37,8 @@ angular.module('frontendApp')
         };
         $scope.facebook = function() {
             facebookM.capiton = 'Todo sobre la norma: ' + $scope.claveActual + ', en';
+            facebook.link = $location.absUrl();
+            facebook.redirect_uri = $location.absUrl();
             socialShareImco.facebook(facebookM);
         };
 

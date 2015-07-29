@@ -42,6 +42,8 @@ angular.module('frontendApp')
         };
         $scope.facebook = function() {
             facebookM.capiton = 'Todas las NOMs de: ' + $scope.dependenciaActual.comites[0].nombre_dependencia + ', en';
+            facebook.link = $location.absUrl();
+            facebook.redirect_uri = $location.absUrl();
             socialShareImco.facebook(facebookM);
         };
 
