@@ -8,7 +8,7 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-    .controller('DependenciaCtrl', function($scope, $location, $routeParams, datos, $anchorScroll) {
+    .controller('DependenciaCtrl', function($scope, $location, $routeParams, datos, $anchorScroll, socialShareImco) {
 
         $scope.accederNorma = function accederNorma(claveNOM) {
             console.log('accederNorma' + claveNOM);
@@ -30,6 +30,20 @@ angular.module('frontendApp')
             $scope.dependenciaActula = {};
             console.log('Error en getFullDependencias' + dataError);
         });
+
+
+        var facebookM = {
+            capiton: "Todo sobre la norma"
+        }
+        var tweetM = {};
+        $scope.tweet = function() {
+            tweetM.text = 'Todas las NOMs de: ' + $scope.dependenciaActual.comites[0].nombre_dependencia + ', en';
+            socialShareImco.tweet(tweetM);
+        };
+        $scope.facebook = function() {
+            facebookM.capiton = 'Todas las NOMs de: ' + $scope.dependenciaActual.comites[0].nombre_dependencia + ', en';
+            socialShareImco.facebook(facebookM);
+        };
 
         $scope.irComite = function irComite(comite) {
             console.log('Ir a comite: ' + comite);

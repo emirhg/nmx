@@ -8,7 +8,7 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-    .controller('NormasCtrl', function($scope, $location, datos, $routeParams, $anchorScroll) {
+    .controller('NormasCtrl', function($scope, $location, datos, $routeParams, $anchorScroll, socialShareImco) {
         //console.log($routeParams);
         $scope.listaTabs = [{
                 titulo: 'NOMs Vigentes',
@@ -23,6 +23,19 @@ angular.module('frontendApp')
             }
             */
         ];
+
+        var facebookM = {
+            capiton: "Todo sobre la norma"
+        }
+        var tweetM = {};
+        $scope.tweet = function() {
+            tweetM.text = 'Todo sobre la norma: ' + $scope.claveActual + ', en';
+            socialShareImco.tweet(tweetM);
+        };
+        $scope.facebook = function() {
+            facebookM.capiton = 'Todo sobre la norma: ' + $scope.claveActual + ', en';
+            socialShareImco.facebook(facebookM);
+        };
 
 
         $scope.irComite = function irComite(comite, hash) {

@@ -8,7 +8,7 @@
  * Service in the frontendApp.
  */
 angular.module('frontendApp')
-    .factory('datos', ['$http', '$q', 'utils', function($http, $q, utils) {
+    .factory('datos', ['$http', '$q', 'utils', function($http, $q, utils, socialShareImco) {
         utils.imprimeIMCO('#0A809D');
         // Service logic
         // ...
