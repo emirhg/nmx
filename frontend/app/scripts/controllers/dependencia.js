@@ -31,7 +31,6 @@ angular.module('frontendApp')
             console.log('Error en getFullDependencias' + dataError);
         });
 
-
         var facebookM = {
             capiton: "Todo sobre la norma"
         }
