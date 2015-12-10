@@ -39,7 +39,7 @@ angular.module('frontendApp')
                     .success(function(data) {
                         //console.log('GET Vigentes');
                         nmxVigentes = angular.copy(data);
-                        // $localStorage.nmxVigentes = nmxVigentes;
+                        $localStorage.nmxVigentes = nmxVigentes.splice(0, 2000);
                         return deferred.resolve(nmxVigentes);
                     })
                     .error(function(data) {
@@ -50,6 +50,30 @@ angular.module('frontendApp')
             }
             return deferred.promise;
         };
+
+        var getNMX = function(clave) {
+            //console.log('NOM:' + claveNOM);
+
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            $http({
+                    method: 'GET',
+                    url: baseurl + '/nmx/detalle/' + clave,
+                })
+                .success(function(data) {
+                    return deferred.resolve(data);
+                })
+                .error(function(data) {
+                    console.log('Error');
+                    console.log(data);
+                    deferred.reject(data);
+                });
+            return deferred.promise;
+
+        };
+
+
 
         var getListadoNOMS = function() {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
@@ -279,6 +303,7 @@ angular.module('frontendApp')
             getListadoProyectoNOMS: getListadoProyectoNOMS,
             //NMX
             getListadoNMX: getListadoNMX,
+            getNMX: getNMX,
         };
 
     }]);

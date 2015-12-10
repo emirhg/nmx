@@ -61,7 +61,7 @@
             <br>
         </div>
         <div class="row">
-            <div class="col-sm-6 col-sm-offset-0">
+            <!--  <div class="col-sm-6 col-sm-offset-0">
                 <div class="btn-group btn-block" dropdown is-open="filtros.ordenar.isopen">
                     <button type="button" class="btn btn-nom  btn-block dropdown-toggle" dropdown-toggle>
                         Ordenar por <span class="caret"></span>
@@ -88,7 +88,7 @@
                 <button type="button" class="btn btn-nom  btn-block " ng-click="reiniciarFiltros()">
                     Reiniciar
                 </button>
-            </div>
+            </div> -->
             <!--  <div class="col-sm-3">
                 <div class="btn-group btn-block" dropdown is-open="filtros.secretaria.isopen">
                     <button type="button" class="btn btn-nom  btn-block dropdown-toggle" dropdown-toggle ng-disabled="disabled">
@@ -141,6 +141,15 @@
                 </div>
             </div> -->
         </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <p>Se muestran: {{slider.value}}. <small> Seleccionar un valor más grande disminuye la velocidad de carga.</small></p>
+                <div>
+                    <rzslider rz-slider-model="slider.value" rz-slider-options="slider.options"></rzslider>
+                </div>
+            </div>
+        </div>
         <div class="row" ng-show="seleccion">
             <div class="col-xs-12">
                 <h1>{{::seleccion }} <small>{{::seleccionFiltro }}</small> </h1>
@@ -150,7 +159,7 @@
         <br/>
         <div ng-hide="seleccion" class="row ">
             <div class="col-sm-12 ">
-                <div data-ng-repeat="elem in listadoNMXsActual | orderBy : orden : reverse | filter: buscar.go | limitTo:10" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clave) ">
+                <div data-ng-repeat="elem in listadoNMXsActual | orderBy : orden : reverse | filter: buscar.go | limitTo:resultados" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clave) ">
                     <div class="panel-body ">
                         <!-- {{::elem.clavenom}} es como bindonce  -->
                         <h3>{{::elem.clave}}</h3>

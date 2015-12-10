@@ -16,6 +16,7 @@ angular
         'ngRoute',
         'ngSanitize',
         'ngStorage',
+        'rzModule',
         'ngTouch',
         'ui.bootstrap',
         'ui.select',
@@ -35,6 +36,10 @@ angular
             })
             .when('/nmx', {
                 templateUrl: 'views/normas_mexicanas.html',
+                controller: 'NormasmexicanasCtrl'
+            })
+            .when('/nmx/:clave', {
+                templateUrl: 'views/norma_mexicana.html',
                 controller: 'NormasmexicanasCtrl'
             })
             .when('/proyectos_nom', {
