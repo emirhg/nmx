@@ -14,17 +14,14 @@ angular.module('frontendApp')
             titulo: 'Inicio',
             activo: true
         }, {
-            link: '#/noms',
-            titulo: 'NOMs'
+            link: '#/nmx',
+            titulo: 'NMXs'
         }, {
             link: '#/glosario',
             titulo: 'Glosario'
         }, {
-            link: '#/proyectos_nom',
-            titulo: 'Proyectos NOMs'
-        }, {
             link: '#/proceso',
-            titulo: '¿Cómo se hacen las NOMs?'
+            titulo: '¿Cómo se hacen las NMXs?'
         }, {
             link: '#/metodologia',
             titulo: 'Metodología'

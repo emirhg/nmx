@@ -15,6 +15,7 @@ angular
         'ngResource',
         'ngRoute',
         'ngSanitize',
+        'ngStorage',
         'ngTouch',
         'ui.bootstrap',
         'ui.select',
@@ -31,6 +32,10 @@ angular
             .when('/noms', {
                 templateUrl: 'views/normas.html',
                 controller: 'NormasCtrl'
+            })
+            .when('/nmx', {
+                templateUrl: 'views/normas_mexicanas.html',
+                controller: 'NormasmexicanasCtrl'
             })
             .when('/proyectos_nom', {
                 templateUrl: 'views/proyectos.html',

@@ -8,7 +8,7 @@
  * Service in the frontendApp.
  */
 angular.module('frontendApp')
-    .factory('datos', ['$http', '$q', 'utils', function($http, $q, utils, socialShareImco) {
+    .factory('datos', ['$http', '$q', 'utils', '$localStorage', function($http, $q, utils, $localStorage) {
         utils.imprimeIMCO('#0A809D');
         // Service logic
         // ...
@@ -21,6 +21,35 @@ angular.module('frontendApp')
         //var baseurl = 'http://nomsapi.dev.imco.org.mx';
         var baseurl = 'http://apiv3.dev.imco.org.mx/catalogonoms';
 
+        //NMX
+        var nmxVigentes = $localStorage.nmxVigentes ||  [];
+
+        var getListadoNMX = function() {
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            if (nmxVigentes.length > 0) {
+                //console.log('Vigentes');
+                deferred.resolve(nmxVigentes);
+            } else {
+                $http({
+                        method: 'GET',
+                        url: baseurl + '/nmx/vigentes',
+                    })
+                    .success(function(data) {
+                        //console.log('GET Vigentes');
+                        nmxVigentes = angular.copy(data);
+                        // $localStorage.nmxVigentes = nmxVigentes;
+                        return deferred.resolve(nmxVigentes);
+                    })
+                    .error(function(data) {
+                        console.log('Error');
+                        console.log(data);
+                        deferred.reject(data);
+                    });
+            }
+            return deferred.promise;
+        };
 
         var getListadoNOMS = function() {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
@@ -247,7 +276,9 @@ angular.module('frontendApp')
             getRamas: getRamas,
             getFullDependencias: getFullDependencias,
             getListadoNOMsSeleccion: getListadoNOMsSeleccion,
-            getListadoProyectoNOMS: getListadoProyectoNOMS
+            getListadoProyectoNOMS: getListadoProyectoNOMS,
+            //NMX
+            getListadoNMX: getListadoNMX,
         };
 
     }]);
