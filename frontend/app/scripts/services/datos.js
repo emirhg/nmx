@@ -39,7 +39,7 @@ angular.module('frontendApp')
                     .success(function(data) {
                         //console.log('GET Vigentes');
                         nmxVigentes = angular.copy(data);
-                        $localStorage.nmxVigentes = nmxVigentes.splice(0, 2000);
+                        //$localStorage.nmxVigentes = nmxVigentes;
                         return deferred.resolve(nmxVigentes);
                     })
                     .error(function(data) {
@@ -120,6 +120,54 @@ angular.module('frontendApp')
                 });
             return deferred.promise;
 
+        };
+        var getFullKeyWord = function(keyword) {
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            $http({
+                    method: 'GET',
+                    url: baseurl + '/nmx/vigentes/bykeyword/' + keyword,
+                })
+                .success(function(data) {
+                    return deferred.resolve(data);
+                })
+                .error(function(data) {
+                    console.log('Error');
+                    console.log(data);
+                    deferred.reject(data);
+                });
+            return deferred.promise;
+
+        };
+
+        var keywords = $localStorage.keywords ||  [];
+        var getKeywords = function() {
+            //console.log('NOM:' + claveNOM);
+
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            if (keywords.length > 0) {
+                //console.log('Vigentes');
+                deferred.resolve(keywords);
+            } else {
+                $http({
+                        method: 'GET',
+                        url: baseurl + '/nmx/keywords',
+                    })
+                    .success(function(data) {
+                        //console.log('GET Vigentes');
+                        keywords = angular.copy(data);
+                        $localStorage.keywords = keywords;
+                        return deferred.resolve(keywords);
+                    })
+                    .error(function(data) {
+                        console.log('Error');
+                        console.log(data);
+                        deferred.reject(data);
+                    });
+            }
+            return deferred.promise;
         };
 
 
@@ -354,6 +402,8 @@ angular.module('frontendApp')
             getNMX: getNMX,
             getCTNN: getCTNN,
             getFullCTNN: getFullCTNN,
+            getKeywords: getKeywords,
+            getFullKeyWord: getFullKeyWord,
         };
 
     }]);

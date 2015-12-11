@@ -12,20 +12,7 @@ angular.module('frontendApp')
         $scope.listadoNMXsActual = [];
         $scope.buscar = {};
         $scope.resultados = 150;
-        datos.getListadoNMX().then(function(result) {
-            console.warn(result);
-            $scope.listadoNMXsActual = result;
-            $scope.slider = {
-                value: 150,
-                options: {
-                    floor: 0,
-                    ceil: result.length
-                },
-                onEnd: function() {
-                    $scope.resultados = $scope.slider.value;
-                }
-            };
-        });
+
         datos.getCTNN().then(function(result) {
             $scope.ctnns = result;
         })
@@ -37,7 +24,42 @@ angular.module('frontendApp')
                 console.log('NOM:  ', datos1);
 
             });
+        } else if ($routeParams.keyword) {
+            $scope.keyword = decodeURIComponent($routeParams.keyword);
+            datos.getFullKeyWord($scope.keyword).then(function(datos) {
+                $scope.listadoNMXsActual = datos;
+                $scope.resultados = datos.length;
+                $scope.slider = {
+                    value: datos.length,
+                    options: {
+                        floor: 0,
+                        ceil: datos.length
+                    },
+                    onEnd: function() {
+                        $scope.resultados = $scope.slider.value;
+                    }
+                };
+
+
+            });
+        } else {
+            datos.getListadoNMX().then(function(result) {
+                console.warn(result);
+                $scope.listadoNMXsActual = result;
+                $scope.slider = {
+                    value: 150,
+                    options: {
+                        floor: 0,
+                        ceil: result.length
+                    },
+                    onEnd: function() {
+                        $scope.resultados = $scope.slider.value;
+                    }
+                };
+            });
         }
+
+
 
         $scope.accederNorma = function accederNorma(claveNOM) {
             //console.log('accederNorma' + claveNOM);

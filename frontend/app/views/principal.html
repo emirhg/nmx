@@ -3,7 +3,7 @@
         <br>
         <div class="row">
             <div class="col-xs-12">
-                <h1>NOMs POR CTNN</h1>
+                <h1>NMXs POR CTNN</h1>
             </div>
             <div class="col-xs-9">
                 <ui-select ng-model="seleccion.ctnn" theme="select2" style="min-width: 300px; width:100%;">
@@ -16,6 +16,23 @@
             </div>
             <div class="col-xs-2">
                 <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaCTNN(seleccion.ctnn)">BUSCAR</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>NMXs POR PALABRA CLAVE</h1>
+            </div>
+            <div class="col-xs-9">
+                <ui-select ng-model="seleccion.keyword" theme="select2" style="min-width: 300px; width:100%;">
+                    <ui-select-match placeholder="Palabras">{{$select.selected.keyword}}</ui-select-match>
+                    <ui-select-choices repeat="elem in keywords  | filter: $select.search">
+                        <div ng-bind-html="elem.keyword | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+                <!--  <button data-ng-repeat="elem in cttns " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.ctnn}}</button> -->
+            </div>
+            <div class="col-xs-2">
+                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaKeyWord(seleccion.keyword)">BUSCAR</button>
             </div>
         </div>
         <br>

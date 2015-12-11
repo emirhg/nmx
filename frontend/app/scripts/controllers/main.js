@@ -22,10 +22,21 @@ angular.module('frontendApp')
             $scope.cttns = [];
             console.log('Error en getDependencias' + errorData);
         });
+        datos.getKeywords().then(function exito(resultado) {
+            $scope.keywords = resultado;
+            console.log('keywords', resultado);
+        }, function error(errorData) {
+            $scope.keywords = [];
+            console.log('Error en getDependencias' + errorData);
+        });
         $scope.seleccion = {};
         $scope.vistaCTNN = function vistaDependencia(ctnn) {
             //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
             $location.path('/ctnn/' + ctnn.ctnn_slug);
+        };
+        $scope.vistaKeyWord = function vistaDependencia(keyword) {
+            //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
+            $location.path('/busqueda/' + keyword.keyword);
         };
 
         /*     datos.getDependencias().then(function exito(resultado) {
