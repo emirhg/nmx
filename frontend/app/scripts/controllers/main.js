@@ -22,6 +22,15 @@ angular.module('frontendApp')
             $scope.cttns = [];
             console.log('Error en getDependencias' + errorData);
         });
+        datos.getOrganismo().then(function exito(resultado) {
+            $scope.onns = resultado;
+            console.log('onn', resultado);
+        }, function error(errorData) {
+            console.log('onn', errorData);
+
+            $scope.onns = [];
+            console.log('Error en getDependencias' + errorData);
+        });
         datos.getKeywords().then(function exito(resultado) {
             $scope.keywords = resultado;
             console.log('keywords', resultado);

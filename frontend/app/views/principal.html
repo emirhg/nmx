@@ -6,16 +6,16 @@
                 <h1>NMXs POR ORGANISMOS</h1>
             </div>
             <div class="col-xs-9">
-                <ui-select ng-model="seleccion.organismo" theme="select2" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="Oraganismo">{{$select.selected.organismo}}</ui-select-match>
-                    <ui-select-choices repeat="elem in organismos  | filter: $select.search">
-                        <div ng-bind-html="elem.organismo | highlight: $select.search"></div>
+                <ui-select ng-model="seleccion.onn" theme="select2" style="min-width: 300px; width:100%;">
+                    <ui-select-match placeholder="Oraganismo">{{$select.selected.onn}}</ui-select-match>
+                    <ui-select-choices repeat="elem in onns  | filter: $select.search">
+                        <div ng-bind-html="elem.onn | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
                 <!--  <button data-ng-repeat="elem in cttns " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.ctnn}}</button> -->
             </div>
             <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaOrganismo(seleccion.organismo)">BUSCAR</button>
+                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaOrganismo(seleccion.onn)">BUSCAR</button>
             </div>
         </div>
         <div class="row">

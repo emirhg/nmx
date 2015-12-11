@@ -65,6 +65,14 @@ angular.module('frontendApp')
             //console.log('accederNorma' + claveNOM);
             $location.path('/nmx/' + encodeURIComponent(claveNOM));
         };
+        $scope.irONN = function(clave) {
+            //console.log('accederNorma' + claveNOM);
+            $location.path('/onn/' + encodeURIComponent(clave));
+        };
+        $scope.irCTNN = function(clave) {
+            //console.log('accederNorma' + claveNOM);
+            $location.path('/ctnn/' + encodeURIComponent(clave));
+        };
 
         var facebookM = {
             capiton: 'Todo sobre la norma',

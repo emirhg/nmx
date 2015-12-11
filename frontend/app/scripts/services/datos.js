@@ -157,7 +157,7 @@ angular.module('frontendApp')
             // Resolve the deferred $q object before returning the promise
             $http({
                     method: 'GET',
-                    url: baseurl + '/nmx/vigentes/byctnn/' + slug_ctnn,
+                    url: baseurl + '/nmx/vigentes/byonn/' + slug_ctnn,
                 })
                 .success(function(data) {
                     return deferred.resolve(data);

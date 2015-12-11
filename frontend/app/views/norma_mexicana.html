@@ -36,10 +36,20 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
+                            <h4 class="nom-subtitulo">Organismo</h4>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <button class="btn btn-nom btn-nom-blanco" data-ng-click="irONN(normaActual.onn_slug) ">{{::normaActual.onn}}</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
                             <h4 class="nom-subtitulo">CTNN</h4>
                             <ul class="list-unstyled">
                                 <li>
-                                    <button class="btn btn-nom btn-nom-blanco" data-ng-click="irComite(normaActual.ctnn) ">{{::normaActual.ctnn}}</button>
+                                    <button class="btn btn-nom btn-nom-blanco" data-ng-click="irCTNN(normaActual.ctnn_slug) ">{{::normaActual.ctnn}}</button>
                                 </li>
                             </ul>
                         </div>
@@ -117,6 +127,9 @@
                     </div>
                 </div>
             </div>
+            <br>
+            <br>
+            <br>
         </div>
     </div>
 </div>

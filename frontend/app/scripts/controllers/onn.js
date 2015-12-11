@@ -10,10 +10,9 @@
 angular.module('frontendApp')
     .controller('OnnCtrl', function($scope, datos, $location, $routeParams, socialShareImco) {
 
-        datos.getFullOrganismo($routeParams.ctnn_slug).then(function exito(resultado) {
+        datos.getFullOrganismo($routeParams.onn_slug).then(function exito(resultado) {
             console.debug($routeParams.onn_slug, resultado);
             $scope.onnActual = resultado;
-
         }, function error(dataError) {
             $scope.onnActual = {};
             console.log('Error en getFullDependencias' + dataError);

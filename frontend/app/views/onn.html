@@ -7,12 +7,12 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-8">
-                            <h4 class="nom-subtitulo">CTNN</h4>
-                            <h2 class="nom-titulo">{{::ctnnActual[0].ctnn}}</h2>
+                            <h4 class="nom-subtitulo">ONN</h4>
+                            <h2 class="nom-titulo">{{::onnActual[0].onn}}</h2>
                         </div>
                         <div class=" col-sm-2">
                             <h4 class="nom-subtitulo">Total Normas</h4>
-                            <h2 class="text-center">{{::ctnnActual.length}}</h2>
+                            <h2 class="text-center">{{::onnActual.length}}</h2>
                         </div>
                         <div class="col-sm-2 ">
                             <h4 class="nom-subtitulo">Compartir</h4>
@@ -59,7 +59,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr data-ng-repeat="elem in ctnnActual">
+                                        <tr data-ng-repeat="elem in onnActual">
                                             <td>{{::$index+1}}</td>
                                             <td class="col-xs-1">{{::elem.fecha_publicacion}}</td>
                                             <td class="col-xs-3">
