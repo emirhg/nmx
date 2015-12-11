@@ -1,16 +1,29 @@
 <div class="container-fluid filtros-nom" style="height:110%; min-height:110vh; ">
     <div class="container">
+        <br>
         <div class="row">
             <div class="col-xs-12">
-                <br>
-                <h1>NOMs POR DEPENDENCIA</h1>
-                <button data-ng-repeat="elem in dependencias " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.dependencia}}</button>
-                <br>
-                <br>
-                <br>
+                <h1>NOMs POR CTNN</h1>
+            </div>
+            <div class="col-xs-9">
+                <ui-select ng-model="seleccion.ctnn" theme="select2" style="min-width: 300px; width:100%;">
+                    <ui-select-match placeholder="CTNNs">{{$select.selected.ctnn}}</ui-select-match>
+                    <ui-select-choices repeat="elem in cttns  | filter: $select.search">
+                        <div ng-bind-html="elem.ctnn | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+                <!--  <button data-ng-repeat="elem in cttns " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.ctnn}}</button> -->
+            </div>
+            <div class="col-xs-2">
+                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaDependencia(seleccion.ctnn)">BUSCAR</button>
             </div>
         </div>
-        <div class="row">
+        <p>{{$select.selected.ctnn}}</p>
+        <p>{{seleccion}}</p>
+        <br>
+        <br>
+        <br>
+        <!--<div class="row">
             <div class="col-xs-12">
                 <h1>NOMs POR TIPO DE BIEN O SERVICIO</h1>
             </div>
@@ -50,12 +63,12 @@
                 <button class="btn btn-sm btn-nom-blanco " data-ng-click="filtraRama('rama')">BUSCAR</button>
             </div>
             <label class="col-sm-4  " style="color:  #19516A">{{seleccion.rama || 'Ejemplo: agricultura, pesca, hospitales...'}}</label>
-        </div>
+        </div> -->
         <div class="row">
             <div class="col-xs-12">
                 <br>
                 <h1>NOMs VIGENTES</h1>
-                <a class="btn btn-nom btn-huge" href="#/noms">Ver todas </a>
+                <a class="btn btn-nom btn-huge" href="#/nmx">Ver todas </a>
                 <br>
                 <br>
                 <br>

@@ -73,6 +73,35 @@ angular.module('frontendApp')
 
         };
 
+        var ctnns = $localStorage.ctnns ||  [];
+        var getCTNN = function() {
+            //console.log('NOM:' + claveNOM);
+
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            if (ctnns.length > 0) {
+                //console.log('Vigentes');
+                deferred.resolve(ctnns);
+            } else {
+                $http({
+                        method: 'GET',
+                        url: baseurl + '/nmx/ctnn',
+                    })
+                    .success(function(data) {
+                        //console.log('GET Vigentes');
+                        ctnns = angular.copy(data);
+                        $localStorage.ctnns = ctnns;
+                        return deferred.resolve(ctnns);
+                    })
+                    .error(function(data) {
+                        console.log('Error');
+                        console.log(data);
+                        deferred.reject(data);
+                    });
+            }
+            return deferred.promise;
+        };
+
 
 
         var getListadoNOMS = function() {
@@ -304,6 +333,7 @@ angular.module('frontendApp')
             //NMX
             getListadoNMX: getListadoNMX,
             getNMX: getNMX,
+            getCTNN: getCTNN,
         };
 
     }]);

@@ -26,6 +26,9 @@ angular.module('frontendApp')
                 }
             };
         });
+        datos.getCTNN().then(function(result) {
+            $scope.ctnns = result;
+        })
 
         if ($routeParams.clave) {
             $scope.claveActual = decodeURIComponent($routeParams.clave);

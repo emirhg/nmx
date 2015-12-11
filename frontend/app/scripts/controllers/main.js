@@ -15,45 +15,58 @@ angular.module('frontendApp')
             $scope.country.selected = undefined;
         };
 
-
-        datos.getDependencias().then(function exito(resultado) {
-            $scope.dependencias = resultado;
+        datos.getCTNN().then(function exito(resultado) {
+            $scope.cttns = resultado;
+            console.log('ctnn', resultado);
         }, function error(errorData) {
-            $scope.dependencias = [];
+            $scope.cttns = [];
             console.log('Error en getDependencias' + errorData);
         });
-
-        datos.getProductos().then(function exito(resultado) {
-            $scope.productos = resultado;
-        }, function error(errorData) {
-            $scope.productos = [];
-            console.log('Error en getProductos' + errorData);
-        });
-
-        datos.getRamas().then(function exito(resultado) {
-            $scope.ramas = resultado;
-        }, function error(errorData) {
-            $scope.ramas = [];
-            console.log('Error en getRamas' + errorData);
-        });
-
-        $scope.vistaDependencia = function vistaDependencia(index, dependencia) {
+        $scope.seleccion = {};
+        $scope.vistaDependencia = function vistaDependencia(index, ctnn) {
             //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
-            $location.path('/dependencia/' + dependencia);
-        };
-        $scope.seleccion = {
-            rama: '',
-            producto: ''
+            $location.path('/ctnn/' + ctnn.ctnn_slug);
         };
 
-        $scope.filtraRama = function filtraRama(cualSeleccion) {
-            //console.log('Ir a seleccion: ' + cualSeleccion + ' ' + $scope.seleccion[cualSeleccion]);
-            if ($scope.seleccion[cualSeleccion]) {
-                //console.log('Ir a seleccion: ' + cualSeleccion + ' ' + $scope.seleccion[cualSeleccion]);
-                var search = {};
-                search[cualSeleccion] = encodeURIComponent($scope.seleccion[cualSeleccion]);
-                $location.path('/noms').search(search);
-            }
+        /*     datos.getDependencias().then(function exito(resultado) {
+                 $scope.dependencias = resultado;
+             }, function error(errorData) {
+                 $scope.dependencias = [];
+                 console.log('Error en getDependencias' + errorData);
+             });
 
-        };
+             datos.getProductos().then(function exito(resultado) {
+                 $scope.productos = resultado;
+             }, function error(errorData) {
+                 $scope.productos = [];
+                 console.log('Error en getProductos' + errorData);
+             });
+
+             datos.getRamas().then(function exito(resultado) {
+                 $scope.ramas = resultado;
+             }, function error(errorData) {
+                 $scope.ramas = [];
+                 console.log('Error en getRamas' + errorData);
+             });
+
+             $scope.vistaDependencia = function vistaDependencia(index, dependencia) {
+                 //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
+                 $location.path('/dependencia/' + dependencia);
+             };
+             $scope.seleccion = {
+                 rama: '',
+                 producto: ''
+             };
+
+             $scope.filtraRama = function filtraRama(cualSeleccion) {
+                 //console.log('Ir a seleccion: ' + cualSeleccion + ' ' + $scope.seleccion[cualSeleccion]);
+                 if ($scope.seleccion[cualSeleccion]) {
+                     //console.log('Ir a seleccion: ' + cualSeleccion + ' ' + $scope.seleccion[cualSeleccion]);
+                     var search = {};
+                     search[cualSeleccion] = encodeURIComponent($scope.seleccion[cualSeleccion]);
+                     $location.path('/noms').search(search);
+                 }
+
+             };
+             */
     });
