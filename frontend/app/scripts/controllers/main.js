@@ -34,6 +34,10 @@ angular.module('frontendApp')
             //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
             $location.path('/ctnn/' + ctnn.ctnn_slug);
         };
+        $scope.vistaOrganismo = function vistaDependencia(onn) {
+            //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
+            $location.path('/onn/' + onn.onn_slug);
+        };
         $scope.vistaKeyWord = function vistaDependencia(keyword) {
             //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
             $location.path('/busqueda/' + keyword.keyword);

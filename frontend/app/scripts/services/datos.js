@@ -121,6 +121,55 @@ angular.module('frontendApp')
             return deferred.promise;
 
         };
+
+        var onn = $localStorage.onn ||  [];
+        var getOrganismo = function() {
+            //console.log('NOM:' + claveNOM);
+
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            if (onn.length > 0) {
+                //console.log('Vigentes');
+                deferred.resolve(onn);
+            } else {
+                $http({
+                        method: 'GET',
+                        url: baseurl + '/nmx/onn',
+                    })
+                    .success(function(data) {
+                        //console.log('GET Vigentes');
+                        onn = angular.copy(data);
+                        $localStorage.onn = onn;
+                        return deferred.resolve(onn);
+                    })
+                    .error(function(data) {
+                        console.log('Error');
+                        console.log(data);
+                        deferred.reject(data);
+                    });
+            }
+            return deferred.promise;
+        };
+
+        var getFullOrganismo = function(slug_ctnn) {
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            $http({
+                    method: 'GET',
+                    url: baseurl + '/nmx/vigentes/byctnn/' + slug_ctnn,
+                })
+                .success(function(data) {
+                    return deferred.resolve(data);
+                })
+                .error(function(data) {
+                    console.log('Error');
+                    console.log(data);
+                    deferred.reject(data);
+                });
+            return deferred.promise;
+
+        };
         var getFullKeyWord = function(keyword) {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
             var deferred = $q.defer();
@@ -404,6 +453,8 @@ angular.module('frontendApp')
             getFullCTNN: getFullCTNN,
             getKeywords: getKeywords,
             getFullKeyWord: getFullKeyWord,
+            getOrganismo: getOrganismo,
+            getFullOrganismo: getFullOrganismo,
         };
 
     }]);

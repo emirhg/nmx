@@ -45,6 +45,9 @@ angular
             .when('/ctnn/:ctnn_slug', {
                 templateUrl: 'views/ctnn.html',
                 controller: 'CtnnCtrl'
+            }).when('/onn/:onn_slug', {
+                templateUrl: 'views/onn.html',
+                controller: 'OnnCtrl'
             })
             .when('/nmx/:clave', {
                 templateUrl: 'views/norma_mexicana.html',
