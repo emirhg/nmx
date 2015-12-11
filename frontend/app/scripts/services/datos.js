@@ -102,6 +102,25 @@ angular.module('frontendApp')
             return deferred.promise;
         };
 
+        var getFullCTNN = function(slug_ctnn) {
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            $http({
+                    method: 'GET',
+                    url: baseurl + '/nmx/vigentes/byctnn/' + slug_ctnn,
+                })
+                .success(function(data) {
+                    return deferred.resolve(data);
+                })
+                .error(function(data) {
+                    console.log('Error');
+                    console.log(data);
+                    deferred.reject(data);
+                });
+            return deferred.promise;
+
+        };
 
 
         var getListadoNOMS = function() {
@@ -334,6 +353,7 @@ angular.module('frontendApp')
             getListadoNMX: getListadoNMX,
             getNMX: getNMX,
             getCTNN: getCTNN,
+            getFullCTNN: getFullCTNN,
         };
 
     }]);

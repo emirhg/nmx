@@ -39,8 +39,8 @@ angular
                 controller: 'NormasmexicanasCtrl'
             })
             .when('/ctnn/:ctnn_slug', {
-                templateUrl: 'views/dependencia.html',
-                controller: 'DependenciaCtrl'
+                templateUrl: 'views/ctnn.html',
+                controller: 'CtnnCtrl'
             })
             .when('/nmx/:clave', {
                 templateUrl: 'views/norma_mexicana.html',

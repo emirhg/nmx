@@ -8,7 +8,7 @@
  * Controller of the frontendApp
  */
 angular.module('frontendApp')
-    .controller('NormasmexicanasCtrl', function($scope, $location, datos, $routeParams) {
+    .controller('NormasmexicanasCtrl', function($scope, $location, datos, $routeParams, socialShareImco) {
         $scope.listadoNMXsActual = [];
         $scope.buscar = {};
         $scope.resultados = 150;
@@ -43,5 +43,24 @@ angular.module('frontendApp')
             //console.log('accederNorma' + claveNOM);
             $location.path('/nmx/' + encodeURIComponent(claveNOM));
         };
+
+        var facebookM = {
+            capiton: 'Todo sobre la norma',
+
+
+        };
+
+        var tweetM = {};
+        $scope.tweet = function() {
+            tweetM.text = 'Todo sobre la norma: ' + $scope.claveActual + ', en';
+            socialShareImco.tweet(tweetM);
+        };
+        $scope.facebook = function() {
+            facebookM.capiton = 'Todo sobre la norma: ' + $scope.claveActual + ', en';
+            facebookM.link = $location.absUrl();
+            facebookM.redirect_uri = $location.absUrl();
+            socialShareImco.facebook(facebookM);
+        };
+
 
     });

@@ -23,7 +23,7 @@ angular.module('frontendApp')
             console.log('Error en getDependencias' + errorData);
         });
         $scope.seleccion = {};
-        $scope.vistaDependencia = function vistaDependencia(index, ctnn) {
+        $scope.vistaCTNN = function vistaDependencia(ctnn) {
             //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
             $location.path('/ctnn/' + ctnn.ctnn_slug);
         };

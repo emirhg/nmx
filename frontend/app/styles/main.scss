@@ -9,8 +9,8 @@ Times,
 serif;
 $color-fondo: #EDEEF0;
 $color-principal: #EF833B;
-$color-principal: #286985;
 $color-principal: #0A809D;
+$color-principal: #286985;
 // bower:scss
 @import 'bootstrap-sass-official/assets/stylesheets/_bootstrap.scss';
 // endbower
@@ -31,14 +31,18 @@ body {
     overflow-x: hidden;
     background-color: $color-fondo;
 }
+
+
 /* Responsive: Portrait tablets and up */
 
 @media screen and (min-width: 768px) {}
+
+
 /* CSS used here will be applied after bootstrap.css */
 
 .dropdown-menu {
-    min-width:auto;
-    width:100%;
+    min-width: auto;
+    width: 100%;
 }
 
 .highlighted {

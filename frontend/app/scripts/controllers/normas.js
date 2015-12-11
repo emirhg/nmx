@@ -167,16 +167,17 @@ angular.module('frontendApp')
         $scope.guionRex = /-/g;
 
         if ($routeParams.clave) {
-            $scope.claveActual = decodeURIComponent($routeParams.clave);
-            //console.log('NOM:  ' + $scope.claveActual);
-            datos.getNOM($scope.claveActual).then(function(datos1) {
-                $scope.normaActual = angular.fromJson(datos1);
-                datos.getNOMgeneral($scope.claveActual).then(function(datos2) {
-                    $scope.normaActualDetalle = datos2[0];
-                    //console.log($scope.normaActualDetalle);
-                });
-            });
-        } else {
+    $scope.claveActual = decodeURIComponent($routeParams.clave);
+    //console.log('NOM:  ' + $scope.claveActual);
+    datos.getNOM($scope.claveActual).then(function(datos1) {
+        $scope.normaActual = angular.fromJson(datos1);
+        datos.getNOMgeneral($scope.claveActual).then(function(datos2) {
+            $scope.normaActualDetalle = datos2[0];
+            //console.log($scope.normaActualDetalle);
+        });
+    });
+}
+else {
             for (var llave in $routeParams) { //TODO - no me acuerdo que hace esto - creo que obtiene el key
                 break;
             }
