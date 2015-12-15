@@ -16,6 +16,32 @@ angular.module('frontendApp')
         datos.getCTNN().then(function(result) {
             $scope.ctnns = result;
         })
+        $scope.res = {
+            min: 1980,
+            max: 2020
+        };
+        $scope.slider2 = {
+            min: 1980,
+            max: 2020,
+            options: {
+                floor: 1950,
+                ceil: 2020,
+                step: 10,
+                draggableRange: true,
+                showTicksValues: true
+            },
+            onEnd: function() {
+                $scope.res = {
+                    min: $scope.slider.min,
+                    max: $scope.slider.max
+                };
+            }
+        };
+
+        $scope.reiniciarFiltros = function reiniciarFiltros() {
+            $scope.buscar = {};
+            $scope.orden = '';
+        };
 
         if ($routeParams.clave) {
             $scope.claveActual = decodeURIComponent($routeParams.clave);
@@ -90,6 +116,105 @@ angular.module('frontendApp')
             facebookM.link = $location.absUrl();
             facebookM.redirect_uri = $location.absUrl();
             socialShareImco.facebook(facebookM);
+        };
+
+
+        $scope.equivalencias = {
+            'NULL': {
+                icono: 'cog',
+                nombre: 'Sin categorizar',
+                categoria: 'nulo'
+            },
+            'Proyecto Modificación': {
+                icono: 'lab',
+                nombre: 'Proyecto de modificación',
+                categoria: 'proymod'
+            },
+            'Proyecto NOM': {
+                icono: 'bulb',
+                nombre: 'Proyecto de norma',
+                categoria: 'proymnom'
+            },
+            'Otros Documentos': {
+                icono: 'attachment',
+                nombre: 'Otros',
+                categoria: 'otros'
+            },
+            'NOM': {
+                icono: 'note',
+                nombre: 'Publicación de Norma',
+                categoria: 'nom'
+            },
+            'Vigencia': {
+                icono: 'note',
+                nombre: 'Declaratoria de vigencia',
+                categoria: 'mod'
+            },
+            'Fe de erratas': {
+                icono: 'zoom',
+                nombre: 'Fe de erratas',
+                categoria: 'erratas'
+            },
+            'Respuestas a Comentarios': {
+                icono: 'bullhorn',
+                nombre: 'Respuestas a comentarios',
+                categoria: 'resp'
+            },
+            'Modificación': {
+                icono: 'quill',
+                nombre: 'Modificación',
+                categoria: 'mod'
+            },
+            'Cancelación': {
+                icono: 'cross',
+                nombre: 'Cancelación',
+                categoria: 'cancel'
+            },
+            'MIR Proyecto': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Otros': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Anteproyecto': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Proyecto Modificación': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Anteproyecto Modificación': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'MIR Modificación Acuerdo': {
+                icono: 'briefcase',
+                nombre: 'MIR',
+                categoria: 'mir'
+            }
+        };
+        $scope.seleccionaIcono = function selec(tipo) {
+            return $scope.equivalencias[tipo].icono;
+
+
+        };
+        $scope.seleccionaCategoriaNOM = function selec(tipo) {
+            return $scope.equivalencias[tipo].categoria;
+
+        };
+        $scope.seleccionaNombreNOM = function selec(tipo) {
+            if (tipo) {
+                return $scope.equivalencias[tipo].nombre;
+            }
+
         };
 
 
