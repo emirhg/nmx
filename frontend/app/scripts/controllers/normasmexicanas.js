@@ -15,11 +15,13 @@ angular.module('frontendApp')
 
         datos.getCTNN().then(function(result) {
             $scope.ctnns = result;
-        })
+        });
+
         $scope.res = {
             min: 1980,
             max: 2020
         };
+
         $scope.slider2 = {
             min: 1980,
             max: 2020,
@@ -47,8 +49,7 @@ angular.module('frontendApp')
             $scope.claveActual = decodeURIComponent($routeParams.clave);
             datos.getNMX($scope.claveActual).then(function(datos1) {
                 $scope.normaActual = datos1;
-                console.log('NOM:  ', datos1);
-
+                console.log('NOM:', datos1);
             });
         } else if ($routeParams.keyword) {
             $scope.listadoNMXsActual = [];
@@ -69,16 +70,6 @@ angular.module('frontendApp')
             datos.getListadoNMX().then(function(result) {
                 console.warn(result);
                 $scope.listadoNMXsActual = result;
-                $scope.slider = {
-                    value: 150,
-                    options: {
-                        floor: 0,
-                        ceil: result.length
-                    },
-                    onEnd: function() {
-                        $scope.resultados = $scope.slider.value;
-                    }
-                };
             });
         }
 
@@ -98,9 +89,7 @@ angular.module('frontendApp')
         };
 
         var facebookM = {
-            capiton: 'Todo sobre la norma',
-
-
+            capiton: 'Todo sobre la norma'
         };
 
         var tweetM = {};

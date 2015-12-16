@@ -459,7 +459,7 @@ angular.module('frontendApp')
             return deferred.promise;
         };
 
-        var ramas = [];
+        var ramasEc = [];
         var getRamasEc = function getRamas() {
             //console.log('getRamas..');
             var deferred = $q.defer();
@@ -491,12 +491,11 @@ angular.module('frontendApp')
             getNOMgeneral: getNOMgeneral,
             getDependencias: getDependencias,
             getProductos: getProductos,
-            getFullRama,
+            getFullRama: getFullRama,
             getRamas: getRamas,
             getFullDependencias: getFullDependencias,
             getListadoNOMsSeleccion: getListadoNOMsSeleccion,
             getListadoProyectoNOMS: getListadoProyectoNOMS,
-
             //NMX
             getListadoNMX: getListadoNMX,
             getNMX: getNMX,
@@ -506,6 +505,7 @@ angular.module('frontendApp')
             getFullKeyWord: getFullKeyWord,
             getOrganismo: getOrganismo,
             getFullOrganismo: getFullOrganismo,
+            getRamasEc: getRamasEc
         };
 
     }]);

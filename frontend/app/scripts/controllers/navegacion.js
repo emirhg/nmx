@@ -28,5 +28,5 @@ angular.module('frontendApp')
         }, {
             link: '#/contacto',
             titulo: 'Contacto'
-        }, ];
+        }];
     });

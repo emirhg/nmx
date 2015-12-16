@@ -24,8 +24,9 @@ angular.module('frontendApp')
         };
 
         var facebookM = {
-            capiton: "Todo sobre la norma"
-        }
+            capiton: 'Todo sobre la norma'
+        };
+
         var tweetM = {};
         $scope.tweet = function() {
             tweetM.text = 'Todas las NMXs de: ' + $scope.onnActual[0].onn + ', en';

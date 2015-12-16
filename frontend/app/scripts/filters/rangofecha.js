@@ -17,8 +17,7 @@ angular.module('frontendApp')
                 if (range.min <= año && año <= range.max) {
                     out.push(input[i]);
                 }
-
-            };
+            }
             return out;
         };
     });

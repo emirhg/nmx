@@ -11,18 +11,12 @@ angular.module('frontendApp')
     .controller('NormasCtrl', function($scope, $location, datos, $routeParams, $anchorScroll, socialShareImco) {
         //console.log($routeParams);
         $scope.listaTabs = [{
-                titulo: 'NOMs Vigentes',
-                clave: 'vigente'
-            }, {
-                titulo: 'Proyectos de NOM',
-                clave: 'proyecto'
-            },
-            /*{
-                titulo: 'NOMs Canceladas',
-                clave: 'cancelada'
-            }
-            */
-        ];
+            titulo: 'NOMs Vigentes',
+            clave: 'vigente'
+        }, {
+            titulo: 'Proyectos de NOM',
+            clave: 'proyecto'
+        }];
 
         var facebookM = {
             capiton: 'Todo sobre la norma',
@@ -167,17 +161,16 @@ angular.module('frontendApp')
         $scope.guionRex = /-/g;
 
         if ($routeParams.clave) {
-    $scope.claveActual = decodeURIComponent($routeParams.clave);
-    //console.log('NOM:  ' + $scope.claveActual);
-    datos.getNOM($scope.claveActual).then(function(datos1) {
-        $scope.normaActual = angular.fromJson(datos1);
-        datos.getNOMgeneral($scope.claveActual).then(function(datos2) {
-            $scope.normaActualDetalle = datos2[0];
-            //console.log($scope.normaActualDetalle);
-        });
-    });
-}
-else {
+            $scope.claveActual = decodeURIComponent($routeParams.clave);
+            //console.log('NOM:  ' + $scope.claveActual);
+            datos.getNOM($scope.claveActual).then(function(datos1) {
+                $scope.normaActual = angular.fromJson(datos1);
+                datos.getNOMgeneral($scope.claveActual).then(function(datos2) {
+                    $scope.normaActualDetalle = datos2[0];
+                    //console.log($scope.normaActualDetalle);
+                });
+            });
+        } else {
             for (var llave in $routeParams) { //TODO - no me acuerdo que hace esto - creo que obtiene el key
                 break;
             }
