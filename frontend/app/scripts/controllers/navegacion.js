@@ -22,8 +22,5 @@ angular.module('frontendApp')
         }, {
             link: '#/glosario',
             titulo: 'Otras Normas'
-        }, {
-            link: '#/contacto',
-            titulo: 'Contacto'
         }];
     });
