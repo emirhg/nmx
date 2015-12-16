@@ -16,17 +16,5 @@ angular.module('frontendApp')
         }, {
             link: '#/nmx',
             titulo: 'NMXs'
-        }, {
-            link: '#/glosario',
-            titulo: 'Glosario'
-        }, {
-            link: '#/proceso',
-            titulo: '¿Cómo se hacen las NMXs?'
-        }, {
-            link: '#/metodologia',
-            titulo: 'Metodología'
-        }, {
-            link: '#/contacto',
-            titulo: 'Contacto'
         }];
     });

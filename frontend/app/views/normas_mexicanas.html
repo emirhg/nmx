@@ -163,10 +163,10 @@
         <br/>
         <div ng-hide="seleccion" class="row ">
             <div class="col-sm-12 ">
-                <div data-ng-repeat="elem in listadoNMXsActual | orderBy : orden : reverse | filter: buscar.go | rangoFecha: res | limitTo:resultados" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clave) ">
+                <div data-ng-repeat="elem in listadoNMXsActual | orderBy : orden : reverse | filter: buscar.go | rangoFecha: { min:slider2.min, max:slider2.max  }  " class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clave) ">
                     <div class="panel-body ">
                         <!-- {{::elem.clavenom}} es como bindonce  -->
-                        <h3>{{::elem.clave}}</h3>
+                        <h3>{{elem.clave}}</h3>
                         <p class="text-justify" data-ng-bind-html="elem.titulo | highlight:buscar.go ">
                         </p>
                         <p>
@@ -187,41 +187,12 @@
                         <p>
                             <ul class="list-inline lista-instituciones ">
                                 <li><span class="normas-icono icon-Icons_Noms_CAL "></span></li>
-                                <li>{{::elem.fecha_publicacion}}</li>
+                                <li>{{elem.fecha_publicacion}}</li>
                             </ul>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Lista filtrada por producto o rama -->
-        <div ng-show="seleccion" class="row ">
-            <div class="col-sm-12 ">
-                <div data-ng-repeat="elem in listadoNOMsSeleccion | orderBy : orden : reverse | filter: buscar.go" class="panel panel-default panel-norma panel-norma-home " data-ng-click="accederNorma(elem.clave) ">
-                    <div class="panel-body ">
-                        <!-- {{::elem.clavenom}} es como bindonce  -->
-                        <h3>{{::elem.clave}}</h3>
-                        <p class="text-justify" data-ng-bind-html="elem.titulo | highlight:buscar.go ">
-                        </p>
-                        <p>
-                            <ul class="list-inline lista-instituciones ">
-                                <li><span class="normas-icono icon-Icons_Noms_GOB "></span></li>
-                                <li>
-                                    <a href=" " data-ng-bind-html="elem.comite | highlight:buscar.go "></a>
-                                </li>
-                                <!-- <li><a href=" ">SAGARPA</a></li> -->
-                            </ul>
-                        </p>
-                        <p>
-                            <ul class="list-inline lista-instituciones ">
-                                <li><span class="normas-icono icon-Icons_Noms_CAL "></span></li>
-                                <li>{{::elem.fecha}}</li>
-                            </ul>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Lista filtrada por producto o rama -->
     </div>
 </div>

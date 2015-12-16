@@ -34,8 +34,8 @@ angular.module('frontendApp')
             },
             onEnd: function() {
                 $scope.res = {
-                    min: $scope.slider.min,
-                    max: $scope.slider.max
+                    min: $scope.slider2.min,
+                    max: $scope.slider2.max
                 };
             }
         };
@@ -111,6 +111,16 @@ angular.module('frontendApp')
                 nombre: 'Sin categorizar',
                 categoria: 'nulo'
             },
+            null: {
+                icono: 'cog',
+                nombre: 'Sin categorizar',
+                categoria: 'nulo'
+            },
+            'null': {
+                icono: 'cog',
+                nombre: 'Sin categorizar',
+                categoria: 'nulo'
+            },
             'Proyecto Modificación': {
                 icono: 'lab',
                 nombre: 'Proyecto de modificación',
@@ -126,7 +136,12 @@ angular.module('frontendApp')
                 nombre: 'Otros',
                 categoria: 'otros'
             },
-            'NOM': {
+            'Otros': {
+                icono: 'attachment',
+                nombre: 'Otros documentos',
+                categoria: 'otros'
+            },
+            'Norma': {
                 icono: 'note',
                 nombre: 'Publicación de Norma',
                 categoria: 'nom'
@@ -146,6 +161,11 @@ angular.module('frontendApp')
                 nombre: 'Respuestas a comentarios',
                 categoria: 'resp'
             },
+            'Consulta Pública': {
+                icono: 'bullhorn',
+                nombre: 'Consulta  pública',
+                categoria: 'resp'
+            },
             'Modificación': {
                 icono: 'quill',
                 nombre: 'Modificación',
@@ -159,6 +179,11 @@ angular.module('frontendApp')
             'MIR Proyecto': {
                 icono: 'briefcase',
                 nombre: 'MIR',
+                categoria: 'mir'
+            },
+            'Evaluación de la Conformidad': {
+                icono: 'briefcase',
+                nombre: 'Evaluación de la Conformidad',
                 categoria: 'mir'
             },
             'MIR Otros': {
