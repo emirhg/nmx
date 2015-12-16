@@ -51,21 +51,18 @@ angular.module('frontendApp')
 
             });
         } else if ($routeParams.keyword) {
+            $scope.listadoNMXsActual = [];
             $scope.keyword = decodeURIComponent($routeParams.keyword);
             datos.getFullKeyWord($scope.keyword).then(function(datos) {
-                $scope.listadoNMXsActual = datos;
+                $scope.listadoNMXsActual = $scope.listadoNMXsActual.concat(datos);
                 $scope.resultados = datos.length;
-                $scope.slider = {
-                    value: datos.length,
-                    options: {
-                        floor: 0,
-                        ceil: datos.length
-                    },
-                    onEnd: function() {
-                        $scope.resultados = $scope.slider.value;
-                    }
-                };
+                console.debug('keyword', datos);
+            });
+            datos.getFullRama($scope.keyword).then(function(datos) {
+                $scope.listadoNMXsActual = $scope.listadoNMXsActual.concat(datos);
 
+                $scope.resultados = $scope.listadoNMXsActual.length;
+                console.debug('rama', datos);
 
             });
         } else {

@@ -219,6 +219,55 @@ angular.module('frontendApp')
             return deferred.promise;
         };
 
+        var getFullRama = function(rama) {
+            //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            $http({
+                    method: 'GET',
+                    url: baseurl + '/nmx/vigentes/byramaeconomica/' + rama,
+                })
+                .success(function(data) {
+                    return deferred.resolve(data);
+                })
+                .error(function(data) {
+                    console.log('Error');
+                    console.log(data);
+                    deferred.reject(data);
+                });
+            return deferred.promise;
+
+        };
+
+        var ramas = $localStorage.ramas ||  [];
+        var getRamas = function() {
+            //console.log('NOM:' + claveNOM);
+
+            var deferred = $q.defer();
+            // Resolve the deferred $q object before returning the promise
+            if (ramas.length > 0) {
+                //console.log('Vigentes');
+                deferred.resolve(ramas);
+            } else {
+                $http({
+                        method: 'GET',
+                        url: baseurl + '/nmx/ramas',
+                    })
+                    .success(function(data) {
+                        //console.log('GET Vigentes');
+                        ramas = angular.copy(data);
+                        $localStorage.ramas = ramas;
+                        return deferred.resolve(ramas);
+                    })
+                    .error(function(data) {
+                        console.log('Error');
+                        console.log(data);
+                        deferred.reject(data);
+                    });
+            }
+            return deferred.promise;
+        };
+
 
         var getListadoNOMS = function() {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
@@ -411,7 +460,7 @@ angular.module('frontendApp')
         };
 
         var ramas = [];
-        var getRamas = function getRamas() {
+        var getRamasEc = function getRamas() {
             //console.log('getRamas..');
             var deferred = $q.defer();
 
@@ -442,10 +491,12 @@ angular.module('frontendApp')
             getNOMgeneral: getNOMgeneral,
             getDependencias: getDependencias,
             getProductos: getProductos,
+            getFullRama,
             getRamas: getRamas,
             getFullDependencias: getFullDependencias,
             getListadoNOMsSeleccion: getListadoNOMsSeleccion,
             getListadoProyectoNOMS: getListadoProyectoNOMS,
+
             //NMX
             getListadoNMX: getListadoNMX,
             getNMX: getNMX,

@@ -38,6 +38,13 @@ angular.module('frontendApp')
             $scope.keywords = [];
             console.log('Error en getDependencias' + errorData);
         });
+        datos.getRamas().then(function exito(resultado) {
+            $scope.ramas = resultado;
+            console.log('ramas', resultado);
+        }, function error(errorData) {
+            $scope.ramas = [];
+            console.log('Error en getDependencias' + errorData);
+        });
         $scope.seleccion = {};
         $scope.vistaCTNN = function vistaDependencia(ctnn) {
             //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
@@ -50,6 +57,10 @@ angular.module('frontendApp')
         $scope.vistaKeyWord = function vistaDependencia(keyword) {
             //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
             $location.path('/busqueda/' + keyword.keyword);
+        };
+        $scope.vistaRama = function vistaDependencia(rama) {
+            //console.log('Ir a dependencia: ' + index + ' ' + dependencia);
+            $location.path('/busqueda/' + rama.rama_economica_slug);
         };
 
         /*     datos.getDependencias().then(function exito(resultado) {

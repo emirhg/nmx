@@ -40,16 +40,16 @@
                 <h1>NMX´s  <span class="text-uppercase"> por Sector Económico o Rama Industrial</span></h1>
             </div>
             <div class="col-xs-9">
-                <ui-select ng-model="seleccion.keyword" theme="select2" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="Palabras">{{$select.selected.keyword}}</ui-select-match>
-                    <ui-select-choices repeat="elem in keywords  | filter: $select.search">
-                        <div ng-bind-html="elem.keyword | highlight: $select.search"></div>
+                <ui-select ng-model="seleccion.rama" theme="select2" style="min-width: 300px; width:100%;">
+                    <ui-select-match placeholder="Rama">{{$select.selected.rama_economica}}</ui-select-match>
+                    <ui-select-choices repeat="elem in ramas  | filter: $select.search">
+                        <div ng-bind-html="elem.rama_economica | highlight: $select.search"></div>
                     </ui-select-choices>
                 </ui-select>
                 <!--  <button data-ng-repeat="elem in cttns " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.ctnn}}</button> -->
             </div>
             <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaKeyWord(seleccion.keyword)">BUSCAR</button>
+                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaRama(seleccion.rama)">BUSCAR</button>
             </div>
         </div>
         <div class="row">
