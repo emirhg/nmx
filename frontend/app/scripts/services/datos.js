@@ -22,7 +22,7 @@ angular.module('frontendApp')
         var baseurl = 'http://apiv3.dev.imco.org.mx/catalogonoms';
 
         //NMX
-        var nmxVigentes = $localStorage.nmxVigentes ||  [];
+        var nmxVigentes =   [];
 
         var getListadoNMX = function() {
             //Obtener el listado de noms con un tamaño de venta y con un offset que representa el 
@@ -73,7 +73,7 @@ angular.module('frontendApp')
 
         };
 
-        var ctnns = $localStorage.ctnns ||  [];
+        var ctnns =   [];
         var getCTNN = function() {
             //console.log('NOM:' + claveNOM);
 
@@ -122,7 +122,8 @@ angular.module('frontendApp')
 
         };
 
-        var onn = $localStorage.onn ||  [];
+        // var onn = $localStorage.onn ||  [];
+        var onn =   [];
         var getOrganismo = function() {
             //console.log('NOM:' + claveNOM);
 
@@ -190,7 +191,7 @@ angular.module('frontendApp')
 
         };
 
-        var keywords = $localStorage.keywords ||  [];
+        var keywords =   [];
         var getKeywords = function() {
             //console.log('NOM:' + claveNOM);
 
@@ -239,7 +240,7 @@ angular.module('frontendApp')
 
         };
 
-        var ramas = $localStorage.ramas ||  [];
+        var ramas =   [];
         var getRamas = function() {
             //console.log('NOM:' + claveNOM);
 
