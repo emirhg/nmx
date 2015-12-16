@@ -14,19 +14,16 @@ angular.module('frontendApp')
             titulo: 'Inicio',
             activo: true
         }, {
-            link: '#/nmx',
+            link: 'http://noms.imco.org.mx/#/',
+            titulo: 'NOMs'
+        }, {
+            link: 'http://nmx.imco.org.mx/#/',
             titulo: 'NMXs'
         }, {
             link: '#/glosario',
-            titulo: 'Glosario'
-        }, {
-            link: '#/proceso',
-            titulo: '¿Cómo se hacen las NMXs?'
-        }, {
-            link: '#/metodologia',
-            titulo: 'Metodología'
+            titulo: 'Otras Normas'
         }, {
             link: '#/contacto',
             titulo: 'Contacto'
-        }, ];
+        }];
     });

@@ -2,117 +2,29 @@
     <div class="container">
         <br>
         <div class="row">
-            <div class="col-xs-12">
-                <h1>NMXs POR ORGANISMOS</h1>
+            <div class="col-xs-4">
+                <img src="images/nom.png" class="img-responsive" alt="NOM">
+                <a style="margin-left:0px;" class="btn btn-nom btn-block btn-huge" href="http://nom.imco.org.mx/#/">NOMs</a>
             </div>
-            <div class="col-xs-9">
-                <ui-select ng-model="seleccion.onn" theme="select2" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="Oraganismo">{{$select.selected.onn}}</ui-select-match>
-                    <ui-select-choices repeat="elem in onns  | filter: $select.search">
-                        <div ng-bind-html="elem.onn | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-                <!--  <button data-ng-repeat="elem in cttns " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.ctnn}}</button> -->
+            <div class="col-xs-4">
+                <img src="images/nmx.png" class="img-responsive" alt="NMX">
+                <a style="margin-left:0px;" class="btn btn-nom btn-block btn-huge" href="http://nmx.imco.org.mx/#/">NMXs</a>
             </div>
-            <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaOrganismo(seleccion.onn)">BUSCAR</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <h1>NMXs POR CTNN</h1>
-            </div>
-            <div class="col-xs-9">
-                <ui-select ng-model="seleccion.ctnn" theme="select2" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="CTNNs">{{$select.selected.ctnn}}</ui-select-match>
-                    <ui-select-choices repeat="elem in cttns  | filter: $select.search">
-                        <div ng-bind-html="elem.ctnn | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-                <!--  <button data-ng-repeat="elem in cttns " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.ctnn}}</button> -->
-            </div>
-            <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaCTNN(seleccion.ctnn)">BUSCAR</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <h1>NMXs POR PALABRA CLAVE</h1>
-            </div>
-            <div class="col-xs-9">
-                <ui-select ng-model="seleccion.keyword" theme="select2" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="Palabras">{{$select.selected.keyword}}</ui-select-match>
-                    <ui-select-choices repeat="elem in keywords  | filter: $select.search">
-                        <div ng-bind-html="elem.keyword | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-                <!--  <button data-ng-repeat="elem in cttns " class="btn btn-nom btn-huge" data-ng-click="vistaDependencia($index,elem.dependencia)">{{::elem.ctnn}}</button> -->
-            </div>
-            <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco " data-ng-click="vistaKeyWord(seleccion.keyword)">BUSCAR</button>
+            <div class="col-xs-4">
+                <img src="images/prox.png" class="img-responsive" alt="normas_proximamente">
+                <a style="margin-left:0px;" class="btn btn-nom btn-block btn-huge" href="http://normas.org.mx/#/">Otras Normas</a>
             </div>
         </div>
         <br>
-        <br>
-        <br>
-        <!--<div class="row">
-            <div class="col-xs-12">
-                <h1>NOMs POR TIPO DE BIEN O SERVICIO</h1>
+        <div class="row">
+            <div class="col-xs-12" style="color: white; font-size: 2rem; ">
+                <p>
+                    Este sitio concentra toda la información relacionadas a las Normas Oficiales Mexicanas (NOM's) y Normas Mexicanas (NMX's) vigentes, de acuerdo a la publicación del Diario Oficial de la Federación (DOF).
+                </p>
+                <p>
+                    Esta plataforma se actualiza automáticamente todos los días. Fue elaborada por el Instituto Mexicano para la Competitividad (IMCO) con financiamiento de la Agencia USAID y la Dirección General de Normas (DGN) de la Secretaria de Economía.
+                </p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <ui-select ng-model="seleccion.producto" theme="select2" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="BIEN O SERVICIO">{{$select.selected}}</ui-select-match>
-                    <ui-select-choices repeat="elem in productos  | filter: $select.search">
-                        <div ng-bind-html="elem | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-            </div>
-            <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco " data-ng-click="filtraRama('producto')">BUSCAR</button>
-            </div>
-            <label class="col-sm-4 " style="color:  #19516A">{{seleccion.producto || 'Ejemplo: agua, trigo, semillas...'}}</label>
-            <br>
-            <br>
-            <br>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <h1>NOMs POR RAMA ECONÓMICA</h1>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <ui-select ng-model="seleccion.rama" theme="select2" style="min-width: 300px; width:100%;">
-                    <ui-select-match placeholder="BIEN O SERVICIO">{{$select.selected}}</ui-select-match>
-                    <ui-select-choices repeat="elem in ramas  | filter: $select.search">
-                        <div ng-bind-html="elem | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
-            </div>
-            <div class="col-xs-2">
-                <button class="btn btn-sm btn-nom-blanco " data-ng-click="filtraRama('rama')">BUSCAR</button>
-            </div>
-            <label class="col-sm-4  " style="color:  #19516A">{{seleccion.rama || 'Ejemplo: agricultura, pesca, hospitales...'}}</label>
-        </div> -->
-        <div class="row">
-            <div class="col-xs-12">
-                <br>
-                <h1>NOMs VIGENTES</h1>
-                <a class="btn btn-nom btn-huge" href="#/nmx">Ver todas </a>
-                <br>
-                <br>
-                <br>
-            </div>
-        </div>
-        <div class="row">
-            <br>
-            <br>
-            <div class="col-xs-12">
-            </div>
-        </div>
-        <br>
-        <br>
     </div>
 </div>
