@@ -46,6 +46,8 @@ module.exports = function(config) {
             'bower_components/angular-utils-imco/imco.js',
             'bower_components/d3/d3.js',
             'bower_components/ng-donuts-d3/dist/ng-donuts-d3.js',
+            'bower_components/ngstorage/ngStorage.js',
+            'bower_components/angularjs-slider/dist/rzslider.js',
             'bower_components/angular-mocks/angular-mocks.js',
             // endbower
             'app/scripts/**/*.js',
