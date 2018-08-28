@@ -12,8 +12,34 @@ La presente aplicación hace uso del API del DOF para identificar las publicacio
 
 
 ## Instalación
-El archivo SQL de configuración debe ser ejecutado por un Superusuario, algunas funciones fuerón escritas en PlPython3 y se requiere de un superusuario para crear el SP.
 
+### Frontend
+
+#### Requerimientos
+* Node & NPM
+* Bower
+
+#### Construccion
+```
+export $PUBLIC_WEB_ROOT=$HOME
+echo "Los sitios web seran copiados a la carpeta $PUBLIC_WEB_ROOT"
+
+cd frontend
+npm install
+bower install
+
+for branch in "master" "Normas" "nmx"
+do
+  git checkout ${branch}
+  grunt build
+  mv dist ${PUBLIC_WEB_ROOT}/${branch}
+done
+
+ls -lat ${PUBLIC_WEB_ROOT} | head
+```
+
+### Base de datos
+El archivo SQL de configuración debe ser ejecutado por un Superusuario, algunas funciones fuerón escritas en PlPython3 y se requiere de un superusuario para crear el SP.
 
 ## Uso
 
