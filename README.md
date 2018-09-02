@@ -14,14 +14,29 @@ La presente aplicación hace uso del API del DOF para identificar las publicacio
 ## Instalación
 
 ### Frontend
+El Frontend está dividido en 3 ramas distintas de desarrollo, cada una conteniendo un portal distintito para NOM, NMX y la página principal de NORMAS.
+
+* master    http://noms.imco.org.mx
+* Normas    http://normas.imco.org.mx
+* nmx       http://nmx.imco.org.m
 
 #### Requerimientos
 * Node & NPM
 * Bower
 
 #### Construccion
+Si se desea cambiar el API este debe ser especificado en cada una de las ramas en las cuales se vaya a implementar la ruta deseada. La ruta del API está especificada en la variable `baseurl` del archivo `app/scripts/services/datos.js`
+
+
 ```
-$PUBLIC_WEB_ROOT=$HOME
+app/scripts/services/datos.js:        var baseurl = 'http://apiv3.dev.imco.org.mx/catalogonoms';
+
+```
+
+La construcción del sitio es cómo cualquier otra aplicación de angular. EL siguiente script itera cobre las ramas involucradas y copia el resultado de la construcción a lña carpeta $HOME del usuario.
+
+```
+export PUBLIC_WEB_ROOT=$HOME
 echo "Los sitios web seran copiados a la carpeta $PUBLIC_WEB_ROOT"
 
 cd frontend
