@@ -2,14 +2,39 @@
 Sistema para la adquisición, clasificación y visualización de las Normas Oficiales Mexicanas publicadas en el Diario Oficial de la Federación.
 
 ## Acerca de
-La presente aplicación hace uso del API del DOF para identificar las publicaciones referentes a Normas Oficiales Mexicanas y clasificarlas.
+La presente aplicación hace uso del API del DOF para identificar las publicaciones referentes a Normas Oficiales Mexicanas y clasificarlas. Puedes conseguir una copia de este programa en https://github.com/imco/nmx.git, el API que provee los datos se puede encontrar en https://github.com/imco/dof-api.
+
+### Conseguir una copia
+```
+git clone https://github.com/imco/nmx.git
+```
+
+### Establecer la versión de node
+```
+  nvm install 5
+  nvm use 5
+```
+
 
 ## Requerimientos del sistema
  - PostgreSQL >= 9.3
  - postgresql-plpython3
  - Python 3.2+
  - nltk http://www.nltk.org/install.html
-
+ - Bower https://bower.io/
+    - `sudo npm install -g bower`
+ - Grunt https://gruntjs.com/installing-grunt
+    - `sudo npm install -g grunt`
+ - NVM https://github.com/creationix/nvm/blob/master/README.md
+    - nodejs 5 https://nodejs.org/es/download/package-manager/
+    - libpng-dev
+ - Ruby
+    - `sudo apt install ruby ruby-dev`
+ - Compass http://compass-style.org/install/
+    -```
+      sudo gem update --system
+      sudo gem install compass
+    ```
 
 ## Instalación
 
@@ -21,8 +46,20 @@ El Frontend está dividido en 3 ramas distintas de desarrollo, cada una contenie
 * nmx       http://nmx.imco.org.m
 
 #### Requerimientos
-* Node & NPM
-* Bower
+- Bower https://bower.io/
+   - `sudo npm install -g bower`
+- Grunt https://gruntjs.com/installing-grunt
+   - `sudo npm install -g grunt`
+- NVM https://github.com/creationix/nvm/blob/master/README.md
+   - nodejs 5 https://nodejs.org/es/download/package-manager/
+   - libpng-dev
+- Ruby
+   - `sudo apt install ruby ruby-dev`
+- Compass http://compass-style.org/install/
+   -```
+     sudo gem update --system
+     sudo gem install compass
+   ```
 
 #### Construccion
 Si se desea cambiar el API este debe ser especificado en cada una de las ramas en las cuales se vaya a implementar la ruta deseada. La ruta del API está especificada en la variable `baseurl` del archivo `app/scripts/services/datos.js`
@@ -40,6 +77,7 @@ export PUBLIC_WEB_ROOT=$HOME
 echo "Los sitios web seran copiados a la carpeta $PUBLIC_WEB_ROOT"
 
 cd frontend
+nvm use 5
 npm install
 bower install
 
